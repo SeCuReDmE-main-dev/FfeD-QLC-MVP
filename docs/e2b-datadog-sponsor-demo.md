@@ -11,6 +11,16 @@ Show that a study-case tool can:
 3. emit Docker logs and tags to Datadog;
 4. keep private research and secrets out of the public repository.
 
+## Why This Matters
+
+The sponsor value is not "another script." The value is a repeatable control loop for complex AI workspaces:
+
+```text
+decide what is safe -> execute in isolation -> observe without leaking secrets
+```
+
+That loop is the smallest testable product surface for a larger key-protection and research-governance platform.
+
 ## E2B
 
 Set the key locally:
@@ -73,3 +83,16 @@ evidence -> admissibility gate -> sandbox run -> Docker/Datadog observability
 ```
 
 That is the smallest useful product because a sponsor can verify that the workflow is isolated, observable, repeatable, and public-safe.
+
+## Key Protection Boundary
+
+The demo should never print or transmit real key values. The acceptable public data is:
+
+- variable names;
+- service names;
+- Docker labels;
+- success/failure status;
+- non-secret counters;
+- non-secret provenance identifiers.
+
+Real values stay in the local `.env` or a future secret manager.
