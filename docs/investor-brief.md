@@ -4,6 +4,8 @@
 
 FfeD-QLC is the first public MVP around **Quasicrystal Lattice Cryptography**, a protocol direction for long-term data protection through structural transformation, sandboxed verification, and observable key-safe workflows.
 
+Primary research attribution identifier: https://orcid.org/0009-0007-2904-0443
+
 ## Problem
 
 AI builders now work across many connected surfaces:
@@ -98,6 +100,8 @@ The MVP proves a small but valuable loop:
 ## What It Does Not Claim
 
 This MVP is not yet a complete security platform. It does not claim production-grade key protection, compliance certification, or automated remediation. Those require threat modeling, scanning coverage, policy enforcement, and audit hardening.
+
+It also does not disclose the full QLC structural transformation logic. The public repository is designed to attract review, sponsorship, and investment interest without giving away the private protocol core.
 
 ## Sponsor Demo
 

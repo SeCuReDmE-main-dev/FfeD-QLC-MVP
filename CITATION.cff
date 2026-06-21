@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+title: "FfeD-QLC MVP"
+message: "If you use this public MVP, cite the repository and ORCID attribution identifier."
+type: software
+authors:
+  - name: "FfeD-QLC contributors"
+    orcid: "https://orcid.org/0009-0007-2904-0443"
+repository-code: "https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP"
+license: "MIT"
+version: "0.1.0"
+date-released: "2026-06-21"
+abstract: "Public MVP scaffold for Quasicrystal Lattice Cryptography workflow governance, admissibility gating, sandbox verification, and non-secret Docker observability."
+

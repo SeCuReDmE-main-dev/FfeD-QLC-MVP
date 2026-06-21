@@ -1,0 +1,17 @@
+FfeD-QLC MVP
+
+Primary research attribution identifier:
+https://orcid.org/0009-0007-2904-0443
+
+QLC means Quasicrystal Lattice Cryptography in this repository.
+
+This public MVP exposes only a bounded software scaffold:
+
+- admissibility gate: accept, suspend, reject;
+- Docker/CodeProject.AI study-case mapping;
+- optional E2B sandbox smoke;
+- Datadog-friendly labels and non-secret telemetry.
+
+The repository intentionally does not disclose the full private research logic,
+private keys, datasets, internal notebooks, or production cryptographic claims.
+

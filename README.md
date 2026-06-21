@@ -4,6 +4,8 @@ FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility
 
 In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
 
+Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443).
+
 The product direction is simple: protect complex AI/research workspaces from accidental data mixing, secret leakage, and untraceable evidence reuse while still letting independent project blocks connect like Lego pieces.
 
 It is intentionally bounded: it does not publish private research logic, secrets, biological claims, clinical claims, or security-certification claims. It gives a clean public base that can be discussed, tested, and extended without mixing study-case data.
@@ -49,6 +51,26 @@ It protects by policy and workflow:
 - each Docker study-case block has its own network and persistent volume.
 
 The intended production version would add secret-pattern scanning, redaction, fingerprint-only audit records, per-repo policy files, and signed decision logs. This public MVP is the first small, testable piece of that larger system.
+
+## What Is Public And What Stays Private
+
+Public in this repository:
+
+- the admissibility gate pattern;
+- the Docker/CPAI map;
+- E2B sandbox smoke logic;
+- Datadog labels and non-secret telemetry pattern;
+- investor-readable problem framing.
+
+Not public in this repository:
+
+- private keys or `.env` values;
+- internal research notebooks;
+- full QLC transformation logic;
+- unpublished protocol details;
+- production cryptographic claims.
+
+This split is intentional: the repository gives investors and sponsors enough to understand the product surface while preserving the deeper research and security logic.
 
 ## What QLC Means Here
 
@@ -215,4 +237,4 @@ compose.yaml
 
 ## License
 
-MIT.
+MIT. See `LICENSE`, `NOTICE`, `AUTHORS.md`, and `CITATION.cff`.

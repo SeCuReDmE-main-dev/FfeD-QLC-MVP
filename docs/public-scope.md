@@ -4,6 +4,8 @@ FfeD-QLC MVP is a public, bounded software demonstration.
 
 In this repository, QLC means **Quasicrystal Lattice Cryptography**. It is a research protocol direction for long-term data protection using structural transformation patterns inspired by quasicrystal lattice geometry. The private theory is not part of this MVP.
 
+Attribution: https://orcid.org/0009-0007-2904-0443
+
 ## Public Algorithm Goal
 
 The public MVP answers a narrow operational question:
@@ -59,6 +61,7 @@ This is not a substitute for a production secret manager. It is a policy and exe
 - Full secret scanning and redaction engine.
 - Signed audit ledger.
 - Access-control service.
+- Full QLC structural transformation logic.
 
 ## Production Roadmap
 
