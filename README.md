@@ -2,7 +2,7 @@
 
 FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility layer, Docker/CodeProject.AI study-case mapping, and observable sandbox execution.
 
-In this public repo, QLC means **Quasicrystal Logic Chamber**: a controlled decision chamber that treats every incoming item as a structured object before it is allowed to enter a project workflow. The MVP does not publish the private research model behind QLC. It exposes the useful public part: classify, contain, observe, and decide.
+In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
 
 The product direction is simple: protect complex AI/research workspaces from accidental data mixing, secret leakage, and untraceable evidence reuse while still letting independent project blocks connect like Lego pieces.
 
@@ -52,13 +52,18 @@ The intended production version would add secret-pattern scanning, redaction, fi
 
 ## What QLC Means Here
 
-QLC is the public name for the decision chamber:
+Quasicrystal Lattice Cryptography is based on the idea that protected data can be transformed through structured, non-periodic lattice rules inspired by quasicrystal geometry. Instead of treating security only as a key-wrapping problem, QLC treats the data, its provenance, its execution context, and its admissibility state as part of the protection surface.
 
-- **Q**: Quasicrystal-inspired structure, meaning non-trivial order without forcing every project into one uniform shape.
-- **L**: Logic gate, meaning every item gets an explicit decision.
-- **C**: Chamber, meaning each project block has a boundary before it exchanges data with the rest of the mesh.
+Publicly, the MVP focuses on the operational layer around that protocol:
 
-In practical software terms, QLC is a boundary algorithm for deciding whether a source, execution request, or runtime event should be accepted, suspended, or rejected.
+- each project block keeps its own boundary;
+- evidence and execution requests are classified before use;
+- public and private keys are never exposed in examples or telemetry;
+- sandbox runs receive only the minimum environment needed;
+- runtime events are observable without leaking secret values;
+- every item receives an explicit `accept`, `suspend`, or `reject` decision.
+
+In practical software terms, this MVP is the first public control surface for a future QLC protocol. It is not yet a cryptographic proof or production security certification.
 
 ## Docker/CPAI Base Map
 

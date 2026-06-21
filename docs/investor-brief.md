@@ -2,7 +2,7 @@
 
 ## One-Line Description
 
-FfeD-QLC is an observable safety layer for AI/research workspaces: it decides what can enter a workflow, runs bounded checks in a sandbox, and sends clean runtime signals to observability tools.
+FfeD-QLC is the first public MVP around **Quasicrystal Lattice Cryptography**, a protocol direction for long-term data protection through structural transformation, sandboxed verification, and observable key-safe workflows.
 
 ## Problem
 
@@ -38,16 +38,21 @@ accept | suspend | reject
 
 ## What QLC Means
 
-QLC means **Quasicrystal Logic Chamber**.
+QLC means **Quasicrystal Lattice Cryptography**.
 
-For investors, the important part is not the mathematical metaphor. The important part is the product behavior:
+The core thesis is that future data security should not depend only on conventional encryption calls around otherwise uncontrolled workflows. QLC explores a layered protection model where data is transformed, classified, contained, and observed before it is allowed to move between project blocks.
+
+For investors, the important part is not the full mathematical detail. The important part is the product behavior:
 
 - each project block keeps its own boundary;
-- connections are allowed, but only through visible interfaces;
+- public and private keys stay out of public artifacts and telemetry;
+- connections are allowed only through visible interfaces;
 - evidence and execution requests are classified before use;
 - uncertain material is suspended;
 - unbounded claims are rejected;
 - runtime behavior is observable.
+
+The MVP does not claim that QLC is already a standardized quantum-resistant cryptosystem. It positions QLC as a long-term, post-quantum-aware protocol research lane with a practical first product: key-safe workflow governance for AI and research systems.
 
 ## Why E2B And Datadog
 
@@ -103,4 +108,3 @@ The sponsor demo should show:
 - E2B sandbox returning `accept` and `reject` examples;
 - Datadog Agent receiving Docker/container telemetry;
 - public repo contains no real `.env` or private key values.
-

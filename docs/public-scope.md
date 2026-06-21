@@ -2,17 +2,29 @@
 
 FfeD-QLC MVP is a public, bounded software demonstration.
 
-In this repository, QLC means **Quasicrystal Logic Chamber**. The name is public-facing shorthand for a structured decision boundary. The private theory is not part of this MVP.
+In this repository, QLC means **Quasicrystal Lattice Cryptography**. It is a research protocol direction for long-term data protection using structural transformation patterns inspired by quasicrystal lattice geometry. The private theory is not part of this MVP.
 
 ## Public Algorithm Goal
 
-The algorithm answers a narrow question:
+The public MVP answers a narrow operational question:
 
 ```text
-Should this item be accepted, suspended, or rejected before it enters a project workflow?
+Should this item be accepted, suspended, or rejected before it enters a protected QLC workflow?
 ```
 
 The item can be a source, claim, execution request, runtime event, or future repository artifact.
+
+## Coherent Public Definition
+
+Quasicrystal Lattice Cryptography is presented here as a protocol concept for protecting data by combining:
+
+- structural data transformation;
+- project-level containment;
+- provenance-aware admissibility;
+- sandboxed execution;
+- observable but non-secret telemetry.
+
+This MVP does not claim quantum resistance as a proven property. It frames QLC as a protocol under development whose design goal is long-term resilience, including post-quantum threat awareness.
 
 ## Included
 
