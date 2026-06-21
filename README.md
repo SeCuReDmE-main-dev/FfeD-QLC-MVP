@@ -6,6 +6,10 @@ In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research
 
 Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443).
 
+![Accepted into E2B for Startups](assets/e2b-startups-badge.png)
+
+Accepted into the **E2B for Startups** program. The program approval email confirms E2B credits and Pro Tier access for sandbox-based AI-agent development. Datadog for Startups onboarding evidence is also present, and the Docker analytics integration is in progress.
+
 The product direction is simple: protect complex AI/research workspaces from accidental data mixing, secret leakage, and untraceable evidence reuse while still letting independent project blocks connect like Lego pieces.
 
 It is intentionally bounded: it does not publish private research logic, secrets, biological claims, clinical claims, or security-certification claims. It gives a clean public base that can be discussed, tested, and extended without mixing study-case data.
@@ -35,6 +39,8 @@ The first commercial shape is a developer/research operations tool that sits bet
 - Provides a Docker image and Compose entrypoint.
 - Provides tests for the MVP behavior.
 - Documents the E2B + Datadog sponsor demo path.
+- Documents the official-badge evidence policy before using sponsor language.
+- Defines a defensive image-redaction path using YOLO-style object detection plus text/secret scanning.
 
 ## What The Algorithm Protects
 
@@ -200,6 +206,34 @@ Investor-facing explanation:
 ```text
 docs/investor-brief.md
 ```
+
+Official badge evidence policy:
+
+```text
+docs/official-badges-and-evidence.md
+```
+
+MicroVM architecture:
+
+```text
+docs/e2b-microvm-qlc-architecture.md
+```
+
+YOLO-style image secret redaction:
+
+```text
+docs/yolo-secret-redaction.md
+```
+
+Safe public banner copy for the current repo:
+
+```text
+Accepted into E2B for Startups - sandbox smoke path in progress
+Datadog for Startups onboarding active - Docker analytics integration in progress
+ORCID-attributed research prototype: 0009-0007-2904-0443
+```
+
+Do not use stronger Datadog language such as "sponsored by" or "official partner" unless an explicit written approval is present and recorded in the evidence file.
 
 ## Test
 
