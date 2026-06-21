@@ -8,7 +8,7 @@ Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orc
 
 ![Accepted into E2B for Startups](assets/e2b-startups-badge.png)
 
-Accepted into the **E2B for Startups** program. The program approval email confirms E2B credits and Pro Tier access for sandbox-based AI-agent development. Datadog for Startups onboarding evidence is also present, and the Docker analytics integration is in progress.
+Accepted into the **E2B for Startups** program. The program approval email confirms E2B credits and Pro Tier access for sandbox-based AI-agent development. Datadog for Startups onboarding evidence is also present, and the Datadog APM console is active for the project environment.
 
 The product direction is simple: protect complex AI/research workspaces from accidental data mixing, secret leakage, and untraceable evidence reuse while still letting independent project blocks connect like Lego pieces.
 
@@ -229,7 +229,7 @@ Safe public banner copy for the current repo:
 
 ```text
 Accepted into E2B for Startups - sandbox smoke path in progress
-Datadog for Startups onboarding active - Docker analytics integration in progress
+Datadog for Startups onboarding active - APM console active
 ORCID-attributed research prototype: 0009-0007-2904-0443
 ```
 

@@ -8,7 +8,7 @@ This repository can mention external tools only at the evidence level that is ac
 
 | Organization | Evidence found | Public wording allowed | Wording locked until explicit approval |
 |---|---|---|---|
-| Datadog | Gmail contains an incoming message from `Datadog for Startups <startups@datadoghq.com>`, subject `Datadog Onboarding - Introduction to Professor Bits!`, dated 2025-10-20. It welcomes the team to the Datadog for Startups journey for the next 12 months and links a Startup Program Welcome Kit. The local stack also has a Datadog Agent integration path. | `Datadog for Startups onboarding active - Docker analytics integration in progress` | `Official Datadog partner`, `Sponsored by Datadog` unless sponsor language is separately approved |
+| Datadog | Gmail contains an incoming message from `Datadog for Startups <startups@datadoghq.com>`, subject `Datadog Onboarding - Introduction to Professor Bits!`, dated 2025-10-20. It welcomes the team to the Datadog for Startups journey for the next 12 months and links a Startup Program Welcome Kit. Visual evidence also shows the Datadog APM console active in `us3.datadoghq.com` for the project account. The local stack has a Datadog Agent integration path. | `Datadog for Startups onboarding active - APM console active` | `Official Datadog partner`, `Sponsored by Datadog` unless sponsor language is separately approved |
 | E2B | Gmail contains an incoming application update from `startups@e2b.dev`, subject `Application Update: E2B for Startups`, dated 2025-08-08. It says the E2B for Startups application was approved and includes E2B credits plus Pro Tier access. The email also says at least one E2B badge display is required where applicable. | `Accepted into E2B for Startups - sandbox smoke path in progress` | `Official E2B partner`, `Sponsored by E2B` unless sponsor language is separately approved |
 
 ## Safe Banner Set
@@ -17,7 +17,7 @@ Use these while the sponsor record is still being hardened:
 
 ```text
 Accepted into E2B for Startups - sandbox smoke path in progress
-Datadog for Startups onboarding active - Docker analytics integration in progress
+Datadog for Startups onboarding active - APM console active
 ORCID-attributed research prototype: 0009-0007-2904-0443
 ```
 
