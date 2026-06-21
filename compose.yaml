@@ -6,8 +6,15 @@ services:
       context: .
     image: ffed-qlc-mvp:local
     command: ["map"]
+    labels:
+      studycase.block.id: "public-ffed-qlc-mvp"
+      studycase.block.title: "Public FfeD QLC MVP"
+      studycase.mesh.role: "public-mvp"
+      com.datadoghq.ad.logs: '[{"source":"python","service":"ffed-qlc-mvp"}]'
     environment:
       QLC_CPAI_QUASICRYSTAL_URL: "${QLC_CPAI_QUASICRYSTAL_URL:-http://host.docker.internal:33168}"
       QLC_CPAI_NEUTROSOPHIQUE_URL: "${QLC_CPAI_NEUTROSOPHIQUE_URL:-http://host.docker.internal:33268}"
       QLC_CPAI_FNP_QNN_URL: "${QLC_CPAI_FNP_QNN_URL:-http://host.docker.internal:33368}"
-
+      DD_SERVICE: "${DD_SERVICE:-ffed-qlc-mvp}"
+      DD_ENV: "${DD_ENV:-local-studycase}"
+      DD_VERSION: "${DD_VERSION:-0.1.0}"

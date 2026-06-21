@@ -11,6 +11,7 @@ It is intentionally modest: it does not publish private research logic, secrets,
 - Keeps the public model tied to provenance, trust score, and bounded claim scope.
 - Provides a Docker image and Compose entrypoint.
 - Provides tests for the MVP behavior.
+- Documents the E2B + Datadog sponsor demo path.
 
 ## Docker/CPAI Base Map
 
@@ -85,6 +86,39 @@ docker build -t ffed-qlc-mvp:local .
 docker run --rm ffed-qlc-mvp:local map
 ```
 
+## E2B + Datadog Sponsor Demo
+
+The sponsor-facing MVP is:
+
+```text
+evidence -> admissibility gate -> E2B sandbox run -> Docker/Datadog observability
+```
+
+Run an optional E2B sandbox smoke:
+
+```bash
+pip install -e ".[e2b]"
+python scripts/e2b_run_mvp.py
+```
+
+The E2B smoke emits a DogStatsD counter to a local Datadog Agent when reachable:
+
+```text
+ffed_qlc.e2b.mvp_run
+```
+
+Run Docker while the local Datadog Agent is active:
+
+```bash
+docker compose up --build
+```
+
+Details:
+
+```text
+docs/e2b-datadog-sponsor-demo.md
+```
+
 ## Test
 
 ```bash
@@ -118,4 +152,3 @@ compose.yaml
 ## License
 
 MIT.
-
