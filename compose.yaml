@@ -1,0 +1,13 @@
+name: ffed-qlc-mvp
+
+services:
+  ffed-qlc:
+    build:
+      context: .
+    image: ffed-qlc-mvp:local
+    command: ["map"]
+    environment:
+      QLC_CPAI_QUASICRYSTAL_URL: "${QLC_CPAI_QUASICRYSTAL_URL:-http://host.docker.internal:33168}"
+      QLC_CPAI_NEUTROSOPHIQUE_URL: "${QLC_CPAI_NEUTROSOPHIQUE_URL:-http://host.docker.internal:33268}"
+      QLC_CPAI_FNP_QNN_URL: "${QLC_CPAI_FNP_QNN_URL:-http://host.docker.internal:33368}"
+
