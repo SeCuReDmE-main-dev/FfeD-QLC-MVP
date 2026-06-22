@@ -1,0 +1,166 @@
+name: FFeD-QLC CI + Datadog telemetry
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ffed-qlc-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DD_SERVICE: ffed-qlc-mvp
+  DD_ENV: alpha-local
+  DD_REPO_TAG: ffed-qlc-mvp
+  DD_TEAM: fnp-qnn
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  validate:
+    name: Tests, public boundary, Datadog marker
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run public unit tests without third-party dependencies
+        run: |
+          python - <<'PY'
+          import importlib.util
+          import inspect
+          import sys
+          from pathlib import Path
+
+          root = Path.cwd()
+          sys.path.insert(0, str(root / "src"))
+          failures = []
+          total = 0
+          for test_file in sorted((root / "tests").glob("test_*.py")):
+              spec = importlib.util.spec_from_file_location(test_file.stem, test_file)
+              module = importlib.util.module_from_spec(spec)
+              assert spec and spec.loader
+              spec.loader.exec_module(module)
+              for name, func in inspect.getmembers(module, inspect.isfunction):
+                  if name.startswith("test_"):
+                      total += 1
+                      try:
+                          func()
+                      except Exception as exc:
+                          failures.append(f"{test_file.name}::{name}: {exc!r}")
+          if failures:
+              print("Unit test failures:", file=sys.stderr)
+              print("\n".join(failures), file=sys.stderr)
+              raise SystemExit(1)
+          print(f"Unit tests passed: {total}")
+          PY
+
+      - name: Validate public-safe boundary
+        run: |
+          python - <<'PY'
+          import re
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          root = Path.cwd()
+          required = {
+              "README.md": ["no real `.env` files", "no API keys", "no medical/clinical guidance"],
+              "SECURITY.md": ["Do not commit", "Datadog API keys", "This MVP is not a production cryptographic system"],
+          }
+          problems = []
+          for path, snippets in required.items():
+              text = (root / path).read_text(encoding="utf-8")
+              for snippet in snippets:
+                  if snippet not in text:
+                      problems.append(f"{path}: missing {snippet!r}")
+          tracked = subprocess.check_output(["git", "ls-files"], text=True).splitlines()
+          forbidden_paths = {".env", ".env.local", ".env.production", "id_rsa", "id_ed25519"}
+          for path in tracked:
+              if path.lower() in forbidden_paths:
+                  problems.append(f"tracked forbidden secret-bearing path: {path}")
+          secret_patterns = [
+              re.compile(r"-----BEGIN (?:RSA |DSA |EC |OPENSSH |)PRIVATE KEY-----"),
+              re.compile(r"AKIA[0-9A-Z]{16}"),
+              re.compile(r"gh[pousr]_[A-Za-z0-9_]{30,}"),
+          ]
+          for path in tracked:
+              p = root / path
+              if p.suffix.lower() not in {".md", ".py", ".toml", ".yml", ".yaml", ".txt", ".cff"} and p.name not in {"Dockerfile"}:
+                  continue
+              try:
+                  text = p.read_text(encoding="utf-8")
+              except UnicodeDecodeError:
+                  continue
+              for pattern in secret_patterns:
+                  if pattern.search(text):
+                      problems.append(f"{path}: possible committed secret matched {pattern.pattern}")
+          if problems:
+              print("Public-boundary validation failed:", file=sys.stderr)
+              print("\n".join(f"- {p}" for p in problems), file=sys.stderr)
+              raise SystemExit(1)
+          print("Public-boundary validation passed")
+          PY
+
+      - name: Emit Datadog CI metric when configured
+        if: always()
+        env:
+          DD_API_KEY: ${{ secrets.DD_API_KEY }}
+          DD_SITE: us3.datadoghq.com
+          CI_JOB_STATUS: ${{ job.status }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import time
+          import urllib.error
+          import urllib.request
+
+          def safe(value: str) -> str:
+              return (value or "unknown").strip().replace(" ", "_").replace("/", "_").lower() or "unknown"
+
+          status = os.environ.get("CI_JOB_STATUS", "unknown")
+          success = 1 if status == "success" else 0
+          tags = [
+              "team:fnp-qnn",
+              "service:ffed-qlc-mvp",
+              "repo:ffed-qlc-mvp",
+              "env:alpha-local",
+              "component:ci",
+              "managed_by:github-actions",
+              f"github_repository:{safe(os.environ.get('GITHUB_REPOSITORY', 'securedme-main-dev/FfeD-QLC-MVP'))}",
+              f"git_branch:{safe(os.environ.get('GITHUB_REF_NAME', 'unknown'))}",
+              f"git_commit_sha:{safe(os.environ.get('GITHUB_SHA', 'unknown'))}",
+              f"github_run_id:{safe(os.environ.get('GITHUB_RUN_ID', 'unknown'))}",
+          ]
+          payload = {
+              "series": [
+                  {"metric": "ffed_qlc.ci.validation", "points": [[int(time.time()), success]], "type": "gauge", "host": "github-actions", "tags": tags},
+                  {"metric": "ffed_qlc.ci.run", "points": [[int(time.time()), 1]], "type": "count", "host": "github-actions", "tags": tags + [f"ci_status:{safe(status)}"]},
+              ]
+          }
+          print(json.dumps({"metrics": [s["metric"] for s in payload["series"]], "tags": tags, "dd_api_key_present": bool(os.environ.get("DD_API_KEY"))}, sort_keys=True))
+          api_key = os.environ.get("DD_API_KEY")
+          if not api_key:
+              print("DD_API_KEY not configured; skipping Datadog submission.")
+              raise SystemExit(0)
+          site = os.environ.get("DD_SITE", "us3.datadoghq.com").removeprefix("https://").removeprefix("http://").rstrip("/")
+          url = f"https://api.{site}/api/v1/series" if not site.startswith("api.") else f"https://{site}/api/v1/series"
+          request = urllib.request.Request(url, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json", "DD-API-KEY": api_key}, method="POST")
+          try:
+              with urllib.request.urlopen(request, timeout=10) as response:
+                  print(f"Datadog metric submission status: {response.status}")
+          except (urllib.error.HTTPError, OSError) as exc:
+              print(f"Datadog metric submission skipped/failed without failing CI: {exc}")
+          PY
