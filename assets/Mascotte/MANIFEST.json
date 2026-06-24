@@ -1,0 +1,32 @@
+{
+  "schema": "ffed.qlc.mascotte_asset_manifest.v1",
+  "scope": "local asset governance only",
+  "raw_secret_stored": false,
+  "guardians": [
+    {
+      "name": "AEGIS",
+      "directory": "assets/Mascotte/AEGIS",
+      "expected_assets": [
+        "AEGIS color.png",
+        "story drawing board 1.png",
+        "story drawing board 2.png",
+        "story drawing board 3.png",
+        "story drawing board 4.png",
+        "story drawing board 5.png"
+      ]
+    },
+    {
+      "name": "VIGIL",
+      "directory": "assets/Mascotte/VIGIL",
+      "expected_assets": [
+        "VIGIL color.png",
+        "story drawing board 1.png",
+        "story drawing board 2.png",
+        "story drawing board 3.png",
+        "story drawing board 4.png",
+        "story drawing board 5.png"
+      ]
+    }
+  ],
+  "claim_boundary": "manifest protects local asset inventory from accidental omission; it is not a licensing or trademark certification"
+}
