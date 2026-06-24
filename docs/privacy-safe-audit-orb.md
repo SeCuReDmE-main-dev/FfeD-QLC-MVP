@@ -83,3 +83,21 @@ Passe 4 lets a privacy-safe audit orb and ECN packet feed
 
 It still rejects raw activity, raw OCR, screenshots, browsing history, passwords,
 tokens, API keys, and full dumps.
+
+## Human Review Quarantine Capsule
+
+Passe 5 adds `ffed.qlc.human_review_quarantine_capsule.v1` for cases where a
+route decision returns `human_review` or `quarantine`.
+
+The capsule carries:
+
+- route action;
+- guard verdict;
+- sensitivity level;
+- audit nonce;
+- reason codes;
+- review priority;
+- route/SWOP/audit fingerprints.
+
+It is a metadata-only review handoff, not a surveillance payload, evidence
+vault, or replacement for a human reviewer.

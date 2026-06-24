@@ -102,4 +102,20 @@ structural effort:
 SWOP does not change the current `FQLC1` container format yet. It prepares the
 final pass where obfuscation intensity can be tightened into the tool workflow.
 
+## SWOP-to-Chunk Protection Plan v1
+
+Passe 5 adds `ffed_qlc.chunk_protection_plan.build_swop_chunk_protection_plan()`.
+It converts SWOP policy regions into chunk allocation guidance:
+
+- logical region index;
+- chunk range;
+- protection tier;
+- obfuscation intensity;
+- recommended chunk mode;
+- optional subkey fingerprint from the chunk key schedule.
+
+It exposes fingerprints only and does not change `FQLC1`. It is a preparation
+layer for the final tightening pass, not ECC per particle, certified adaptive
+encryption, or a quantum-proof claim.
+
 Do not commit real packed sensitive payloads to the public repository.

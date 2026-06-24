@@ -3,11 +3,14 @@
 from .admissibility import AdmDecision, Evidence, evaluate_evidence
 from .audit_orb import build_privacy_safe_audit_orb
 from .context_guard import build_context_consistency_guard
+from .chunk_protection_plan import build_swop_chunk_protection_plan
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS, StudycaseBlock
 from .ecn_handoff import build_ecn_handoff_packet
 from .key_schedule import derive_chunk_key_schedule
 from .mesh_proof import YOLODetection, build_celebrum_roi_map, build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .proof_bundle import build_compact_proof_bundle_receipt
+from .protected_intake import build_multimodal_protected_intake_descriptor
+from .quarantine_capsule import build_human_review_quarantine_capsule
 from .route_decision import build_celebrum_route_decision
 from .semantic_policy import SemanticComplexityRule, build_semantic_complexity_map
 from .swop_policy import build_sensitivity_weighted_obfuscation_policy
@@ -37,10 +40,13 @@ __all__ = [
     "build_ecn_handoff_packet",
     "build_fnpqnn_runtime_payload",
     "build_gateway_command_plan",
+    "build_human_review_quarantine_capsule",
+    "build_multimodal_protected_intake_descriptor",
     "build_privacy_safe_audit_orb",
     "build_reciprocal_utility_scorecard",
     "build_semantic_complexity_map",
     "build_sensitivity_weighted_obfuscation_policy",
+    "build_swop_chunk_protection_plan",
     "derive_chunk_key_schedule",
     "evaluate_evidence",
     "emit_dogstatsd_counter",

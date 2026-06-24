@@ -87,6 +87,20 @@ The module does not run YOLO, OCR, or video analysis by itself. It consumes
 metadata produced by those tools and rejects raw media, raw OCR, screenshots,
 tokens, passwords, and secrets.
 
+## Multimodal Protected Intake Descriptor
+
+Passe 5 adds `ffed.qlc.multimodal_protected_intake_descriptor.v1`. It normalizes
+image, document, and video metadata before SWOP:
+
+- source id and source fingerprint;
+- media type;
+- region count;
+- page count for document metadata;
+- frame count for video metadata;
+- detector labels and detection fingerprints.
+
+It does not embed raw media, raw OCR, screenshots, or secret values.
+
 ## Datadog And E2B Boundary
 
 E2B can run the redaction pass inside an isolated sandbox. Datadog can receive metrics such as:

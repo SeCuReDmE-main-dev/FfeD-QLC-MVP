@@ -65,6 +65,15 @@ This is a local MVP scorecard, not scientific proof or security certification.
 - simulator flags for LVFM/QNN plus plithogenic, topology, neutro-algebra, and
   Hydra-EM-GPCN layers.
 
+Passe 5 adds three helper surfaces around this payload:
+
+- `build_multimodal_protected_intake_descriptor()` normalizes image, document,
+  and video metadata before SWOP;
+- `build_human_review_quarantine_capsule()` turns `human_review` or
+  `quarantine` routes into a safe review capsule;
+- `build_swop_chunk_protection_plan()` turns SWOP intensity into future chunk
+  allocation guidance without changing `FQLC1`.
+
 Generate a proof payload:
 
 ```powershell
@@ -170,6 +179,10 @@ model and does not replace human review.
 Critical SWOP sensitivity is routed to review by the route-decision layer before
 it can be treated as a normal simulator handoff.
 
+`ffed.qlc.human_review_quarantine_capsule.v1` is the safe handoff shape for
+those review cases. It carries route action, guard verdict, sensitivity level,
+audit nonce, reason codes, and fingerprints only.
+
 ## Boundaries
 
 - YOLO is perception metadata only.
@@ -178,6 +191,8 @@ it can be treated as a normal simulator handoff.
   means the event needs a safer route, not that an attack was proven.
 - SWOP is a policy signal for obfuscation intensity and chunk-mode planning; it
   does not certify encryption strength.
+- Intake descriptors, quarantine capsules, and chunk plans are metadata-only
+  helper surfaces, not raw evidence stores.
 - CeLeBrUm is the orchestration concept for the MVP proof.
 - Cerebrum is the simulator runtime/memory endpoint, not the orchestrator.
 - QLC container bytes are not embedded in the simulator payload.
