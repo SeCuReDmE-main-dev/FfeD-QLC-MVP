@@ -1,3 +1,5 @@
+![FfeD-QLC Logo](./assets/Logo%20Final.png).
+
 # FfeD-QLC MVP
 
 FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility layer, Docker/CodeProject.AI study-case mapping, and observable sandbox execution.
@@ -5,8 +7,6 @@ FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility
 In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
 
 Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443).
-
-![FfeD-QLC Logo](./assets/Logo%20Final.png).
 
 Accepted into the **E2B for Startups** program. The program approval email confirms E2B credits and Pro Tier access for sandbox-based AI-agent development. Datadog for Startups onboarding evidence is also present, and the Datadog APM console is active for the project environment.
 
