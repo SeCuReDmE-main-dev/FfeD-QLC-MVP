@@ -43,6 +43,7 @@ The first commercial shape is a developer/research operations tool that sits bet
 - Defines a defensive image-redaction path using YOLO-style object detection plus text/secret scanning.
 - Provides a concrete reversible QLC-style structural transform using a phi/cut-and-project byte ordering plus authenticated encryption.
 - Builds an FNP-QNN runtime proof payload so QLC events can pass through `fnpqnn_gateway_MVP`, CodeProject.AI/YOLO mesh metadata, CeLeBrUm orchestration, LVFM, and the simulator's Hydra-EM-GPCN lane.
+- Adds a Semantic Complexity Map and Privacy-Safe Audit Orb as second-pass concept extractions from the foundation documents.
 
 ## What The Algorithm Protects
 
@@ -188,6 +189,18 @@ ffed-qlc yolo-pack `
 
 `yolo-detections.json` contains metadata only. QLC does not embed raw image bytes
 in the simulator payload.
+
+Build a privacy-safe ProGuarD audit orb:
+
+```powershell
+ffed-qlc audit-orb `
+  --orb-id worker-orb-001 `
+  --events-json .\events.json `
+  --output .\audit-orb.json
+```
+
+The Audit Orb rejects raw password/secret fields and keeps only fingerprints,
+secret-manager references, and bounded aggregate metadata.
 
 This is a reciprocal MVP proof loop:
 

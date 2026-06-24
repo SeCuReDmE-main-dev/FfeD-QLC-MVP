@@ -75,3 +75,42 @@ def test_cli_yolo_pack_writes_container_and_proof(tmp_path, monkeypatch) -> None
     assert payload["memories"][1]["provenance"]["privacy_note"].startswith("detection metadata only")
     assert container.exists()
     assert plan.exists()
+
+
+def test_cli_audit_orb_writes_privacy_safe_record(tmp_path, monkeypatch) -> None:
+    events = tmp_path / "events.json"
+    output = tmp_path / "audit-orb.json"
+    events.write_text(
+        json.dumps(
+            {
+                "events": [
+                    {
+                        "label": "runtime-export",
+                        "source": "fnp-qnn",
+                        "secret_manager_ref": "vault://simulator/runtime",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "audit-orb",
+            "--orb-id",
+            "orb-001",
+            "--events-json",
+            str(events),
+            "--output",
+            str(output),
+        ],
+    )
+
+    assert main() == 0
+    payload = json.loads(output.read_text(encoding="utf-8"))
+    assert payload["secret_policy"]["raw_secrets_allowed"] is False
+    assert payload["events"][0]["raw_payload_embedded"] is False

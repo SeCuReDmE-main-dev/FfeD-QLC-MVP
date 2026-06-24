@@ -4,6 +4,8 @@ import hashlib
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping, Sequence
 
+from .semantic_policy import build_semantic_complexity_map
+
 
 ProofMode = Literal[
     "simulator_supports_qlc_complexity",
@@ -96,6 +98,7 @@ def build_fnpqnn_runtime_payload(
     detections = [_normalize_detection(item) for item in (yolo_detections or [])]
     active_proof_mode = _normalize_proof_mode(proof_mode)
     roi_map = build_celebrum_roi_map(detections)
+    semantic_complexity_map = build_semantic_complexity_map([_detection_to_mapping(item) for item in detections])
     container_sha256 = hashlib.sha256(qlc_container).hexdigest()
     structural_score = _structural_score(qlc_container)
     semantic_score = _semantic_score(detections)
@@ -181,6 +184,7 @@ def build_fnpqnn_runtime_payload(
             "qlc_container_sha256": container_sha256,
             "yolo_detection_count": len(detections),
             "celebrum_roi_map": roi_map,
+            "semantic_complexity_map": semantic_complexity_map,
             "semantic_score": semantic_score,
             "structural_score": structural_score,
             "proof_mode": active_proof_mode,
@@ -346,6 +350,14 @@ def _normalize_detection(item: Mapping[str, Any] | YOLODetection) -> YOLODetecti
     if isinstance(item, YOLODetection):
         return item
     return YOLODetection.from_mapping(item)
+
+
+def _detection_to_mapping(item: YOLODetection) -> dict[str, Any]:
+    return {
+        "label": item.label,
+        "confidence": item.confidence,
+        "bounding_box_normalized": [item.x, item.y, item.width, item.height],
+    }
 
 
 def _semantic_score(detections: Sequence[YOLODetection]) -> float:

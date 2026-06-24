@@ -37,6 +37,8 @@ FfeD-QLC-MVP
 - QLC container SHA-256 and structural score;
 - optional YOLO detections as `vision` memories;
 - a CeLeBrUm ROI/semantic map derived from YOLO metadata only;
+- a Semantic Complexity Map that translates high-confidence ROI labels into
+  bounded lattice-density, phason-strain, and Z-value policy parameters;
 - CPAI mesh context with route, node count, load, and forwarding metadata;
 - explicit `CeLeBrUm` versus `Cerebrum` provenance markers;
 - simulator flags for LVFM/QNN plus plithogenic, topology, neutro-algebra, and
@@ -124,6 +126,7 @@ FNP-QNN routes.
 ## Boundaries
 
 - YOLO is perception metadata only.
+- Semantic complexity is policy pressure only; it is not a cryptographic root.
 - CeLeBrUm is the orchestration concept for the MVP proof.
 - Cerebrum is the simulator runtime/memory endpoint, not the orchestrator.
 - QLC container bytes are not embedded in the simulator payload.

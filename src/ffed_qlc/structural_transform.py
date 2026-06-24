@@ -53,10 +53,17 @@ def pack_bytes(
     active_config = config or QLCTransformConfig()
     salt = os.urandom(16)
     nonce = os.urandom(12)
+    plaintext_sha256 = hashlib.sha256(plaintext).hexdigest()
     key = _derive_key(passphrase, salt, active_config)
     order = _quasicrystal_order(len(plaintext), key)
     transformed = _permute(plaintext, order)
 
+    manifest = _build_key_manifest(
+        plaintext_sha256=plaintext_sha256,
+        plaintext_length=len(plaintext),
+        salt=salt,
+        key=key,
+    )
     header = {
         "version": 1,
         "transform": "phi_cut_project_permutation_v1",
@@ -68,6 +75,7 @@ def pack_bytes(
         "salt": _b64(salt),
         "nonce": _b64(nonce),
         "plaintext_length": len(plaintext),
+        "qlc_manifest": manifest,
     }
     header_bytes = _encode_header(header)
     aad = _container_aad(header_bytes, associated_data)
@@ -131,6 +139,7 @@ def inspect_container(container: bytes) -> dict[str, object]:
         "kdf_n": int(header["kdf_n"]),
         "kdf_r": int(header["kdf_r"]),
         "kdf_p": int(header["kdf_p"]),
+        "qlc_manifest": header.get("qlc_manifest", {}),
         "raw_payload_exposed": False,
     }
 
@@ -169,6 +178,40 @@ def quasicrystal_coordinates(length: int, passphrase: str, *, salt: bytes | None
     key = _derive_key(passphrase or "demo", demo_salt, QLCTransformConfig())
     order = _quasicrystal_order(length, key)
     return [(rank, source_index, _window_distance(source_index, key)) for rank, source_index in enumerate(order)]
+
+
+def _build_key_manifest(
+    *,
+    plaintext_sha256: str,
+    plaintext_length: int,
+    salt: bytes,
+    key: bytes,
+) -> dict[str, object]:
+    lattice_seed = _seed64(key, b"lattice-seed")
+    projection_seed = _seed64(key, b"projection-slice")
+    return {
+        "schema": "ffed.qlc.crypte_key_manifest.v1",
+        "source_sha256": plaintext_sha256,
+        "source_length_bytes": plaintext_length,
+        "lattice_seed_fingerprint": f"{lattice_seed:016x}",
+        "projection_profile": {
+            "profile_id": "phi_cut_project_single_chunk_v1",
+            "projection_seed_fingerprint": f"{projection_seed:016x}",
+            "rotational_profile": "golden_ratio_rank_pair_v1",
+        },
+        "chunk_policy": {
+            "mode": "single_chunk_v1",
+            "chunk_count": 1 if plaintext_length else 0,
+            "planned_key_schedule": "hkdf_subkeys_per_chunk_v2",
+        },
+        "crypto_profile": {
+            "cipher": "ChaCha20-Poly1305",
+            "kdf": "scrypt",
+            "salt_fingerprint": hashlib.sha256(salt).hexdigest()[:16],
+            "production_claim": False,
+        },
+        "claim_boundary": "manifested_mvp_key_recipe_not_quantum_proof_certification",
+    }
 
 
 def _derive_key(passphrase: str, salt: bytes, config: QLCTransformConfig) -> bytes:

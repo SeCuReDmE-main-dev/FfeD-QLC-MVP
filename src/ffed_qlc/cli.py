@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from .admissibility import Evidence, evaluate_evidence
+from .audit_orb import build_privacy_safe_audit_orb
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .structural_transform import inspect_container, pack_bytes, unpack_bytes, verify_container
@@ -83,6 +84,12 @@ def main() -> int:
         default="qlc_protects_simulator_mvp",
     )
     yolo_pack.add_argument("--plan-output")
+
+    audit_orb = sub.add_parser("audit-orb", help="Build a privacy-safe ProGuarD audit orb from event metadata")
+    audit_orb.add_argument("--orb-id", required=True)
+    audit_orb.add_argument("--events-json", required=True)
+    audit_orb.add_argument("--output", required=True)
+    audit_orb.add_argument("--epsilon", type=float, default=1.0)
 
     args = parser.parse_args()
 
@@ -170,6 +177,13 @@ def main() -> int:
         print(args.proof_output)
         return 0
 
+    if args.command == "audit-orb":
+        events = _load_events(args.events_json)
+        payload = build_privacy_safe_audit_orb(orb_id=args.orb_id, events=events, epsilon=args.epsilon)
+        Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        print(args.output)
+        return 0
+
     return 2
 
 
@@ -198,6 +212,15 @@ def _load_detections(path: str | None) -> list[dict[str, Any]]:
             payload = [payload]
     if not isinstance(payload, list):
         raise ValueError("detections JSON must be a list or an object containing predictions/detections/regions")
+    return [item for item in payload if isinstance(item, dict)]
+
+
+def _load_events(path: str) -> list[dict[str, Any]]:
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if isinstance(payload, dict) and isinstance(payload.get("events"), list):
+        payload = payload["events"]
+    if not isinstance(payload, list):
+        raise ValueError("events JSON must be a list or an object containing events")
     return [item for item in payload if isinstance(item, dict)]
 
 

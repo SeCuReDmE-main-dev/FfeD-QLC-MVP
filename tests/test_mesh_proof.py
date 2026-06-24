@@ -47,6 +47,10 @@ def test_mesh_proof_payload_targets_fnpqnn_runtime() -> None:
     assert payload["memories"][1]["provenance"]["bridge"] == "codeproject-yolo-to-celebrum-to-cerebrum"
     assert payload["concept_remap"]["mvp_runtime_role"] == "CeLeBrUm"
     assert payload["plugin_context"]["celebrum_roi_map"]["policy"]["raw_image_embedded"] is False
+    semantic_map = payload["plugin_context"]["semantic_complexity_map"]
+    assert semantic_map["schema"] == "ffed.qlc.semantic_complexity_map.v1"
+    assert semantic_map["regions"][0]["parameters"]["lattice_density_multiplier"] == 2.0
+    assert semantic_map["regions"][0]["phason_strain_gradient"]["enabled"] is True
 
 
 def test_gateway_command_plan_names_codeproject_and_fnpqnn() -> None:

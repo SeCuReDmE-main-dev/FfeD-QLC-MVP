@@ -39,4 +39,19 @@ public-safe record with hashes, transform parameters, sizes, and
 `plaintext_bytes_revealed=false`. Use `--no-decrypt` when only a structural
 manifest is needed.
 
+## FfeD CrypTe Key Manifest v1
+
+Every new `FQLC1` container includes a public-safe manifest:
+
+- source SHA-256 and source length;
+- lattice seed fingerprint;
+- projection profile and rotational profile;
+- chunk policy for the current single-chunk MVP;
+- planned `hkdf_subkeys_per_chunk_v2` key schedule;
+- crypto profile and claim boundary.
+
+The manifest is authenticated as part of the container header. Editing it causes
+normal unpack/verify authentication to fail. It is a recipe fingerprint, not the
+secret key and not a quantum-proof certification.
+
 Do not commit real packed sensitive payloads to the public repository.

@@ -30,6 +30,8 @@ def test_inspect_container_returns_public_safe_manifest() -> None:
     assert manifest["container_size_bytes"] == len(container)
     assert manifest["plaintext_length"] == 6
     assert manifest["raw_payload_exposed"] is False
+    assert manifest["qlc_manifest"]["schema"] == "ffed.qlc.crypte_key_manifest.v1"
+    assert manifest["qlc_manifest"]["chunk_policy"]["planned_key_schedule"] == "hkdf_subkeys_per_chunk_v2"
     assert "secret" not in str(manifest)
 
 
@@ -42,6 +44,7 @@ def test_verify_container_authenticates_and_fingerprints_plaintext() -> None:
     assert record["valid"] is True
     assert record["plaintext_sha256"] == hashlib.sha256(plaintext).hexdigest()
     assert record["plaintext_bytes_revealed"] is False
+    assert record["qlc_manifest"]["source_sha256"] == hashlib.sha256(plaintext).hexdigest()
 
 
 def test_quasicrystal_coordinates_are_deterministic() -> None:
