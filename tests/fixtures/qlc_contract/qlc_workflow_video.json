@@ -1,5 +1,6 @@
 {
   "schema": "ffed.qlc.protection_workflow_bundle.v1",
+  "contract_version": "qlc-wiring-contract.v2",
   "source_id": "fixture-video-001",
   "media_type": "video",
   "workflow_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
@@ -15,6 +16,7 @@
   },
   "gateway_submission": {
     "schema": "ffed.qlc.gateway_submission.v1",
+    "contract_version": "qlc-wiring-contract.v2",
     "source_workflow_schema": "ffed.qlc.protection_workflow_bundle.v1",
     "workflow_fingerprint": "3333333333333333333333333333333333333333333333333333333333333333",
     "target_endpoint": "POST /cerebrum/runtime/run",

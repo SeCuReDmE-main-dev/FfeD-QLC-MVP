@@ -35,36 +35,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Run public unit tests without third-party dependencies
+      - name: Install package dependencies
         run: |
-          python - <<'PY'
-          import importlib.util
-          import inspect
-          import sys
-          from pathlib import Path
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
 
-          root = Path.cwd()
-          sys.path.insert(0, str(root / "src"))
-          failures = []
-          total = 0
-          for test_file in sorted((root / "tests").glob("test_*.py")):
-              spec = importlib.util.spec_from_file_location(test_file.stem, test_file)
-              module = importlib.util.module_from_spec(spec)
-              assert spec and spec.loader
-              spec.loader.exec_module(module)
-              for name, func in inspect.getmembers(module, inspect.isfunction):
-                  if name.startswith("test_"):
-                      total += 1
-                      try:
-                          func()
-                      except Exception as exc:
-                          failures.append(f"{test_file.name}::{name}: {exc!r}")
-          if failures:
-              print("Unit test failures:", file=sys.stderr)
-              print("\n".join(failures), file=sys.stderr)
-              raise SystemExit(1)
-          print(f"Unit tests passed: {total}")
-          PY
+      - name: Run public unit tests with package dependencies
+        run: python -m pytest
 
       - name: Validate public-safe boundary
         run: |

@@ -89,6 +89,10 @@ The bundle also carries `ffed.qlc.gateway_submission.v1`, the stable contract
 consumed by `fnpqnn_gateway_MVP`. That submission contains the simulator-ready
 mesh payload plus fingerprints and route metadata only.
 
+The final wiring pass stamps shared fixtures and generated workflow bundles with
+`contract_version=qlc-wiring-contract.v2`. QLC, gateway, and FNP-QNN tests use
+that value to catch local fixture drift without network fetches.
+
 Generate the full workflow bundle:
 
 ```powershell
@@ -105,6 +109,12 @@ Then dry-run the gateway handoff:
 
 ```powershell
 fnpqnn gateway qlc-submit --bundle .\qlc-workflow.json --dry-run
+```
+
+Run the unified local smoke across the three repos:
+
+```powershell
+python .\scripts\qlc_final_wiring_smoke.py
 ```
 
 The gateway posts only `gateway_submission.mesh_payload` to
