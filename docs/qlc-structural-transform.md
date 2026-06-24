@@ -47,11 +47,30 @@ Every new `FQLC1` container includes a public-safe manifest:
 - lattice seed fingerprint;
 - projection profile and rotational profile;
 - chunk policy for the current single-chunk MVP;
-- planned `hkdf_subkeys_per_chunk_v2` key schedule;
+- `chunk_key_schedule` using `granular_chunk_key_schedule_v1`;
 - crypto profile and claim boundary.
 
 The manifest is authenticated as part of the container header. Editing it causes
 normal unpack/verify authentication to fail. It is a recipe fingerprint, not the
 secret key and not a quantum-proof certification.
+
+## Granular Chunk Key Schedule v1
+
+`ffed_qlc.key_schedule.derive_chunk_key_schedule(container_or_manifest,
+chunk_count)` exposes inspectable per-chunk subkey fingerprints for the public
+MVP.
+
+The schedule is deterministic for the same manifest and chunk count, and changes
+when source or lattice/projection fingerprints change. It exposes:
+
+- `schema=ffed.qlc.granular_chunk_key_schedule.v1`;
+- chunk count;
+- derivation label `blake2b_fingerprint_only_mvp`;
+- per-chunk `subkey_fingerprint`;
+- `key_material_exposed=false`.
+
+This is intentionally not real ECC per particle. It is a verifiable manifest
+section for simulator and governance tests while production cryptography remains
+bounded to the authenticated container profile.
 
 Do not commit real packed sensitive payloads to the public repository.

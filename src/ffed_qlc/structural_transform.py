@@ -11,6 +11,8 @@ from cryptography.exceptions import InvalidTag
 from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 from cryptography.hazmat.primitives.kdf.scrypt import Scrypt
 
+from .key_schedule import derive_chunk_key_schedule
+
 
 MAGIC = b"FQLC1\n"
 HEADER_LENGTH_BYTES = 4
@@ -189,7 +191,8 @@ def _build_key_manifest(
 ) -> dict[str, object]:
     lattice_seed = _seed64(key, b"lattice-seed")
     projection_seed = _seed64(key, b"projection-slice")
-    return {
+    chunk_count = 1 if plaintext_length else 0
+    manifest = {
         "schema": "ffed.qlc.crypte_key_manifest.v1",
         "source_sha256": plaintext_sha256,
         "source_length_bytes": plaintext_length,
@@ -201,8 +204,8 @@ def _build_key_manifest(
         },
         "chunk_policy": {
             "mode": "single_chunk_v1",
-            "chunk_count": 1 if plaintext_length else 0,
-            "planned_key_schedule": "hkdf_subkeys_per_chunk_v2",
+            "chunk_count": chunk_count,
+            "planned_key_schedule": "granular_chunk_key_schedule_v1",
         },
         "crypto_profile": {
             "cipher": "ChaCha20-Poly1305",
@@ -212,6 +215,8 @@ def _build_key_manifest(
         },
         "claim_boundary": "manifested_mvp_key_recipe_not_quantum_proof_certification",
     }
+    manifest["chunk_key_schedule"] = derive_chunk_key_schedule(manifest, chunk_count)
+    return manifest
 
 
 def _derive_key(passphrase: str, salt: bytes, config: QLCTransformConfig) -> bytes:

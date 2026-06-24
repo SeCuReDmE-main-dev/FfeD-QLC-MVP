@@ -31,7 +31,12 @@ def test_inspect_container_returns_public_safe_manifest() -> None:
     assert manifest["plaintext_length"] == 6
     assert manifest["raw_payload_exposed"] is False
     assert manifest["qlc_manifest"]["schema"] == "ffed.qlc.crypte_key_manifest.v1"
-    assert manifest["qlc_manifest"]["chunk_policy"]["planned_key_schedule"] == "hkdf_subkeys_per_chunk_v2"
+    assert manifest["qlc_manifest"]["chunk_policy"]["planned_key_schedule"] == "granular_chunk_key_schedule_v1"
+    schedule = manifest["qlc_manifest"]["chunk_key_schedule"]
+    assert schedule["schema"] == "ffed.qlc.granular_chunk_key_schedule.v1"
+    assert schedule["chunk_count"] == 1
+    assert schedule["key_material_exposed"] is False
+    assert "subkey_fingerprint" in schedule["chunks"][0]
     assert "secret" not in str(manifest)
 
 

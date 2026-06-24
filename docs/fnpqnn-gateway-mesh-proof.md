@@ -39,6 +39,9 @@ FfeD-QLC-MVP
 - a CeLeBrUm ROI/semantic map derived from YOLO metadata only;
 - a Semantic Complexity Map that translates high-confidence ROI labels into
   bounded lattice-density, phason-strain, and Z-value policy parameters;
+- a YOLO Context Consistency Guard that compares detection confidence against
+  metadata-only context signals (`texture_complexity`, `entropy_score`,
+  `edge_density`) and returns `pass`, `suspend`, or `escalate`;
 - CPAI mesh context with route, node count, load, and forwarding metadata;
 - explicit `CeLeBrUm` versus `Cerebrum` provenance markers;
 - simulator flags for LVFM/QNN plus plithogenic, topology, neutro-algebra, and
@@ -52,6 +55,8 @@ ffed-qlc mesh-proof `
   --source-id asset-001 `
   --output .\qlc-runtime.json `
   --proof-mode simulator_supports_qlc_complexity `
+  --detections-json .\yolo-detections.json `
+  --context-json .\context-signals.json `
   --plan-output .\qlc-gateway-plan.json `
   --codeproject-url http://localhost:32168 `
   --known-server ai-node-01
@@ -66,6 +71,7 @@ ffed-qlc yolo-pack `
   --source-id image-001 `
   --proof-output .\image-runtime.json `
   --detections-json .\yolo-detections.json `
+  --context-json .\context-signals.json `
   --proof-mode qlc_protects_simulator_mvp `
   --plan-output .\image-gateway-plan.json
 ```
@@ -73,6 +79,11 @@ ffed-qlc yolo-pack `
 The detections file may be a list or a CodeProject-style object containing
 `predictions`, `detections`, or `regions`. The CLI stores only metadata in the
 runtime proof; it does not embed image bytes.
+
+The context file may be a list or an object containing `context_signals`.
+Signals are public-safe scalar metrics only. They are used as policy evidence
+inside `plugin_context.context_consistency_guard`; they are not added to the
+cryptographic root and they never carry raw pixels.
 
 Post it to the simulator once the FNP-QNN API is running:
 
@@ -127,6 +138,8 @@ FNP-QNN routes.
 
 - YOLO is perception metadata only.
 - Semantic complexity is policy pressure only; it is not a cryptographic root.
+- Context consistency is an adversarial-evasion guardrail only; `escalate`
+  means the event needs a safer route, not that an attack was proven.
 - CeLeBrUm is the orchestration concept for the MVP proof.
 - Cerebrum is the simulator runtime/memory endpoint, not the orchestrator.
 - QLC container bytes are not embedded in the simulator payload.

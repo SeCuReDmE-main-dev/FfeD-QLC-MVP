@@ -32,6 +32,13 @@ def test_mesh_proof_payload_targets_fnpqnn_runtime() -> None:
                 "bounding_box_normalized": [0.5, 0.5, 0.2, 0.3],
             }
         ],
+        context_signals=[
+            {
+                "texture_complexity": 0.30,
+                "entropy_score": 0.40,
+                "edge_density": 0.20,
+            }
+        ],
         known_mesh_servers=["ai-node-01"],
     )
 
@@ -51,6 +58,10 @@ def test_mesh_proof_payload_targets_fnpqnn_runtime() -> None:
     assert semantic_map["schema"] == "ffed.qlc.semantic_complexity_map.v1"
     assert semantic_map["regions"][0]["parameters"]["lattice_density_multiplier"] == 2.0
     assert semantic_map["regions"][0]["phason_strain_gradient"]["enabled"] is True
+    guard = payload["plugin_context"]["context_consistency_guard"]
+    assert guard["schema"] == "ffed.qlc.context_consistency_guard.v1"
+    assert guard["verdict"] == "pass"
+    assert guard["raw_image_embedded"] is False
 
 
 def test_gateway_command_plan_names_codeproject_and_fnpqnn() -> None:

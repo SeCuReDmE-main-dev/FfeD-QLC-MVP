@@ -4,6 +4,7 @@ import hashlib
 from dataclasses import dataclass
 from typing import Any, Literal, Mapping, Sequence
 
+from .context_guard import build_context_consistency_guard
 from .semantic_policy import build_semantic_complexity_map
 
 
@@ -81,6 +82,7 @@ def build_fnpqnn_runtime_payload(
     source_id: str,
     qlc_container: bytes,
     yolo_detections: Sequence[Mapping[str, Any] | YOLODetection] | None = None,
+    context_signals: Sequence[Mapping[str, Any]] | None = None,
     codeproject_url: str = "http://localhost:32168",
     known_mesh_servers: Sequence[str] | None = None,
     epochs: int = 4,
@@ -98,7 +100,9 @@ def build_fnpqnn_runtime_payload(
     detections = [_normalize_detection(item) for item in (yolo_detections or [])]
     active_proof_mode = _normalize_proof_mode(proof_mode)
     roi_map = build_celebrum_roi_map(detections)
-    semantic_complexity_map = build_semantic_complexity_map([_detection_to_mapping(item) for item in detections])
+    detection_maps = [_detection_to_mapping(item) for item in detections]
+    semantic_complexity_map = build_semantic_complexity_map(detection_maps)
+    context_consistency_guard = build_context_consistency_guard(detection_maps, context_signals)
     container_sha256 = hashlib.sha256(qlc_container).hexdigest()
     structural_score = _structural_score(qlc_container)
     semantic_score = _semantic_score(detections)
@@ -185,6 +189,7 @@ def build_fnpqnn_runtime_payload(
             "yolo_detection_count": len(detections),
             "celebrum_roi_map": roi_map,
             "semantic_complexity_map": semantic_complexity_map,
+            "context_consistency_guard": context_consistency_guard,
             "semantic_score": semantic_score,
             "structural_score": structural_score,
             "proof_mode": active_proof_mode,

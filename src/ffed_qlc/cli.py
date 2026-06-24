@@ -10,6 +10,7 @@ from typing import Any
 from .admissibility import Evidence, evaluate_evidence
 from .audit_orb import build_privacy_safe_audit_orb
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS
+from .ecn_handoff import build_ecn_handoff_packet
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .structural_transform import inspect_container, pack_bytes, unpack_bytes, verify_container
 
@@ -54,6 +55,7 @@ def main() -> int:
     proof.add_argument("--known-server", action="append", default=[])
     proof.add_argument("--epochs", type=int, default=4)
     proof.add_argument("--detections-json", help="YOLO detections JSON file; metadata only, no image bytes")
+    proof.add_argument("--context-json", help="Context signal JSON file; metadata only, no image bytes")
     proof.add_argument(
         "--proof-mode",
         choices=[
@@ -75,6 +77,7 @@ def main() -> int:
     yolo_pack.add_argument("--codeproject-url", default="http://localhost:32168")
     yolo_pack.add_argument("--known-server", action="append", default=[])
     yolo_pack.add_argument("--epochs", type=int, default=4)
+    yolo_pack.add_argument("--context-json", help="Context signal JSON file; metadata only, no image bytes")
     yolo_pack.add_argument(
         "--proof-mode",
         choices=[
@@ -90,6 +93,12 @@ def main() -> int:
     audit_orb.add_argument("--events-json", required=True)
     audit_orb.add_argument("--output", required=True)
     audit_orb.add_argument("--epsilon", type=float, default=1.0)
+
+    ecn = sub.add_parser("ecn-handoff", help="Build a privacy-safe ECN handoff packet from an audit orb")
+    ecn.add_argument("--audit-orb-json", required=True)
+    ecn.add_argument("--output", required=True)
+    ecn.add_argument("--urgency", default="normal")
+    ecn.add_argument("--destination", default="ecn://default")
 
     args = parser.parse_args()
 
@@ -143,6 +152,7 @@ def main() -> int:
             source_id=args.source_id,
             qlc_container=container,
             yolo_detections=_load_detections(args.detections_json),
+            context_signals=_load_context(args.context_json),
             codeproject_url=args.codeproject_url,
             known_mesh_servers=args.known_server,
             epochs=args.epochs,
@@ -164,6 +174,7 @@ def main() -> int:
             source_id=args.source_id,
             qlc_container=container,
             yolo_detections=_load_detections(args.detections_json),
+            context_signals=_load_context(args.context_json),
             codeproject_url=args.codeproject_url,
             known_mesh_servers=args.known_server,
             epochs=args.epochs,
@@ -180,6 +191,13 @@ def main() -> int:
     if args.command == "audit-orb":
         events = _load_events(args.events_json)
         payload = build_privacy_safe_audit_orb(orb_id=args.orb_id, events=events, epsilon=args.epsilon)
+        Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        print(args.output)
+        return 0
+
+    if args.command == "ecn-handoff":
+        audit_orb = json.loads(Path(args.audit_orb_json).read_text(encoding="utf-8"))
+        payload = build_ecn_handoff_packet(audit_orb, urgency=args.urgency, destination=args.destination)
         Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
         print(args.output)
         return 0
@@ -221,6 +239,17 @@ def _load_events(path: str) -> list[dict[str, Any]]:
         payload = payload["events"]
     if not isinstance(payload, list):
         raise ValueError("events JSON must be a list or an object containing events")
+    return [item for item in payload if isinstance(item, dict)]
+
+
+def _load_context(path: str | None) -> list[dict[str, Any]]:
+    if not path:
+        return []
+    payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if isinstance(payload, dict) and isinstance(payload.get("context_signals"), list):
+        payload = payload["context_signals"]
+    if not isinstance(payload, list):
+        raise ValueError("context JSON must be a list or an object containing context_signals")
     return [item for item in payload if isinstance(item, dict)]
 
 
