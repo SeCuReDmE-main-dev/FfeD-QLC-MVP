@@ -14,9 +14,10 @@ from .ecn_handoff import build_ecn_handoff_packet
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .structural_transform import inspect_container, pack_bytes, unpack_bytes, verify_container
 from .workflow import build_qlc_protection_workflow
+from .workflow_inspector import inspect_qlc_workflow_bundle
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="FfeD-QLC public MVP CLI")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -126,7 +127,11 @@ def main() -> int:
     workflow.add_argument("--ecn-urgency", default="normal")
     workflow.add_argument("--chunk-count", type=int)
 
-    args = parser.parse_args()
+    inspect_workflow = sub.add_parser("inspect-workflow", help="Inspect a QLC workflow bundle without exposing payloads")
+    inspect_workflow.add_argument("--bundle", required=True)
+    inspect_workflow.add_argument("--output")
+
+    args = parser.parse_args(argv)
 
     if args.command == "map":
         print(json.dumps([block.__dict__ for block in DEFAULT_STUDYCASE_BLOCKS], indent=2))
@@ -249,6 +254,17 @@ def main() -> int:
         )
         Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
         print(args.output)
+        return 0
+
+    if args.command == "inspect-workflow":
+        bundle = json.loads(Path(args.bundle).read_text(encoding="utf-8"))
+        payload = inspect_qlc_workflow_bundle(bundle)
+        output = json.dumps(payload, indent=2, sort_keys=True)
+        if args.output:
+            Path(args.output).write_text(output, encoding="utf-8")
+            print(args.output)
+        else:
+            print(output)
         return 0
 
     return 2

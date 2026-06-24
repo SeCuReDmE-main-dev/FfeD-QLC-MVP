@@ -25,6 +25,7 @@ from .structural_transform import (
 from .telemetry import emit_dogstatsd_counter, emit_qlc_workflow_counter
 from .utility_scorecard import build_reciprocal_utility_scorecard
 from .workflow import build_gateway_celebrum_loop_receipt, build_qlc_protection_workflow
+from .workflow_inspector import inspect_qlc_workflow_bundle
 
 __all__ = [
     "AdmDecision",
@@ -55,6 +56,7 @@ __all__ = [
     "emit_dogstatsd_counter",
     "emit_qlc_workflow_counter",
     "inspect_container",
+    "inspect_qlc_workflow_bundle",
     "pack_bytes",
     "quasicrystal_coordinates",
     "unpack_bytes",
