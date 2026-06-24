@@ -41,12 +41,15 @@ def build_celebrum_route_decision(
 
     plugin_context = _mapping(mesh_payload.get("plugin_context"))
     guard = _mapping(plugin_context.get("context_consistency_guard"))
+    swop = _mapping(plugin_context.get("sensitivity_weighted_obfuscation_policy"))
     guard_verdict = str(guard.get("verdict") or "suspend")
+    sensitivity_level = str(swop.get("sensitivity_level") or "low")
     admissible = mesh_payload.get("fractal_admissible") is not False
     has_ecn_destination = bool(_mapping(ecn_packet).get("destination"))
 
     action = _route_action(
         guard_verdict=guard_verdict,
+        sensitivity_level=sensitivity_level,
         admissible=admissible,
         has_ecn_destination=has_ecn_destination,
     )
@@ -56,6 +59,7 @@ def build_celebrum_route_decision(
         "runtime_memory_surface": "Cerebrum",
         "action": action,
         "guard_verdict": guard_verdict,
+        "sensitivity_level": sensitivity_level,
         "admissible": admissible,
         "audit_nonce": str(_mapping(audit_orb).get("audit_nonce") or "")[:64],
         "ecn_destination": str(_mapping(ecn_packet).get("destination") or "")[:160],
@@ -64,12 +68,14 @@ def build_celebrum_route_decision(
     }
 
 
-def _route_action(*, guard_verdict: str, admissible: bool, has_ecn_destination: bool) -> str:
+def _route_action(*, guard_verdict: str, sensitivity_level: str, admissible: bool, has_ecn_destination: bool) -> str:
     if not admissible:
         return "quarantine"
     if guard_verdict == "escalate":
         return "human_review"
     if guard_verdict == "suspend":
+        return "human_review"
+    if sensitivity_level == "critical":
         return "human_review"
     if has_ecn_destination:
         return "gateway_handoff"

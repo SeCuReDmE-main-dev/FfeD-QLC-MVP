@@ -58,3 +58,17 @@ def test_route_decision_sends_escalated_guard_to_human_review() -> None:
 
     assert decision["guard_verdict"] == "escalate"
     assert decision["action"] == "human_review"
+
+
+def test_route_decision_sends_critical_swop_region_to_human_review() -> None:
+    payload = build_fnpqnn_runtime_payload(
+        source_id="asset-001",
+        qlc_container=pack_bytes(b"critical route artifact", "passphrase"),
+        yolo_detections=[{"class_name": "license_plate", "confidence_score": 0.98}],
+        context_signals=[{"texture_complexity": 0.8, "entropy_score": 0.8, "edge_density": 0.7}],
+    )
+
+    decision = build_celebrum_route_decision(payload)
+
+    assert decision["sensitivity_level"] == "critical"
+    assert decision["action"] == "human_review"

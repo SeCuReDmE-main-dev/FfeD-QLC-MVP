@@ -78,6 +78,8 @@ def test_cli_yolo_pack_writes_container_and_proof(tmp_path, monkeypatch) -> None
             str(detections),
             "--context-json",
             str(context),
+            "--media-type",
+            "image",
             "--plan-output",
             str(plan),
         ],
@@ -89,6 +91,7 @@ def test_cli_yolo_pack_writes_container_and_proof(tmp_path, monkeypatch) -> None
     assert payload["plugin_context"]["proof_mode"] == "qlc_protects_simulator_mvp"
     assert payload["plugin_context"]["celebrum_roi_map"]["detection_count"] == 1
     assert payload["plugin_context"]["context_consistency_guard"]["verdict"] == "pass"
+    assert payload["plugin_context"]["sensitivity_weighted_obfuscation_policy"]["media_type"] == "image"
     assert payload["plugin_context"]["simulator_protection_case"]["qlc_role"] == "protection_layer_for_simulator_artifacts"
     assert payload["memories"][1]["provenance"]["privacy_note"].startswith("detection metadata only")
     assert container.exists()

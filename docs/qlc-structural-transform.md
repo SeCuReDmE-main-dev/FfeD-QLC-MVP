@@ -89,4 +89,17 @@ fingerprints:
 The receipt is a compact MVP coherence record. It is not a distributed ledger,
 blockchain, legal notarization, or external cryptographic proof.
 
+## SWOP Before FQLC1
+
+`ffed_qlc.swop_policy.build_sensitivity_weighted_obfuscation_policy()` is a
+pre-container policy signal. It recommends where QLC should spend more
+structural effort:
+
+- sensitive or critical media regions can map to denser future chunk handling;
+- low-sensitivity regions can remain `fast_basic`;
+- no raw media, raw OCR, or secret value is embedded in the policy output.
+
+SWOP does not change the current `FQLC1` container format yet. It prepares the
+final pass where obfuscation intensity can be tightened into the tool workflow.
+
 Do not commit real packed sensitive payloads to the public repository.

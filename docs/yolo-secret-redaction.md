@@ -73,6 +73,20 @@ reason_codes
 
 This lets the project prove that a redaction decision happened without exposing the secret material.
 
+## SWOP Fit
+
+SWOP means `Sensitivity-Weighted Obfuscation Policy`. It consumes detector,
+OCR, document, or video-frame metadata and recommends QLC intensity by region:
+
+- `low` -> `baseline` / `fast_basic`;
+- `medium` -> `elevated` / `balanced`;
+- `high` -> `strong` / `sensitive_dense`;
+- `critical` -> `maximum` / `critical_dense`.
+
+The module does not run YOLO, OCR, or video analysis by itself. It consumes
+metadata produced by those tools and rejects raw media, raw OCR, screenshots,
+tokens, passwords, and secrets.
+
 ## Datadog And E2B Boundary
 
 E2B can run the redaction pass inside an isolated sandbox. Datadog can receive metrics such as:

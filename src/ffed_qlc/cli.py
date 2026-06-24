@@ -56,6 +56,7 @@ def main() -> int:
     proof.add_argument("--epochs", type=int, default=4)
     proof.add_argument("--detections-json", help="YOLO detections JSON file; metadata only, no image bytes")
     proof.add_argument("--context-json", help="Context signal JSON file; metadata only, no image bytes")
+    proof.add_argument("--media-type", choices=["image", "document", "video"], default="image")
     proof.add_argument(
         "--proof-mode",
         choices=[
@@ -78,6 +79,7 @@ def main() -> int:
     yolo_pack.add_argument("--known-server", action="append", default=[])
     yolo_pack.add_argument("--epochs", type=int, default=4)
     yolo_pack.add_argument("--context-json", help="Context signal JSON file; metadata only, no image bytes")
+    yolo_pack.add_argument("--media-type", choices=["image", "document", "video"], default="image")
     yolo_pack.add_argument(
         "--proof-mode",
         choices=[
@@ -153,6 +155,7 @@ def main() -> int:
             qlc_container=container,
             yolo_detections=_load_detections(args.detections_json),
             context_signals=_load_context(args.context_json),
+            media_type=args.media_type,
             codeproject_url=args.codeproject_url,
             known_mesh_servers=args.known_server,
             epochs=args.epochs,
@@ -175,6 +178,7 @@ def main() -> int:
             qlc_container=container,
             yolo_detections=_load_detections(args.detections_json),
             context_signals=_load_context(args.context_json),
+            media_type=args.media_type,
             codeproject_url=args.codeproject_url,
             known_mesh_servers=args.known_server,
             epochs=args.epochs,

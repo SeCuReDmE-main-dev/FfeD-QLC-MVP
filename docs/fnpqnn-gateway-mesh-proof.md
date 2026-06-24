@@ -57,6 +57,9 @@ This is a local MVP scorecard, not scientific proof or security certification.
 - a YOLO Context Consistency Guard that compares detection confidence against
   metadata-only context signals (`texture_complexity`, `entropy_score`,
   `edge_density`) and returns `pass`, `suspend`, or `escalate`;
+- SWOP, a Sensitivity-Weighted Obfuscation Policy, that maps image/document/video
+  metadata to `baseline`, `elevated`, `strong`, or `maximum` QLC intensity
+  recommendations without embedding raw media;
 - CPAI mesh context with route, node count, load, and forwarding metadata;
 - explicit `CeLeBrUm` versus `Cerebrum` provenance markers;
 - simulator flags for LVFM/QNN plus plithogenic, topology, neutro-algebra, and
@@ -164,12 +167,17 @@ Raw images, OCR text, screenshots, browsing history, secrets, and full activity
 dumps are rejected. CeLeBrUm remains the orchestrator/router; it is not a truth
 model and does not replace human review.
 
+Critical SWOP sensitivity is routed to review by the route-decision layer before
+it can be treated as a normal simulator handoff.
+
 ## Boundaries
 
 - YOLO is perception metadata only.
 - Semantic complexity is policy pressure only; it is not a cryptographic root.
 - Context consistency is an adversarial-evasion guardrail only; `escalate`
   means the event needs a safer route, not that an attack was proven.
+- SWOP is a policy signal for obfuscation intensity and chunk-mode planning; it
+  does not certify encryption strength.
 - CeLeBrUm is the orchestration concept for the MVP proof.
 - Cerebrum is the simulator runtime/memory endpoint, not the orchestrator.
 - QLC container bytes are not embedded in the simulator payload.

@@ -10,6 +10,7 @@ from .mesh_proof import YOLODetection, build_celebrum_roi_map, build_fnpqnn_runt
 from .proof_bundle import build_compact_proof_bundle_receipt
 from .route_decision import build_celebrum_route_decision
 from .semantic_policy import SemanticComplexityRule, build_semantic_complexity_map
+from .swop_policy import build_sensitivity_weighted_obfuscation_policy
 from .structural_transform import (
     QLCTransformError,
     inspect_container,
@@ -39,6 +40,7 @@ __all__ = [
     "build_privacy_safe_audit_orb",
     "build_reciprocal_utility_scorecard",
     "build_semantic_complexity_map",
+    "build_sensitivity_weighted_obfuscation_policy",
     "derive_chunk_key_schedule",
     "evaluate_evidence",
     "emit_dogstatsd_counter",

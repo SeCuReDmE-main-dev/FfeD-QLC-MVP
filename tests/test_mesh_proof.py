@@ -62,6 +62,10 @@ def test_mesh_proof_payload_targets_fnpqnn_runtime() -> None:
     assert guard["schema"] == "ffed.qlc.context_consistency_guard.v1"
     assert guard["verdict"] == "pass"
     assert guard["raw_image_embedded"] is False
+    swop = payload["plugin_context"]["sensitivity_weighted_obfuscation_policy"]
+    assert swop["schema"] == "ffed.qlc.sensitivity_weighted_obfuscation_policy.v1"
+    assert swop["media_type"] == "image"
+    assert swop["raw_media_embedded"] is False
 
 
 def test_gateway_command_plan_names_codeproject_and_fnpqnn() -> None:
