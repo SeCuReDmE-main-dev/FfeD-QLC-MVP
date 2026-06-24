@@ -118,4 +118,24 @@ It exposes fingerprints only and does not change `FQLC1`. It is a preparation
 layer for the final tightening pass, not ECC per particle, certified adaptive
 encryption, or a quantum-proof claim.
 
+## QLC Protection Workflow Bundle v1
+
+`ffed_qlc.workflow.build_qlc_protection_workflow()` is the current protocol
+threading layer. It does not change the `FQLC1` container format. It wraps the
+existing functions into one inspectable bundle:
+
+- protected intake;
+- FNP-QNN mesh payload;
+- SWOP and SWOP-to-chunk plan;
+- granular chunk key schedule fingerprints;
+- privacy-safe audit orb and ECN handoff;
+- CeLeBrUm route decision and optional quarantine capsule;
+- compact proof receipt;
+- reciprocal utility scorecard;
+- gateway submission contract.
+
+The gateway submission schema is `ffed.qlc.gateway_submission.v1`. It is the
+handoff object used by `fnpqnn gateway qlc-submit` and carries only metadata,
+fingerprints, route tags, and the simulator-ready mesh payload.
+
 Do not commit real packed sensitive payloads to the public repository.

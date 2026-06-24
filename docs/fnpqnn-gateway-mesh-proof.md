@@ -74,6 +74,43 @@ Passe 5 adds three helper surfaces around this payload:
 - `build_swop_chunk_protection_plan()` turns SWOP intensity into future chunk
   allocation guidance without changing `FQLC1`.
 
+## Protection Workflow Bundle
+
+The threading pass adds `build_qlc_protection_workflow()`. It assembles the
+intake descriptor, mesh payload, SWOP chunk plan, chunk key schedule, audit orb,
+ECN packet, route decision, optional quarantine capsule, proof receipt, and
+reciprocal scorecard into one metadata-only bundle:
+
+```text
+ffed.qlc.protection_workflow_bundle.v1
+```
+
+The bundle also carries `ffed.qlc.gateway_submission.v1`, the stable contract
+consumed by `fnpqnn_gateway_MVP`. That submission contains the simulator-ready
+mesh payload plus fingerprints and route metadata only.
+
+Generate the full workflow bundle:
+
+```powershell
+ffed-qlc protect-workflow `
+  --input .\plain.fqlc `
+  --source-id asset-001 `
+  --output .\qlc-workflow.json `
+  --detections-json .\yolo-detections.json `
+  --context-json .\context-signals.json `
+  --ecn-destination ecn://celebrum
+```
+
+Then dry-run the gateway handoff:
+
+```powershell
+fnpqnn gateway qlc-submit --bundle .\qlc-workflow.json --dry-run
+```
+
+The gateway posts only `gateway_submission.mesh_payload` to
+`POST /cerebrum/runtime/run`. Runtime results are compacted into
+`ffed.qlc.gateway_celebrum_loop_receipt.v1` for the CeLeBrUm feedback loop.
+
 Generate a proof payload:
 
 ```powershell

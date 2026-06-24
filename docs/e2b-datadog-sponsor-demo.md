@@ -50,6 +50,31 @@ The script also emits a DogStatsD counter when the local Datadog Agent is reacha
 ffed_qlc.e2b.mvp_run
 ```
 
+The workflow threading layer also exposes typed counters through
+`emit_qlc_workflow_counter()`:
+
+```text
+ffed_qlc.workflow.started
+ffed_qlc.workflow.accepted
+ffed_qlc.workflow.review_required
+ffed_qlc.gateway.submit.ok
+ffed_qlc.gateway.submit.failed
+ffed_qlc.e2b.audit.pass
+ffed_qlc.e2b.audit.fail
+```
+
+Default tags stay redacted and metadata-only:
+
+```text
+qlc_schema
+media_type
+swop_level
+route_action
+simulator_status
+gateway_mode
+e2b_enabled
+```
+
 Default tags:
 
 ```text
