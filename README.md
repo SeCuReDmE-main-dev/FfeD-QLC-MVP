@@ -41,6 +41,8 @@ The first commercial shape is a developer/research operations tool that sits bet
 - Documents the E2B + Datadog sponsor demo path.
 - Documents the official-badge evidence policy before using sponsor language.
 - Defines a defensive image-redaction path using YOLO-style object detection plus text/secret scanning.
+- Provides a concrete reversible QLC-style structural transform using a phi/cut-and-project byte ordering plus authenticated encryption.
+- Builds an FNP-QNN runtime proof payload so QLC events can pass through `fnpqnn_gateway_MVP`, CodeProject.AI/YOLO mesh metadata, CeLeBrUm orchestration, LVFM, and the simulator's Hydra-EM-GPCN lane.
 
 ## What The Algorithm Protects
 
@@ -150,6 +152,54 @@ Expected output:
 ```text
 reject
 ```
+
+Pack and unpack a local file with the QLC structural transform:
+
+```powershell
+$env:FFED_QLC_PASSPHRASE = "replace-with-a-real-local-secret"
+ffed-qlc pack --input .\plain.bin --output .\plain.fqlc
+ffed-qlc verify --input .\plain.fqlc --output .\plain.manifest.json
+ffed-qlc unpack --input .\plain.fqlc --output .\plain.roundtrip.bin
+```
+
+The current transform is documented in `docs/qlc-structural-transform.md`. The quasicrystal layer is a deterministic structural permutation; confidentiality and integrity come from standard ChaCha20-Poly1305 with a scrypt-derived key.
+
+Build the simulator proof payload for the gateway mesh:
+
+```powershell
+ffed-qlc mesh-proof --input .\plain.fqlc --source-id asset-001 --output .\qlc-runtime.json --plan-output .\qlc-gateway-plan.json
+```
+
+This produces a JSON body shaped for FNP-QNN `POST /cerebrum/runtime/run`.
+Details: `docs/fnpqnn-gateway-mesh-proof.md`.
+
+Pack a YOLO-analyzed image/file and produce the CeLeBrUm/FNP-QNN proof in one step:
+
+```powershell
+ffed-qlc yolo-pack `
+  --input .\image.png `
+  --output .\image.fqlc `
+  --source-id image-001 `
+  --proof-output .\image-runtime.json `
+  --detections-json .\yolo-detections.json `
+  --proof-mode qlc_protects_simulator_mvp `
+  --plan-output .\image-gateway-plan.json
+```
+
+`yolo-detections.json` contains metadata only. QLC does not embed raw image bytes
+in the simulator payload.
+
+This is a reciprocal MVP proof loop:
+
+- `--proof-mode simulator_supports_qlc_complexity` proves the FNP-QNN MVP can
+  support, measure, and route a complex protocol like QLC.
+- `--proof-mode qlc_protects_simulator_mvp` demonstrates the QLC MVP by
+  protecting simulator inputs, outputs, runtime snapshots, YOLO-derived events,
+  and mesh handoffs with authenticated manifests and metadata-only audit records.
+
+Naming boundary: `CeLeBrUm` is the MVP orchestrator that routes YOLO-derived
+observations; `Cerebrum` is the FNP-QNN runtime/memory endpoint. They are not
+the same component.
 
 ## Docker
 

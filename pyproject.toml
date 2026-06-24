@@ -12,7 +12,7 @@ license = { text = "MIT" }
 authors = [
   { name = "SeCuReDmE-main-dev" }
 ]
-dependencies = []
+dependencies = ["cryptography>=42.0"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0"]
