@@ -22,8 +22,9 @@ from .structural_transform import (
     unpack_bytes,
     verify_container,
 )
-from .telemetry import emit_dogstatsd_counter
+from .telemetry import emit_dogstatsd_counter, emit_qlc_workflow_counter
 from .utility_scorecard import build_reciprocal_utility_scorecard
+from .workflow import build_gateway_celebrum_loop_receipt, build_qlc_protection_workflow
 
 __all__ = [
     "AdmDecision",
@@ -40,16 +41,19 @@ __all__ = [
     "build_ecn_handoff_packet",
     "build_fnpqnn_runtime_payload",
     "build_gateway_command_plan",
+    "build_gateway_celebrum_loop_receipt",
     "build_human_review_quarantine_capsule",
     "build_multimodal_protected_intake_descriptor",
     "build_privacy_safe_audit_orb",
     "build_reciprocal_utility_scorecard",
+    "build_qlc_protection_workflow",
     "build_semantic_complexity_map",
     "build_sensitivity_weighted_obfuscation_policy",
     "build_swop_chunk_protection_plan",
     "derive_chunk_key_schedule",
     "evaluate_evidence",
     "emit_dogstatsd_counter",
+    "emit_qlc_workflow_counter",
     "inspect_container",
     "pack_bytes",
     "quasicrystal_coordinates",

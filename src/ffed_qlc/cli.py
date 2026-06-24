@@ -13,6 +13,7 @@ from .docker_map import DEFAULT_STUDYCASE_BLOCKS
 from .ecn_handoff import build_ecn_handoff_packet
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .structural_transform import inspect_container, pack_bytes, unpack_bytes, verify_container
+from .workflow import build_qlc_protection_workflow
 
 
 def main() -> int:
@@ -101,6 +102,29 @@ def main() -> int:
     ecn.add_argument("--output", required=True)
     ecn.add_argument("--urgency", default="normal")
     ecn.add_argument("--destination", default="ecn://default")
+
+    workflow = sub.add_parser("protect-workflow", help="Build the canonical QLC protection workflow bundle")
+    workflow.add_argument("--input", required=True, help="Existing FQLC1 container")
+    workflow.add_argument("--source-id", required=True)
+    workflow.add_argument("--output", required=True)
+    workflow.add_argument("--detections-json", help="YOLO/OCR/frame detections JSON; metadata only")
+    workflow.add_argument("--context-json", help="Context signal JSON; metadata only")
+    workflow.add_argument("--events-json", help="Optional audit events JSON; metadata only")
+    workflow.add_argument("--media-type", choices=["image", "document", "video"], default="image")
+    workflow.add_argument("--codeproject-url", default="http://localhost:32168")
+    workflow.add_argument("--known-server", action="append", default=[])
+    workflow.add_argument("--epochs", type=int, default=4)
+    workflow.add_argument(
+        "--proof-mode",
+        choices=[
+            "simulator_supports_qlc_complexity",
+            "qlc_protects_simulator_mvp",
+        ],
+        default="simulator_supports_qlc_complexity",
+    )
+    workflow.add_argument("--ecn-destination", default="ecn://celebrum")
+    workflow.add_argument("--ecn-urgency", default="normal")
+    workflow.add_argument("--chunk-count", type=int)
 
     args = parser.parse_args()
 
@@ -202,6 +226,27 @@ def main() -> int:
     if args.command == "ecn-handoff":
         audit_orb = json.loads(Path(args.audit_orb_json).read_text(encoding="utf-8"))
         payload = build_ecn_handoff_packet(audit_orb, urgency=args.urgency, destination=args.destination)
+        Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+        print(args.output)
+        return 0
+
+    if args.command == "protect-workflow":
+        container = Path(args.input).read_bytes()
+        payload = build_qlc_protection_workflow(
+            source_id=args.source_id,
+            qlc_container=container,
+            detections=_load_detections(args.detections_json),
+            context_signals=_load_context(args.context_json),
+            audit_events=_load_events(args.events_json) if args.events_json else None,
+            media_type=args.media_type,
+            codeproject_url=args.codeproject_url,
+            known_mesh_servers=args.known_server,
+            epochs=args.epochs,
+            proof_mode=args.proof_mode,
+            ecn_destination=args.ecn_destination,
+            ecn_urgency=args.ecn_urgency,
+            chunk_count=args.chunk_count,
+        )
         Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
         print(args.output)
         return 0
