@@ -73,4 +73,20 @@ This is intentionally not real ECC per particle. It is a verifiable manifest
 section for simulator and governance tests while production cryptography remains
 bounded to the authenticated container profile.
 
+## Compact Proof Bundle Receipt v1
+
+Passe 4 adds
+`ffed_qlc.proof_bundle.build_compact_proof_bundle_receipt()`. It links the QLC
+manifest, mesh proof, audit orb, ECN packet, and route decision through stable
+fingerprints:
+
+- `bundle_nonce`;
+- `artifact_fingerprints`;
+- `artifact_count`;
+- `receipt_fingerprint`;
+- `raw_payload_embedded=false`.
+
+The receipt is a compact MVP coherence record. It is not a distributed ledger,
+blockchain, legal notarization, or external cryptographic proof.
+
 Do not commit real packed sensitive payloads to the public repository.

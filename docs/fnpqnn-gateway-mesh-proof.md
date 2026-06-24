@@ -30,6 +30,21 @@ FfeD-QLC-MVP
   -> LVFM + QNN + Hydra-EM-GPCN profiles
 ```
 
+## Reciprocal Utility Scorecard
+
+Passe 4 adds `ffed_qlc.utility_scorecard.build_reciprocal_utility_scorecard()`.
+It scores the reciprocal MVP loop without claiming external validation:
+
+- `simulator_support_score`: whether the FNP-QNN/Cerebrum payload has the
+  runtime flags and mesh signals needed to support QLC complexity;
+- `qlc_protection_score`: whether QLC protection metadata, guardrails, and
+  simulator-protection guarantees are present;
+- `context_risk_pressure`: pressure from the YOLO context guard;
+- `overall_verdict`: `reciprocal_pass`, `simulator_gap`, `qlc_gap`, or
+  `needs_review`.
+
+This is a local MVP scorecard, not scientific proof or security certification.
+
 ## Implemented QLC Side
 
 `ffed_qlc.mesh_proof` builds a simulator-ready JSON payload:
@@ -133,6 +148,21 @@ intermediate artifacts, routing decisions, and perception-derived metadata. QLC
 adds authenticated containment, replayable manifests, and leak-resistant audit
 records around those artifacts before they move through CeLeBrUm, gateway, or
 FNP-QNN routes.
+
+## CeLeBrUm Route Decision Envelope
+
+Passe 4 adds `ffed_qlc.route_decision.build_celebrum_route_decision()`. It turns
+mesh proof metadata, optional audit orbs, and optional ECN packets into a
+metadata-only route decision:
+
+- `submit_to_cerebrum`;
+- `gateway_handoff`;
+- `quarantine`;
+- `human_review`.
+
+Raw images, OCR text, screenshots, browsing history, secrets, and full activity
+dumps are rejected. CeLeBrUm remains the orchestrator/router; it is not a truth
+model and does not replace human review.
 
 ## Boundaries
 

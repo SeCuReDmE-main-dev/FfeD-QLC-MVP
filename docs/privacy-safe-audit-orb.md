@@ -69,3 +69,17 @@ ffed-qlc ecn-handoff `
 
 The packet is an ECN metadata handoff. It is not a secret-transfer channel and
 does not make a production compliance claim.
+
+## Route Decision Input
+
+Passe 4 lets a privacy-safe audit orb and ECN packet feed
+`ffed.qlc.celebrum_route_decision.v1`. The route decision carries only:
+
+- audit nonce;
+- ECN destination;
+- guard verdict;
+- admissibility flag;
+- selected route action.
+
+It still rejects raw activity, raw OCR, screenshots, browsing history, passwords,
+tokens, API keys, and full dumps.
