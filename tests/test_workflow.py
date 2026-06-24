@@ -25,6 +25,7 @@ def test_qlc_protection_workflow_threads_all_artifacts() -> None:
     )
 
     assert bundle["schema"] == "ffed.qlc.protection_workflow_bundle.v1"
+    assert bundle["contract_version"] == "qlc-wiring-contract.v2"
     artifacts = bundle["artifacts"]
     assert artifacts["intake_descriptor"]["raw_media_embedded"] is False
     assert artifacts["mesh_payload"]["plugin_context"]["context_consistency_guard"]["verdict"] == "pass"
@@ -37,6 +38,7 @@ def test_qlc_protection_workflow_threads_all_artifacts() -> None:
     assert artifacts["proof_bundle_receipt"]["artifact_count"] == 5
     assert artifacts["reciprocal_utility_scorecard"]["schema"] == "ffed.qlc.reciprocal_utility_scorecard.v1"
     assert bundle["gateway_submission"]["schema"] == "ffed.qlc.gateway_submission.v1"
+    assert bundle["gateway_submission"]["contract_version"] == "qlc-wiring-contract.v2"
     assert bundle["gateway_submission"]["target_endpoint"] == "POST /cerebrum/runtime/run"
 
 

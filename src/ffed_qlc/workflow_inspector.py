@@ -4,7 +4,7 @@ import hashlib
 import json
 from typing import Any, Mapping, Sequence
 
-from .workflow import GATEWAY_SUBMISSION_SCHEMA, WORKFLOW_SCHEMA
+from .workflow import GATEWAY_SUBMISSION_SCHEMA, QLC_WIRING_CONTRACT_VERSION, WORKFLOW_SCHEMA
 
 
 WORKFLOW_INSPECTION_SCHEMA = "ffed.qlc.workflow_inspection.v1"
@@ -38,6 +38,7 @@ def inspect_qlc_workflow_bundle(bundle: Mapping[str, Any]) -> dict[str, Any]:
 
     _reject_forbidden_fields(bundle)
     submission = _extract_submission(bundle)
+    contract_version = _contract_version(bundle, submission)
     mesh_payload = _mapping(submission.get("mesh_payload"))
     plugin_context = _mapping(mesh_payload.get("plugin_context"))
     swop = _mapping(plugin_context.get("sensitivity_weighted_obfuscation_policy"))
@@ -55,6 +56,7 @@ def inspect_qlc_workflow_bundle(bundle: Mapping[str, Any]) -> dict[str, Any]:
         "success": redaction_verdict == "metadata_only_pass",
         "schema": WORKFLOW_INSPECTION_SCHEMA,
         "bundle_schema": str(bundle.get("schema") or submission.get("schema") or "")[:120],
+        "contract_version": contract_version,
         "workflow_fingerprint": str(submission.get("workflow_fingerprint") or bundle.get("workflow_fingerprint") or "")[:64],
         "media_type": str(bundle.get("media_type") or swop.get("media_type") or "unknown")[:40],
         "swop_level": str(swop.get("sensitivity_level") or "unknown")[:40],
@@ -85,6 +87,17 @@ def _extract_submission(bundle: Mapping[str, Any]) -> Mapping[str, Any]:
     if not isinstance(submission.get("mesh_payload"), Mapping):
         raise ValueError("QLC gateway submission requires mesh_payload")
     return submission
+
+
+def _contract_version(bundle: Mapping[str, Any], submission: Mapping[str, Any]) -> str:
+    bundle_version = str(bundle.get("contract_version") or "")[:80]
+    submission_version = str(submission.get("contract_version") or "")[:80]
+    contract_version = bundle_version or submission_version
+    if contract_version != QLC_WIRING_CONTRACT_VERSION:
+        raise ValueError("QLC contract_version is missing or unsupported")
+    if submission_version and submission_version != contract_version:
+        raise ValueError("QLC gateway submission contract_version mismatch")
+    return contract_version
 
 
 def _reject_forbidden_fields(value: Any) -> None:

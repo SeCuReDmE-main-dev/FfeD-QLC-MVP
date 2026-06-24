@@ -20,6 +20,7 @@ from .utility_scorecard import build_reciprocal_utility_scorecard
 WORKFLOW_SCHEMA = "ffed.qlc.protection_workflow_bundle.v1"
 GATEWAY_SUBMISSION_SCHEMA = "ffed.qlc.gateway_submission.v1"
 LOOP_RECEIPT_SCHEMA = "ffed.qlc.gateway_celebrum_loop_receipt.v1"
+QLC_WIRING_CONTRACT_VERSION = "qlc-wiring-contract.v2"
 RUNTIME_ENDPOINT = "POST /cerebrum/runtime/run"
 
 FORBIDDEN_WORKFLOW_FIELDS = {
@@ -139,6 +140,7 @@ def build_qlc_protection_workflow(
     )
     gateway_submission = {
         "schema": GATEWAY_SUBMISSION_SCHEMA,
+        "contract_version": QLC_WIRING_CONTRACT_VERSION,
         "source_workflow_schema": WORKFLOW_SCHEMA,
         "workflow_fingerprint": workflow_fingerprint,
         "source_id": source_id[:160],
@@ -153,6 +155,7 @@ def build_qlc_protection_workflow(
     }
     return {
         "schema": WORKFLOW_SCHEMA,
+        "contract_version": QLC_WIRING_CONTRACT_VERSION,
         "source_id": source_id[:160],
         "media_type": intake["media_type"],
         "workflow_fingerprint": workflow_fingerprint,

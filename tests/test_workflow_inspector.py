@@ -19,6 +19,7 @@ def test_inspector_accepts_contract_fixtures() -> None:
 
         assert inspection["success"] is True
         assert inspection["schema"] == "ffed.qlc.workflow_inspection.v1"
+        assert inspection["contract_version"] == "qlc-wiring-contract.v2"
         assert inspection["redaction_verdict"] == "metadata_only_pass"
         assert inspection["raw_payload_embedded"] is False
         assert inspection["fingerprints"]["bundle"]
@@ -28,6 +29,15 @@ def test_inspector_rejects_forbidden_fixture() -> None:
     bundle = json.loads((FIXTURE_ROOT / "qlc_workflow_forbidden_raw.json").read_text(encoding="utf-8"))
 
     with pytest.raises(ValueError, match="raw QLC workflow field"):
+        inspect_qlc_workflow_bundle(bundle)
+
+
+def test_inspector_rejects_missing_contract_version() -> None:
+    bundle = json.loads((FIXTURE_ROOT / "qlc_workflow_image.json").read_text(encoding="utf-8"))
+    bundle.pop("contract_version", None)
+    bundle["gateway_submission"].pop("contract_version", None)
+
+    with pytest.raises(ValueError, match="contract_version"):
         inspect_qlc_workflow_bundle(bundle)
 
 

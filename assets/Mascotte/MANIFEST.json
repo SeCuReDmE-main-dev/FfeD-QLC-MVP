@@ -1,5 +1,5 @@
 {
-  "schema": "ffed.qlc.mascotte_asset_manifest.v1",
+  "schema": "ffed.qlc.design_asset_manifest.v1",
   "scope": "local asset governance only",
   "raw_secret_stored": false,
   "guardians": [
@@ -25,6 +25,102 @@
         "story drawing board 3.png",
         "story drawing board 4.png",
         "story drawing board 5.png"
+      ]
+    },
+    {
+      "name": "AION",
+      "directory": "assets/Mascotte/AION",
+      "expected_assets": [
+        "AION color.png",
+        "story drawing board 1.png",
+        "story drawing board 2.png",
+        "story drawing board 3.png",
+        "story drawing board 4.png",
+        "story drawing board 5.png"
+      ]
+    },
+    {
+      "name": "OCTA",
+      "directory": "assets/Mascotte/OCTA",
+      "expected_assets": [
+        "OCTA color.png",
+        "story drawing board 1.png",
+        "story drawing board 2.png",
+        "story drawing board 3.png",
+        "story drawing board 4.png",
+        "story drawing board 5.png"
+      ]
+    },
+    {
+      "name": "TESS",
+      "directory": "assets/Mascotte/TESS",
+      "expected_assets": [
+        "TESS color.png",
+        "story drawing board 1.png",
+        "story drawing board 2.png",
+        "story drawing board 3.png",
+        "story drawing board 4.png",
+        "story drawing board 5.png"
+      ]
+    }
+  ],
+  "design_assets": [
+    {
+      "group": "font_style_schema",
+      "directory": "assets/font style schema",
+      "expected_assets": [
+        "Font style 1.png",
+        "Font style 2.png",
+        "Font style 3.png",
+        "Font style 4.png",
+        "Font style 5.png",
+        "Font style 6.png",
+        "Logo style template 2d.png",
+        "Logo style template 2d v2.png",
+        "Logo style template 2d v3.png",
+        "Logo style template 2d v4.png",
+        "Logo style template 2d v5.png"
+      ]
+    },
+    {
+      "group": "logo_drafts",
+      "directory": "assets/Logo draft version",
+      "expected_assets": [
+        "Logo 1.png",
+        "Logo centre color 2.png",
+        "logo centre 1.png",
+        "logo centre color 1.png",
+        "logo centre color 3.png",
+        "logo centre color 4.png",
+        "logo centre color 5.png",
+        "logo 3d centre color 1.png",
+        "logo 3d centre color 2.png",
+        "logo 3d centre color 3.png",
+        "logo 3d centre color 4.png",
+        "logo 3d centre color 5.png",
+        "logo 3d outter color 1.png",
+        "logo 3d outter color 2.png",
+        "logo 3d outter color 3.png",
+        "logo 3d outter color 4.png",
+        "logo 3d outter color 5.png",
+        "logo vector centre color 1.png",
+        "logo vector centre color 2.png",
+        "logo vector centre color 3.png",
+        "logo vector centre color 4.png",
+        "logo vector centre color 5.png",
+        "logo vector noir blanc 2d.png",
+        "logo vector outter color 1.png",
+        "logo vector outter color 2.png",
+        "logo vector outter color 3.png",
+        "logo vector outter color 4.png",
+        "logo vector outter color 5.png"
+      ]
+    },
+    {
+      "group": "full_logo",
+      "directory": "assets",
+      "expected_assets": [
+        "full logo versipon 1.png"
       ]
     }
   ],
