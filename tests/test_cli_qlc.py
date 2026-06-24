@@ -185,3 +185,51 @@ def test_cli_ecn_handoff_writes_filtered_packet(tmp_path, monkeypatch) -> None:
     assert payload["destination"] == "ecn://celebrum"
     assert payload["event_fingerprints"] == ["event-fp"]
     assert payload["raw_payload_embedded"] is False
+
+
+def test_cli_protect_workflow_writes_gateway_submission(tmp_path, monkeypatch) -> None:
+    plain = tmp_path / "plain.bin"
+    container = tmp_path / "plain.fqlc"
+    detections = tmp_path / "detections.json"
+    context = tmp_path / "context.json"
+    workflow = tmp_path / "workflow.json"
+    plain.write_bytes(b"workflow-cli")
+    detections.write_text(
+        json.dumps({"detections": [{"class_name": "face", "confidence_score": 0.91}]}),
+        encoding="utf-8",
+    )
+    context.write_text(
+        json.dumps({"context_signals": [{"texture_complexity": 0.2, "entropy_score": 0.2, "edge_density": 0.2}]}),
+        encoding="utf-8",
+    )
+    monkeypatch.setenv("FFED_QLC_PASSPHRASE", "passphrase")
+
+    monkeypatch.setattr(sys, "argv", ["ffed-qlc", "pack", "--input", str(plain), "--output", str(container)])
+    assert main() == 0
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "protect-workflow",
+            "--input",
+            str(container),
+            "--source-id",
+            "asset-cli",
+            "--output",
+            str(workflow),
+            "--detections-json",
+            str(detections),
+            "--context-json",
+            str(context),
+            "--ecn-destination",
+            "",
+        ],
+    )
+    assert main() == 0
+
+    payload = json.loads(workflow.read_text(encoding="utf-8"))
+    assert payload["schema"] == "ffed.qlc.protection_workflow_bundle.v1"
+    assert payload["gateway_submission"]["schema"] == "ffed.qlc.gateway_submission.v1"
+    assert payload["gateway_submission"]["mesh_payload"]["plugin_context"]["orchestrator"] == "CeLeBrUm"
