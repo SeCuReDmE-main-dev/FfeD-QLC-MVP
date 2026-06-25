@@ -49,10 +49,20 @@ def _manifest_from_container(container: bytes) -> Mapping[str, Any]:
     if not container.startswith(MAGIC):
         raise ValueError("invalid QLC container magic")
     offset = len(MAGIC)
+    if len(container) < offset + HEADER_LENGTH_BYTES:
+        raise ValueError("truncated QLC container header")
     header_length = int.from_bytes(container[offset : offset + HEADER_LENGTH_BYTES], "big")
     header_start = offset + HEADER_LENGTH_BYTES
     header_end = header_start + header_length
-    header = json.loads(container[header_start:header_end].decode("utf-8"))
+    if len(container) < header_end:
+        raise ValueError("truncated QLC container body")
+    try:
+        header_str = container[header_start:header_end].decode("utf-8")
+        header = json.loads(header_str)
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        raise ValueError("invalid QLC container header JSON") from exc
+    if not isinstance(header, dict):
+        raise ValueError("QLC container header must be a JSON object")
     manifest = header.get("qlc_manifest")
     if not isinstance(manifest, Mapping):
         raise ValueError("QLC container has no qlc_manifest")

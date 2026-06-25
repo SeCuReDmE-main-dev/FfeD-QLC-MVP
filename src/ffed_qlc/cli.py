@@ -33,18 +33,15 @@ def main(argv: list[str] | None = None) -> int:
     pack = sub.add_parser("pack", help="Pack a file into an authenticated QLC-style container")
     pack.add_argument("--input", required=True)
     pack.add_argument("--output", required=True)
-    pack.add_argument("--passphrase")
     pack.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
 
     unpack = sub.add_parser("unpack", help="Unpack an authenticated QLC-style container")
     unpack.add_argument("--input", required=True)
     unpack.add_argument("--output", required=True)
-    unpack.add_argument("--passphrase")
     unpack.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
 
     verify = sub.add_parser("verify", help="Authenticate a QLC container and print a safe manifest")
     verify.add_argument("--input", required=True)
-    verify.add_argument("--passphrase")
     verify.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
     verify.add_argument("--output")
     verify.add_argument("--no-decrypt", action="store_true", help="Inspect manifest without authenticating plaintext")
@@ -74,7 +71,6 @@ def main(argv: list[str] | None = None) -> int:
     yolo_pack.add_argument("--output", required=True)
     yolo_pack.add_argument("--source-id", required=True)
     yolo_pack.add_argument("--proof-output", required=True)
-    yolo_pack.add_argument("--passphrase")
     yolo_pack.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
     yolo_pack.add_argument("--detections-json", help="YOLO detections JSON file; metadata only, no image bytes")
     yolo_pack.add_argument("--codeproject-url", default="http://localhost:32168")
@@ -149,14 +145,14 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "pack":
-        passphrase = _resolve_passphrase(args.passphrase, args.passphrase_env)
+        passphrase = _resolve_passphrase(args.passphrase_env)
         plaintext = Path(args.input).read_bytes()
         Path(args.output).write_bytes(pack_bytes(plaintext, passphrase))
         print(args.output)
         return 0
 
     if args.command == "unpack":
-        passphrase = _resolve_passphrase(args.passphrase, args.passphrase_env)
+        passphrase = _resolve_passphrase(args.passphrase_env)
         container = Path(args.input).read_bytes()
         Path(args.output).write_bytes(unpack_bytes(container, passphrase))
         print(args.output)
@@ -167,7 +163,7 @@ def main(argv: list[str] | None = None) -> int:
         if args.no_decrypt:
             record = inspect_container(container)
         else:
-            passphrase = _resolve_passphrase(args.passphrase, args.passphrase_env)
+            passphrase = _resolve_passphrase(args.passphrase_env)
             record = verify_container(container, passphrase)
         output = json.dumps(record, indent=2, sort_keys=True)
         if args.output:
@@ -198,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.command == "yolo-pack":
-        passphrase = _resolve_passphrase(args.passphrase, args.passphrase_env)
+        passphrase = _resolve_passphrase(args.passphrase_env)
         plaintext = Path(args.input).read_bytes()
         container = pack_bytes(plaintext, passphrase)
         Path(args.output).write_bytes(container)
@@ -270,9 +266,7 @@ def main(argv: list[str] | None = None) -> int:
     return 2
 
 
-def _resolve_passphrase(value: str | None, env_name: str | None) -> str:
-    if value:
-        return value
+def _resolve_passphrase(env_name: str | None) -> str:
     if env_name:
         env_value = os.environ.get(env_name)
         if env_value:

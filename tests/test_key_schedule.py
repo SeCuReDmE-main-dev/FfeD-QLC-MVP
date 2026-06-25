@@ -1,4 +1,7 @@
+import pytest
+
 from ffed_qlc import derive_chunk_key_schedule, inspect_container, pack_bytes
+from ffed_qlc.key_schedule import HEADER_LENGTH_BYTES, MAGIC
 
 
 def test_chunk_key_schedule_is_deterministic_for_manifest() -> None:
@@ -45,3 +48,11 @@ def test_container_manifest_includes_chunk_key_schedule() -> None:
     assert manifest["chunk_key_schedule"]["schema"] == "ffed.qlc.granular_chunk_key_schedule.v1"
     assert manifest["chunk_key_schedule"]["chunks"][0]["key_material_exposed"] is False
     assert derive_chunk_key_schedule(container, 1) == manifest["chunk_key_schedule"]
+
+
+def test_manifest_extraction_rejects_malformed_header_json() -> None:
+    header = b"\xff"
+    container = MAGIC + len(header).to_bytes(HEADER_LENGTH_BYTES, "big") + header
+
+    with pytest.raises(ValueError, match="invalid QLC container header JSON"):
+        derive_chunk_key_schedule(container, 1)

@@ -8,6 +8,7 @@ from ffed_qlc import (
     emit_qlc_workflow_counter,
     pack_bytes,
 )
+from ffed_qlc.telemetry import _sanitize as sanitize_metric_token
 
 
 def _container() -> bytes:
@@ -113,3 +114,14 @@ def test_emit_qlc_workflow_counter_uses_typed_metric(monkeypatch) -> None:
     assert emitted[0][0] == "ffed_qlc.workflow.accepted"
     assert "qlc_schema:ffed.qlc.protection_workflow_bundle.v1" in emitted[0][2]
     assert "simulator_status:ok" in emitted[0][2]
+
+
+def test_dogstatsd_sanitizer_rejects_injection_delimiters_and_bounds_length() -> None:
+    unsafe = "metric|c\nsecond:tag,another" + ("x" * 200)
+    safe = sanitize_metric_token(unsafe)
+
+    assert "|" not in safe
+    assert "\n" not in safe
+    assert ":" not in safe
+    assert "," not in safe
+    assert len(safe) <= 120
