@@ -5,6 +5,7 @@ import json
 from typing import Any, Mapping, Sequence
 
 from .audit_orb import build_privacy_safe_audit_orb
+from .bc_perimeter import BcctlProvider, build_bouncy_castle_perimeter_receipt
 from .chunk_protection_plan import build_swop_chunk_protection_plan
 from .ecn_handoff import build_ecn_handoff_packet
 from .key_schedule import derive_chunk_key_schedule
@@ -63,6 +64,9 @@ def build_qlc_protection_workflow(
     ecn_destination: str = "ecn://celebrum",
     ecn_urgency: str = "normal",
     chunk_count: int | None = None,
+    bcctl_sign: bool = False,
+    bcctl_key_id: str | None = None,
+    bcctl_provider: BcctlProvider | None = None,
 ) -> dict[str, Any]:
     """Assemble the QLC metadata-only protection workflow bundle."""
 
@@ -153,7 +157,7 @@ def build_qlc_protection_workflow(
         "raw_payload_embedded": False,
         "claim_boundary": "gateway_submission_contract_for_mvp_runtime_not_raw_media_or_secret_transfer",
     }
-    return {
+    bundle = {
         "schema": WORKFLOW_SCHEMA,
         "contract_version": QLC_WIRING_CONTRACT_VERSION,
         "source_id": source_id[:160],
@@ -177,6 +181,16 @@ def build_qlc_protection_workflow(
         "gateway_submission": gateway_submission,
         "claim_boundary": "metadata_only_qlc_workflow_threading_not_production_security_or_quantum_proof_certification",
     }
+    if bcctl_sign:
+        if not bcctl_key_id:
+            raise ValueError("bcctl_key_id is required when bcctl_sign is enabled")
+        bundle["perimeter_receipt"] = build_bouncy_castle_perimeter_receipt(
+            key_id=bcctl_key_id,
+            context_digest=workflow_fingerprint,
+            artifact_digest=source_fingerprint,
+            provider=bcctl_provider,
+        )
+    return bundle
 
 
 def build_gateway_celebrum_loop_receipt(

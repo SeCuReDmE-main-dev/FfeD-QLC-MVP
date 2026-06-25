@@ -23,6 +23,8 @@ Security boundary:
 - the encryption key is derived with `scrypt`;
 - the quasicrystal ordering is a structural transformation, not a standalone
   cryptographic proof;
+- the optional Bouncy Castle perimeter signs metadata digests only and does not
+  change the `FQLC1` container format;
 - the public MVP still makes no production security-certification claim.
 
 CLI:
@@ -137,5 +139,22 @@ existing functions into one inspectable bundle:
 The gateway submission schema is `ffed.qlc.gateway_submission.v1`. It is the
 handoff object used by `fnpqnn gateway qlc-submit` and carries only metadata,
 fingerprints, route tags, and the simulator-ready mesh payload.
+
+## Bouncy Castle Perimeter Receipt v1
+
+`ffed_qlc.bc_perimeter` adds an optional perimeter receipt through a local
+`bcctl` provider backed by Bouncy Castle. It is enabled only with
+`protect-workflow --bcctl-sign --bcctl-key-id <id>`.
+
+The receipt is written as `perimeter_receipt` on the workflow bundle. It signs:
+
+- `context_digest`: the workflow fingerprint;
+- `artifact_digest`: the QLC container SHA-256 digest;
+- `key_id`: a short public-safe key identifier.
+
+It never receives raw media, plaintext, passphrases, API keys, private research
+text, or simulator payload bodies. If `bcctl` is not configured, normal QLC
+packing, verification, and workflow generation continue without perimeter
+signing.
 
 Do not commit real packed sensitive payloads to the public repository.

@@ -4,6 +4,11 @@ import sys
 from ffed_qlc.cli import main
 
 
+CONTEXT_DIGEST = "a" * 64
+ARTIFACT_DIGEST = "b" * 64
+SIGNATURE_DIGEST = "c" * 64
+
+
 def test_cli_verify_writes_manifest(tmp_path, monkeypatch) -> None:
     plain = tmp_path / "plain.bin"
     container = tmp_path / "plain.fqlc"
@@ -233,3 +238,174 @@ def test_cli_protect_workflow_writes_gateway_submission(tmp_path, monkeypatch) -
     assert payload["schema"] == "ffed.qlc.protection_workflow_bundle.v1"
     assert payload["gateway_submission"]["schema"] == "ffed.qlc.gateway_submission.v1"
     assert payload["gateway_submission"]["mesh_payload"]["plugin_context"]["orchestrator"] == "CeLeBrUm"
+
+
+def test_cli_bouncy_castle_status_sign_and_verify_use_provider(tmp_path, monkeypatch) -> None:
+    class FakeProvider:
+        def __init__(self) -> None:
+            self.sign_calls: list[dict[str, str]] = []
+            self.verify_calls: list[dict[str, str]] = []
+
+        def status(self) -> dict[str, object]:
+            return {
+                "provider_available": True,
+                "provider": "BouncyCastle",
+                "tool": "bcctl",
+                "tool_path_source": "FFED_BCCTL_PATH",
+                "algorithms": ["Ed25519"],
+            }
+
+        def sign_digest(self, *, key_id: str, context_digest: str, artifact_digest: str) -> dict[str, object]:
+            self.sign_calls.append(
+                {
+                    "key_id": key_id,
+                    "context_digest": context_digest,
+                    "artifact_digest": artifact_digest,
+                }
+            )
+            return {
+                "status": "ok",
+                "operation": "sign",
+                "provider": "BouncyCastle",
+                "tool": "bcctl",
+                "key_id": key_id,
+                "algorithm": "Ed25519",
+                "context_digest": context_digest,
+                "message_digest": artifact_digest,
+                "signature_digest": SIGNATURE_DIGEST,
+                "signature_b64": "signature",
+                "raw_payload_embedded": False,
+            }
+
+        def verify_digest(
+            self,
+            *,
+            key_id: str,
+            context_digest: str,
+            message_digest: str,
+            signature_digest: str,
+        ) -> dict[str, object]:
+            self.verify_calls.append(
+                {
+                    "key_id": key_id,
+                    "context_digest": context_digest,
+                    "message_digest": message_digest,
+                    "signature_digest": signature_digest,
+                }
+            )
+            return {
+                "status": "ok",
+                "operation": "verify",
+                "provider": "BouncyCastle",
+                "tool": "bcctl",
+                "key_id": key_id,
+                "verified": True,
+                "context_digest": context_digest,
+                "message_digest": message_digest,
+                "signature_digest": signature_digest,
+                "raw_payload_embedded": False,
+            }
+
+    provider = FakeProvider()
+    monkeypatch.setattr("ffed_qlc.cli.BcctlProvider.from_environment", lambda: provider)
+
+    status_output = tmp_path / "bc-status.json"
+    monkeypatch.setattr(sys, "argv", ["ffed-qlc", "bc-status", "--output", str(status_output)])
+    assert main() == 0
+    assert json.loads(status_output.read_text(encoding="utf-8"))["provider_available"] is True
+
+    sign_output = tmp_path / "bc-sign.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "bc-sign",
+            "--key-id",
+            "perimeter-key",
+            "--context-digest",
+            CONTEXT_DIGEST,
+            "--artifact-digest",
+            ARTIFACT_DIGEST,
+            "--output",
+            str(sign_output),
+        ],
+    )
+    assert main() == 0
+    assert json.loads(sign_output.read_text(encoding="utf-8"))["signature_digest"] == SIGNATURE_DIGEST
+
+    verify_output = tmp_path / "bc-verify.json"
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "bc-verify",
+            "--key-id",
+            "perimeter-key",
+            "--context-digest",
+            CONTEXT_DIGEST,
+            "--message-digest",
+            ARTIFACT_DIGEST,
+            "--signature-digest",
+            SIGNATURE_DIGEST,
+            "--output",
+            str(verify_output),
+        ],
+    )
+    assert main() == 0
+    assert json.loads(verify_output.read_text(encoding="utf-8"))["verified"] is True
+    assert provider.sign_calls[0]["artifact_digest"] == ARTIFACT_DIGEST
+    assert provider.verify_calls[0]["signature_digest"] == SIGNATURE_DIGEST
+
+
+def test_cli_protect_workflow_can_add_bouncy_castle_perimeter_receipt(tmp_path, monkeypatch) -> None:
+    class FakeProvider:
+        def sign_digest(self, *, key_id: str, context_digest: str, artifact_digest: str) -> dict[str, object]:
+            return {
+                "status": "ok",
+                "operation": "sign",
+                "provider": "BouncyCastle",
+                "tool": "bcctl",
+                "key_id": key_id,
+                "algorithm": "Ed25519",
+                "context_digest": context_digest,
+                "message_digest": artifact_digest,
+                "signature_digest": SIGNATURE_DIGEST,
+                "signature_b64": "signature",
+                "raw_payload_embedded": False,
+            }
+
+    plain = tmp_path / "plain.bin"
+    container = tmp_path / "plain.fqlc"
+    workflow = tmp_path / "workflow.json"
+    plain.write_bytes(b"workflow-cli-bc")
+    monkeypatch.setenv("FFED_QLC_PASSPHRASE", "passphrase")
+    monkeypatch.setattr("ffed_qlc.bc_perimeter.BcctlProvider.from_environment", lambda: FakeProvider())
+
+    monkeypatch.setattr(sys, "argv", ["ffed-qlc", "pack", "--input", str(plain), "--output", str(container)])
+    assert main() == 0
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "protect-workflow",
+            "--input",
+            str(container),
+            "--source-id",
+            "asset-cli-bc",
+            "--output",
+            str(workflow),
+            "--bcctl-sign",
+            "--bcctl-key-id",
+            "perimeter-key",
+        ],
+    )
+    assert main() == 0
+
+    payload = json.loads(workflow.read_text(encoding="utf-8"))
+    assert payload["perimeter_receipt"]["schema"] == "ffed.qlc.bouncy_castle_perimeter_receipt.v1"
+    assert payload["perimeter_receipt"]["signature_digest"] == SIGNATURE_DIGEST
+    assert payload["perimeter_receipt"]["raw_payload_embedded"] is False

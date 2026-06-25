@@ -41,6 +41,70 @@ def test_qlc_protection_workflow_threads_all_artifacts() -> None:
     assert bundle["gateway_submission"]["schema"] == "ffed.qlc.gateway_submission.v1"
     assert bundle["gateway_submission"]["contract_version"] == "qlc-wiring-contract.v2"
     assert bundle["gateway_submission"]["target_endpoint"] == "POST /cerebrum/runtime/run"
+    assert "perimeter_receipt" not in bundle
+
+
+def test_qlc_protection_workflow_adds_opt_in_bouncy_castle_perimeter_receipt() -> None:
+    class FakeBcctlProvider:
+        def __init__(self) -> None:
+            self.calls: list[dict[str, str]] = []
+
+        def sign_digest(self, *, key_id: str, context_digest: str, artifact_digest: str) -> dict[str, object]:
+            self.calls.append(
+                {
+                    "key_id": key_id,
+                    "context_digest": context_digest,
+                    "artifact_digest": artifact_digest,
+                }
+            )
+            return {
+                "status": "ok",
+                "operation": "sign",
+                "provider": "BouncyCastle",
+                "tool": "bcctl",
+                "key_id": key_id,
+                "algorithm": "Ed25519",
+                "context_digest": context_digest,
+                "message_digest": artifact_digest,
+                "signature_digest": "c" * 64,
+                "signature_b64": "signature",
+                "raw_payload_embedded": False,
+            }
+
+    provider = FakeBcctlProvider()
+    bundle = build_qlc_protection_workflow(
+        source_id="asset-bc",
+        qlc_container=_container(),
+        media_type="image",
+        detections=[{"class_name": "face", "confidence_score": 0.91}],
+        context_signals=[{"texture_complexity": 0.2, "entropy_score": 0.2, "edge_density": 0.2}],
+        ecn_destination="",
+        bcctl_sign=True,
+        bcctl_key_id="perimeter-key",
+        bcctl_provider=provider,  # type: ignore[arg-type]
+    )
+
+    receipt = bundle["perimeter_receipt"]
+    assert receipt["schema"] == "ffed.qlc.bouncy_castle_perimeter_receipt.v1"
+    assert receipt["provider"] == "BouncyCastle"
+    assert receipt["raw_payload_embedded"] is False
+    assert provider.calls == [
+        {
+            "key_id": "perimeter-key",
+            "context_digest": bundle["workflow_fingerprint"],
+            "artifact_digest": bundle["artifacts"]["mesh_payload"]["plugin_context"]["qlc_container_sha256"],
+        }
+    ]
+    assert "workflow payload for qlc threading" not in str(provider.calls)
+
+
+def test_qlc_protection_workflow_requires_key_for_bouncy_castle_signing() -> None:
+    with pytest.raises(ValueError, match="bcctl_key_id"):
+        build_qlc_protection_workflow(
+            source_id="asset-bc-missing-key",
+            qlc_container=_container(),
+            bcctl_sign=True,
+        )
 
 
 def test_qlc_protection_workflow_quarantines_critical_route() -> None:
