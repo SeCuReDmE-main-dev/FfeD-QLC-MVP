@@ -34,6 +34,25 @@ Images can contain secrets even when the filename looks harmless. Before images 
 
 See `docs/yolo-secret-redaction.md`.
 
+## Optional Bouncy Castle Perimeter
+
+The optional `bcctl` integration uses Bouncy Castle through an external local
+tool to sign public metadata digests. It is a perimeter integrity receipt for
+workflow bundles, not a replacement for the QLC structural transform,
+ChaCha20-Poly1305, scrypt key derivation, or future production threat modeling.
+
+The provider boundary is strict:
+
+- pass only key IDs, context digests, artifact/message digests, and signature
+  digests;
+- never pass raw files, plaintext, passphrases, API keys, `.env` values, private
+  corpus text, screenshots, or raw simulator payloads;
+- keep provider failures sanitized and do not echo local filesystem paths in
+  public status output;
+- leave normal QLC commands functional when `bcctl` is not configured.
+
+See `docs/bouncy-castle-perimeter.md`.
+
 ## Reporting
 
 If you find a secret exposure or unsafe public artifact, open a private disclosure path with the repository owner instead of posting the secret in a public issue.

@@ -44,6 +44,7 @@ The first commercial shape is a developer/research operations tool that sits bet
 - Provides a concrete reversible QLC-style structural transform using a phi/cut-and-project byte ordering plus authenticated encryption.
 - Builds an FNP-QNN runtime proof payload so QLC events can pass through `fnpqnn_gateway_MVP`, CodeProject.AI/YOLO mesh metadata, CeLeBrUm orchestration, LVFM, and the simulator's Hydra-EM-GPCN lane.
 - Adds a Semantic Complexity Map and Privacy-Safe Audit Orb as second-pass concept extractions from the foundation documents.
+- Adds an optional Bouncy Castle perimeter signature layer through a local `bcctl` provider. It signs metadata digests only and does not replace the QLC transform or authenticated encryption.
 
 ## What The Algorithm Protects
 
@@ -164,6 +165,24 @@ ffed-qlc unpack --input .\plain.fqlc --output .\plain.roundtrip.bin
 ```
 
 The current transform is documented in `docs/qlc-structural-transform.md`. The quasicrystal layer is a deterministic structural permutation; confidentiality and integrity come from standard ChaCha20-Poly1305 with a scrypt-derived key.
+
+Optionally attach a Bouncy Castle perimeter signature to workflow metadata:
+
+```powershell
+$env:FFED_BCCTL_PATH = "path-to-local-bcctl-executable"
+ffed-qlc bc-status
+ffed-qlc protect-workflow `
+  --input .\plain.fqlc `
+  --source-id asset-001 `
+  --output .\qlc-workflow.json `
+  --bcctl-sign `
+  --bcctl-key-id perimeter-key
+```
+
+The Bouncy Castle perimeter signs public digests only: workflow context digest,
+container artifact digest, key ID, and signature metadata. It never receives
+raw files, plaintext, passphrases, `.env` values, or private research text.
+Details: `docs/bouncy-castle-perimeter.md`.
 
 Build the simulator proof payload for the gateway mesh:
 

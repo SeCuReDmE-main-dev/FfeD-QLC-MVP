@@ -9,6 +9,7 @@ from typing import Any
 
 from .admissibility import Evidence, evaluate_evidence
 from .audit_orb import build_privacy_safe_audit_orb
+from .bc_perimeter import BcctlProvider
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS
 from .ecn_handoff import build_ecn_handoff_packet
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
@@ -45,6 +46,22 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
     verify.add_argument("--output")
     verify.add_argument("--no-decrypt", action="store_true", help="Inspect manifest without authenticating plaintext")
+
+    bc_status = sub.add_parser("bc-status", help="Inspect the optional Bouncy Castle perimeter provider")
+    bc_status.add_argument("--output")
+
+    bc_sign = sub.add_parser("bc-sign", help="Sign public metadata digests with the optional bcctl provider")
+    bc_sign.add_argument("--key-id", required=True)
+    bc_sign.add_argument("--context-digest", required=True)
+    bc_sign.add_argument("--artifact-digest", required=True)
+    bc_sign.add_argument("--output")
+
+    bc_verify = sub.add_parser("bc-verify", help="Verify a public metadata digest signature with bcctl")
+    bc_verify.add_argument("--key-id", required=True)
+    bc_verify.add_argument("--context-digest", required=True)
+    bc_verify.add_argument("--message-digest", required=True)
+    bc_verify.add_argument("--signature-digest", required=True)
+    bc_verify.add_argument("--output")
 
     proof = sub.add_parser("mesh-proof", help="Build a FNP-QNN runtime proof payload from a QLC container")
     proof.add_argument("--input", required=True)
@@ -122,6 +139,8 @@ def main(argv: list[str] | None = None) -> int:
     workflow.add_argument("--ecn-destination", default="ecn://celebrum")
     workflow.add_argument("--ecn-urgency", default="normal")
     workflow.add_argument("--chunk-count", type=int)
+    workflow.add_argument("--bcctl-sign", action="store_true", help="Add an optional Bouncy Castle perimeter signature")
+    workflow.add_argument("--bcctl-key-id", help="Public-safe key identifier used with --bcctl-sign")
 
     inspect_workflow = sub.add_parser("inspect-workflow", help="Inspect a QLC workflow bundle without exposing payloads")
     inspect_workflow.add_argument("--bundle", required=True)
@@ -166,6 +185,45 @@ def main(argv: list[str] | None = None) -> int:
             passphrase = _resolve_passphrase(args.passphrase_env)
             record = verify_container(container, passphrase)
         output = json.dumps(record, indent=2, sort_keys=True)
+        if args.output:
+            Path(args.output).write_text(output, encoding="utf-8")
+            print(args.output)
+        else:
+            print(output)
+        return 0
+
+    if args.command == "bc-status":
+        payload = BcctlProvider.from_environment().status()
+        output = json.dumps(payload, indent=2, sort_keys=True)
+        if args.output:
+            Path(args.output).write_text(output, encoding="utf-8")
+            print(args.output)
+        else:
+            print(output)
+        return 0
+
+    if args.command == "bc-sign":
+        payload = BcctlProvider.from_environment().sign_digest(
+            key_id=args.key_id,
+            context_digest=args.context_digest,
+            artifact_digest=args.artifact_digest,
+        )
+        output = json.dumps(payload, indent=2, sort_keys=True)
+        if args.output:
+            Path(args.output).write_text(output, encoding="utf-8")
+            print(args.output)
+        else:
+            print(output)
+        return 0
+
+    if args.command == "bc-verify":
+        payload = BcctlProvider.from_environment().verify_digest(
+            key_id=args.key_id,
+            context_digest=args.context_digest,
+            message_digest=args.message_digest,
+            signature_digest=args.signature_digest,
+        )
+        output = json.dumps(payload, indent=2, sort_keys=True)
         if args.output:
             Path(args.output).write_text(output, encoding="utf-8")
             print(args.output)
@@ -247,6 +305,8 @@ def main(argv: list[str] | None = None) -> int:
             ecn_destination=args.ecn_destination,
             ecn_urgency=args.ecn_urgency,
             chunk_count=args.chunk_count,
+            bcctl_sign=args.bcctl_sign,
+            bcctl_key_id=args.bcctl_key_id,
         )
         Path(args.output).write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
         print(args.output)
