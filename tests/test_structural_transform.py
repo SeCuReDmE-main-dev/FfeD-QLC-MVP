@@ -3,6 +3,7 @@ import hashlib
 import pytest
 
 from ffed_qlc import QLCTransformError, inspect_container, pack_bytes, quasicrystal_coordinates, unpack_bytes, verify_container
+from ffed_qlc.structural_transform import HEADER_LENGTH_BYTES, MAGIC
 
 
 def test_pack_unpack_round_trip() -> None:
@@ -19,6 +20,22 @@ def test_unpack_rejects_wrong_passphrase() -> None:
 
     with pytest.raises(QLCTransformError):
         unpack_bytes(container, "wrong-passphrase")
+
+
+def test_inspect_container_rejects_malformed_non_utf8_header() -> None:
+    header = b"\xff\xff"
+    container = MAGIC + len(header).to_bytes(HEADER_LENGTH_BYTES, "big") + header
+
+    with pytest.raises(QLCTransformError, match="invalid QLC container header JSON"):
+        inspect_container(container)
+
+
+def test_inspect_container_rejects_non_object_header() -> None:
+    header = b"[]"
+    container = MAGIC + len(header).to_bytes(HEADER_LENGTH_BYTES, "big") + header
+
+    with pytest.raises(QLCTransformError, match="QLC header must be a JSON object"):
+        inspect_container(container)
 
 
 def test_inspect_container_returns_public_safe_manifest() -> None:

@@ -268,6 +268,7 @@ def _encode_header(header: dict[str, object]) -> bytes:
     return json.dumps(header, sort_keys=True, separators=(",", ":")).encode("utf-8")
 
 
+
 def _split_container(container: bytes) -> tuple[dict[str, object], bytes, bytes]:
     if not container.startswith(MAGIC):
         raise QLCTransformError("invalid QLC container magic")
@@ -281,8 +282,11 @@ def _split_container(container: bytes) -> tuple[dict[str, object], bytes, bytes]
         raise QLCTransformError("truncated QLC container body")
     header_bytes = container[header_start:header_end]
     try:
-        header = json.loads(header_bytes.decode("utf-8"))
-    except json.JSONDecodeError as exc:
+        header_str = header_bytes.decode("utf-8")
+        header = json.loads(header_str)
+        if not isinstance(header, dict):
+            raise QLCTransformError("QLC header must be a JSON object")
+    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise QLCTransformError("invalid QLC container header JSON") from exc
     _validate_header(header)
     return header, header_bytes, container[header_end:]
@@ -304,11 +308,11 @@ def _validate_header(header: dict[str, object]) -> None:
     missing = required.difference(header)
     if missing:
         raise QLCTransformError(f"missing QLC header fields: {', '.join(sorted(missing))}")
-    if header["version"] != 1:
+    if header.get("version") != 1:
         raise QLCTransformError("unsupported QLC container version")
-    if header["transform"] != "phi_cut_project_permutation_v1":
+    if header.get("transform") != "phi_cut_project_permutation_v1":
         raise QLCTransformError("unsupported QLC transform")
-    if header["cipher"] != "ChaCha20-Poly1305" or header["kdf"] != "scrypt":
+    if header.get("cipher") != "ChaCha20-Poly1305" or header.get("kdf") != "scrypt":
         raise QLCTransformError("unsupported QLC cryptographic profile")
 
 

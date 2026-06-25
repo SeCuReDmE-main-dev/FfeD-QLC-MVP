@@ -58,21 +58,20 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _run_gateway(bundle: dict[str, Any], gateway_repo: Path, simulator_url: str, *, real_submit: bool) -> dict[str, Any]:
-    if gateway_repo.exists():
-        sys.path.insert(0, str(gateway_repo))
     try:
-        from fnpqnn_gateway_mvp.qlc_submit import qlc_submit
+        module = _load_repo_module(gateway_repo, "fnpqnn_gateway_mvp", "qlc_submit")
+        qlc_submit = module.qlc_submit
     except Exception as exc:
         return {"success": False, "stage": "gateway_import", "error": _compact_error(exc)}
     return qlc_submit(bundle, simulator_url=simulator_url, dry_run=not real_submit, timeout=5)
 
 
 def _run_fnp_testclient(bundle: dict[str, Any], fnp_repo: Path) -> dict[str, Any]:
-    if fnp_repo.exists():
-        sys.path.insert(0, str(fnp_repo))
     try:
         from fastapi.testclient import TestClient
-        from api.main import app
+
+        module = _load_repo_module(fnp_repo, "api", "main")
+        app = module.app
     except Exception as exc:
         return {"success": False, "stage": "fnp_import", "error": _compact_error(exc)}
     mesh_payload = bundle["gateway_submission"]["mesh_payload"]
@@ -92,6 +91,38 @@ def _run_fnp_testclient(bundle: dict[str, Any], fnp_repo: Path) -> dict[str, Any
         "mesh_payload_fingerprint_present": bool(qlc_runtime.get("mesh_payload_fingerprint")),
         "raw_payload_embedded": bool(qlc_runtime.get("raw_payload_embedded", True)),
     }
+
+
+def _load_repo_module(repo: Path, package_name: str, module_name: str):
+    import importlib.util
+
+    package_dir = repo.resolve() / package_name
+    init_file = package_dir / "__init__.py"
+    target_file = package_dir / f"{module_name}.py"
+    if not init_file.is_file():
+        raise ImportError(f"{package_name} package not found at {init_file}")
+    if not target_file.is_file():
+        raise ImportError(f"{package_name}.{module_name} not found at {target_file}")
+
+    package_spec = importlib.util.spec_from_file_location(
+        package_name,
+        str(init_file),
+        submodule_search_locations=[str(package_dir)],
+    )
+    if package_spec is None or package_spec.loader is None:
+        raise ImportError(f"Cannot load package {package_name}")
+    package_module = importlib.util.module_from_spec(package_spec)
+    sys.modules[package_name] = package_module
+    package_spec.loader.exec_module(package_module)
+
+    qualified_name = f"{package_name}.{module_name}"
+    module_spec = importlib.util.spec_from_file_location(qualified_name, str(target_file))
+    if module_spec is None or module_spec.loader is None:
+        raise ImportError(f"Cannot load module {qualified_name}")
+    module = importlib.util.module_from_spec(module_spec)
+    sys.modules[qualified_name] = module
+    module_spec.loader.exec_module(module)
+    return module
 
 
 def _compact_inspection(inspection: dict[str, Any]) -> dict[str, Any]:
