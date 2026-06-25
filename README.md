@@ -1,4 +1,4 @@
-![FfeD-QLC Logo](./assets/Logo%20Final.png)
+![FfeD-QLC Logo](./assets/Logo%20draft%20version/logo%20centre%201.png)
 
 # FfeD-QLC MVP
 
