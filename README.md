@@ -6,6 +6,8 @@ FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility
 
 > **Official school governance.** This repo is an educational research scaffold, not a finished cryptographic standard, attack tool, or safety guarantee. The maintained classroom route supports Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md).
 
+> **Notice and disclaimer.** The existing project license remains active. See [NOTICE](NOTICE) and [DISCLAIMER](DISCLAIMER) for attribution, school-governance, and misuse-responsibility boundaries.
+
 In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
 
 Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443).
