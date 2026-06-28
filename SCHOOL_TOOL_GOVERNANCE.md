@@ -9,3 +9,7 @@ The existing project license remains active. `NOTICE` and `DISCLAIMER` add attri
 Security and cryptography-facing features are educational research scaffolds. They are not attack tools, finished standards, or safety guarantees.
 
 Users may fork the code under the repository license, but the maintainer only supports the reviewed official version.
+## Development Stability Gate
+This repository is tagged `pre-alpha` and `in-development`. External PRs are not evaluated for merge before the official school tool is stable and fully functional for classroom use. Until that gate is met, outside contributors should open issues or build local forks/plugins; maintainers may still push internal stabilization commits.
+
+

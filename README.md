@@ -1,3 +1,5 @@
+> **Development status.** This school tool is currently tagged **pre-alpha / in development**. External PRs are not evaluated for merge until the maintained tool reaches a stable, fully functional 100% classroom release after the pre-alpha phase. Issues and forks remain allowed, but official PR review is paused until that stability gate is met.
+
 ![FfeD-QLC Logo](./assets/Logo%20draft%20version/logo%20centre%201.png)
 
 # FfeD-QLC MVP
@@ -358,3 +360,5 @@ compose.yaml
 ## License
 
 MIT. See `LICENSE`, `NOTICE`, `AUTHORS.md`, and `CITATION.cff`.
+
+
