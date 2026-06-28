@@ -2,6 +2,14 @@
 
 **Attribution:** Jean-Sebastien Beaulieu · [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443) · [SecuredMe](https://securedme.ca) · [FfeD-QLC](https://ffed-qlc.securedme.ca)
 
+<!-- SECUREDME-SUITE-BADGES:START -->
+[![Issues](https://img.shields.io/github/issues/SeCuReDmE-main-dev/FfeD-QLC-MVP?color=301000)](https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/issues)
+[![Milestones](https://img.shields.io/badge/milestones-M0--M7-C03000)](https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/milestones)
+[![Project Board](https://img.shields.io/badge/project-kanban-100C0B0)](https://github.com/users/SeCuReDmE-main-dev/projects/3)
+[![Branch](https://img.shields.io/badge/branch-main-802000)](https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/tree/main)
+<!-- SECUREDME-SUITE-BADGES:END -->
+
+
 ## School Authentication And Secret Boundary
 This repository is a small SecuredMe school tool. Official classroom use must not require `.env` files, API keys, raw tokens, or local model secrets. Student and teacher workflows must use Codex/OpenAI or Antigravity/Gemini through browser WebAuth, fingerprinted session approval, and encrypted local session records when authentication is needed.
 
@@ -369,6 +377,7 @@ compose.yaml
 ## License
 
 MIT. See `LICENSE`, `NOTICE`, `AUTHORS.md`, and `CITATION.cff`.
+
 
 
 
