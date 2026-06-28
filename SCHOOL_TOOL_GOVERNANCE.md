@@ -11,5 +11,8 @@ Security and cryptography-facing features are educational research scaffolds. Th
 Users may fork the code under the repository license, but the maintainer only supports the reviewed official version.
 ## Development Stability Gate
 This repository is tagged `pre-alpha` and `in-development`. External PRs are not evaluated for merge before the official school tool is stable and fully functional for classroom use. Until that gate is met, outside contributors should open issues or build local forks/plugins; maintainers may still push internal stabilization commits.
+## School Authentication And Secret Boundary
+This repository is a small SecuredMe school tool. Official classroom use must not require `.env` files, API keys, raw tokens, or local model secrets. Student and teacher workflows must use Codex/OpenAI or Antigravity/Gemini through browser WebAuth, fingerprinted session approval, and encrypted local session records when authentication is needed.
 
+The reason for excluding generic local AI routes from official school mode is student and teacher safety: education accounts, provider-side account controls, browser login, and governed AI refusal behavior are safer than unguided local model endpoints for classroom cybersecurity and algorithm-building tools.
 
