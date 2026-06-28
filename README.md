@@ -12,14 +12,14 @@
 <!-- SECUREDME-STARTUP-SUPPORT:START -->
 <p align="center">
   <a href="https://e2b.dev/startups">
-    <img alt="Supported by E2B for Startups" src="https://img.shields.io/badge/Supported%20by-E2B%20for%20Startups-FF8800?style=for-the-badge" />
+    <img alt="Gateway-ready E2B audit lane" src="https://img.shields.io/badge/Gateway--ready-E2B%20audit%20lane-FF8800?style=for-the-badge" />
   </a>
   <a href="https://www.datadoghq.com/partner/datadog-for-startups/">
-    <img alt="Supported by Datadog for Startups" src="https://img.shields.io/badge/Supported%20by-Datadog%20for%20Startups-632CA6?style=for-the-badge&amp;logo=datadog&amp;logoColor=white" />
+    <img alt="Gateway-ready Datadog observability" src="https://img.shields.io/badge/Gateway--ready-Datadog%20observability-632CA6?style=for-the-badge&amp;logo=datadog&amp;logoColor=white" />
   </a>
 </p>
 
-> **Startup support acknowledgement.** This SecuredMe school tool is part of the suite supported through E2B for Startups and Datadog for Startups. E2B is used as an optional isolated sandbox and audit lane; Datadog is used as an optional observability and review-support lane. No E2B or Datadog secret is stored in this README.
+> **Gateway support acknowledgement.** This SecuredMe school tool is gateway-compatible. E2B audit support and Datadog observability are routed through the shared SecuredMe gateway when that lane is configured; this repository does not claim a direct E2B or Datadog runtime dependency by default, and no E2B or Datadog secret is stored in this README.
 <!-- SECUREDME-STARTUP-SUPPORT:END -->
 
 
@@ -391,6 +391,7 @@ compose.yaml
 ## License
 
 MIT. See `LICENSE`, `NOTICE`, `AUTHORS.md`, and `CITATION.cff`.
+
 
 
 
