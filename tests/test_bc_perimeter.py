@@ -96,9 +96,9 @@ def test_bcctl_status_does_not_echo_local_tool_path(monkeypatch) -> None:
             return subprocess.CompletedProcess(command, 0, stdout="bcctl 2.6.2-ffed.1 (BouncyCastle)\n", stderr="")
         return subprocess.CompletedProcess(command, 0, stdout="Ed25519\nChaCha20-Poly1305\n", stderr="")
 
-    monkeypatch.setenv("FFED_BCCTL_PATH", r"C:\Users\jeans\Desktop\bcctl\bcctl.exe")
+    monkeypatch.setenv("FFED_BCCTL_PATH", r".\\bcctl\\bcctl.exe")
     monkeypatch.setattr("ffed_qlc.bc_perimeter.subprocess.run", fake_run)
-    provider = BcctlProvider(executable=r"C:\Users\jeans\Desktop\bcctl\bcctl.exe")
+    provider = BcctlProvider(executable=r".\\bcctl\\bcctl.exe")
 
     payload = provider.status()
 
