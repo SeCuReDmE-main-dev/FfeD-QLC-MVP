@@ -1,0 +1,37 @@
+{
+  "name": "securedme-ffed-qlc-codex-adapter",
+  "version": "0.1.0",
+  "description": "FfeD-QLC learning workflow adapter.",
+  "author": {
+    "name": "SecuredMe",
+    "url": "https://securedme.ca"
+  },
+  "homepage": "https://ffed-qlc.securedme.ca",
+  "license": "MIT",
+  "keywords": [
+    "securedme",
+    "education",
+    "webauth",
+    "token-governor"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "FfeD-QLC Codex Adapter",
+    "shortDescription": "FfeD-QLC learning workflow adapter.",
+    "longDescription": "Repo-local Codex adapter for FfeD-QLC. It keeps the app in pre-alpha, uses browser-authenticated OpenAI/Codex workflows, forbids copied secrets, and prepares future Token Governor and MCP integration.",
+    "developerName": "SecuredMe",
+    "category": "Education",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Adapter"
+    ],
+    "websiteURL": "https://ffed-qlc.securedme.ca",
+    "defaultPrompt": [
+      "Open the FfeD-QLC adapter context.",
+      "Check WebAuth readiness without secrets.",
+      "Plan a Token Governor handoff."
+    ]
+  },
+  "repository": "https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP"
+}

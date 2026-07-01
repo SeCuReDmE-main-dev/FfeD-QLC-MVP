@@ -1,0 +1,25 @@
+{
+  "name": "securedme-ffed-qlc-antigravity-adapter",
+  "displayName": "FfeD-QLC Antigravity Adapter",
+  "description": "FfeD-QLC learning workflow adapter.",
+  "version": "0.1.0",
+  "publisher": "SecuredMe",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Education"
+  ],
+  "activationEvents": [
+    "onCommand:securedme.ffedqlc.openAdapter"
+  ],
+  "main": "./extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "securedme.ffedqlc.openAdapter",
+        "title": "SecuredMe: Open FfeD-QLC Adapter"
+      }
+    ]
+  }
+}

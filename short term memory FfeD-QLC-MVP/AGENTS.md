@@ -1,6 +1,6 @@
 # FfeD-QLC-MVP Short-Term Memory
 
-This folder is the frontal pocket for `FfeD-QLC-MVP`. It receives active working chunks before the central website hippocampus harvests them.
+This folder is the frontal pocket for `FfeD-QLC-MVP`. It receives active working chunks before the central modele dorsal mechanism harvests them.
 
 ## Rules
 
