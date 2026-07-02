@@ -39,7 +39,7 @@ FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility
 
 > **Official school governance.** This repo is an educational research scaffold, not a finished cryptographic standard, attack tool, or safety guarantee. The maintained classroom route supports Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md).
 
-> **Notice and disclaimer.** The existing project license remains active. See [NOTICE](NOTICE) and [DISCLAIMER](DISCLAIMER) for attribution, school-governance, and misuse-responsibility boundaries.
+> **License.** This project uses the Secured Educational Cybersecurity License 2.0 (SECL-2.0). It is provided for defensive education, fraud-awareness, simulation, and supervised cyber training. Offensive workflows, unsafe surveillance, credential theft, fraud, bypass, and criminal automation are not maintained or endorsed by the official school version. See [LICENSE](LICENSE), [NOTICE](NOTICE), [DISCLAIMER](DISCLAIMER), and [SAFETY.md](SAFETY.md).
 
 In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
 
@@ -390,10 +390,4 @@ compose.yaml
 
 ## License
 
-MIT. See `LICENSE`, `NOTICE`, `AUTHORS.md`, and `CITATION.cff`.
-
-
-
-
-
-
+This project is licensed under the Secured Educational Cybersecurity License 2.0 (SECL-2.0). See `LICENSE`, `NOTICE`, `DISCLAIMER`, and `SAFETY.md`.

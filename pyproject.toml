@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Public MVP for a bounded FfeD-QLC admissibility layer and Docker/CPAI study-case map."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "LicenseRef-SECL-2.0" }
 authors = [
   { name = "SeCuReDmE-main-dev" }
 ]

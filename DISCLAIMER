@@ -1,18 +1,17 @@
-Disclaimer For SEL/SECL-Covered Projects
+Disclaimer For FfeD-QLC-MVP
 
-SEL/SECL-covered material is provided for education, research, classroom
-training, review support, simulation, defensive cybersecurity education,
-fraud-awareness, abuse-prevention, and supervised learning.
+This repository is provided for defensive education, fraud-awareness, simulation, and supervised cyber training as part of the SecuredMe
+Education suite. It is currently pre-alpha / in development.
 
 The material is provided without warranty and without any promise of accuracy,
-safety, legality, compliance, fitness for production, or fitness for
+safety, legality, compliance, production readiness, or fitness for
 safety-critical decisions.
 
 Jean-Sebastien Beaulieu, SecuredMe, contributors, reviewers, schools, OpenAI,
 Codex, Google, Gemini, Antigravity, and related providers are not responsible
 for misuse, unsafe modifications, broken private forks, illegal deployments,
 harmful workflows, privacy violations, security incidents, or autonomous
-decisions made with SEL/SECL-covered material.
+decisions made with this material.
 
 Users and deployers remain responsible for:
 

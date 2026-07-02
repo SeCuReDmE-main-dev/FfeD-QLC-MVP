@@ -1,4 +1,4 @@
-Secured Educational License 2.0 Notice
+FfeD-QLC-MVP Notice
 
 Primary author and maintainer:
 
@@ -6,14 +6,11 @@ Jean-Sebastien Beaulieu
 ORCID: https://orcid.org/0009-0007-2904-0443
 SecuredMe
 
-This project defines the SEL-2.0 and SECL-2.0 license texts and companion
-policy documents for educational software, classroom tooling, research
-scaffolds, simulation tools, supervised student/teacher learning environments,
-and defensive educational cybersecurity tools.
+This repository is part of the SecuredMe Education suite and is licensed under
+the Secured Educational Cybersecurity License 2.0 (SECL-2.0). The local metadata reference is
+LicenseRef-SECL-2.0.
 
-SEL-2.0 uses the custom SPDX-compatible identifier:
-
-- LicenseRef-SEL-2.0
-- LicenseRef-SECL-2.0
-
-These identifiers are not currently part of the official SPDX License List.
+The selected license is a custom SecuredMe license. It is not currently an
+OSI-approved license and is not currently listed in the SPDX License List. Use
+LicenseRef-SECL-2.0 only as a local metadata reference when the full license text is
+included in this repository.
