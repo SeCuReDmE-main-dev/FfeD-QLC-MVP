@@ -1,0 +1,42 @@
+{#-
+  SecuredMe Education global content wrapper.
+  Keeps the Material content pipeline while adding public Education branding.
+-#}
+{% include "partials/tags.html" %}
+{% include "partials/actions.html" %}
+
+{% if page.is_homepage %}
+  <section class="se-hero" aria-label="SecuredMe Education">
+    <picture class="se-hero__media">
+      <img class="se-hero__image se-hero__image--light" src="{{ 'assets/education/banner-light-education-tier.png' | url }}" alt="SecuredMe Education light banner">
+      <img class="se-hero__image se-hero__image--dark" src="{{ 'assets/education/banner-dark-education-tier.png' | url }}" alt="SecuredMe Education dark banner">
+    </picture>
+    <div class="se-hero__copy">
+      <p class="se-kicker">Tier 4: Education</p>
+      <h1>Learn safely. Build clearly.</h1>
+      <p>Apprendre, verifier, fabriquer. A public path for students, teachers, and builders using the SecuredMe Education suite.</p>
+      <div class="se-hero__signals" aria-label="Education actions">
+        <span>Learn / Apprendre</span>
+        <span>Connect / Connecter</span>
+        <span>Explore / Explorer</span>
+        <span>Collaborate / Collaborer</span>
+      </div>
+    </div>
+  </section>
+{% else %}
+  <section class="se-ribbon" aria-label="SecuredMe Education page marker">
+    <img src="{{ 'assets/education/education-icon.png' | url }}" alt="" class="se-ribbon__mark">
+    <div class="se-ribbon__text">
+      <span class="se-ribbon__title">SecuredMe Education</span>
+      <span class="se-ribbon__meta">Learn / Apprendre - Connect / Connecter - Explore / Explorer - Collaborate / Collaborer</span>
+    </div>
+  </section>
+{% endif %}
+
+{% if "<h1" not in page.content %}
+  <h1>{{ page.title | d(config.site_name, true)}}</h1>
+{% endif %}
+{{ page.content }}
+{% include "partials/source-file.html" %}
+{% include "partials/feedback.html" %}
+{% include "partials/comments.html" %}
