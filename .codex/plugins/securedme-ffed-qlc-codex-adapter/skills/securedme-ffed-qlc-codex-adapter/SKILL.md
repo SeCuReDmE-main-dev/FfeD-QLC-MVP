@@ -34,3 +34,6 @@ Use this skill to operate the repo-local Codex adapter for `FfeD-QLC-MVP`.
 3. Preserve `I -> I_system^S -> D_f -> dF -> i_fractal` when math or neutrosophic state appears.
 4. Use the gateway template at `FNP-QNN-MVP/fnpqnn_gateway_MVP` for WebAuth behavior.
 5. Never rewrite the official school mechanism from this app adapter.
+6. Preserve the QLC Penrose contract: source URLs are function provenance, Source Graph is secondary, and lattice tiles must be validated thin/thick rhombi.
+7. Keep CPAI/YOLO metadata-only; do not copy CodeProject AI Server and do not start training without explicit UI confirmation.
+8. Reject Ollama as an official school route for this adapter.

@@ -1,0 +1,195 @@
+{
+  "schema": "ffed.qlc.source_function_profiles.v1",
+  "profiles": [
+    {
+      "source_id": "S01",
+      "title": "Plithogenic Set Logic Probability Statistics",
+      "url": "https://digitalrepository.unm.edu/math_fsp/20/",
+      "lane": "plithogenic",
+      "trust_tier": "primary",
+      "source_role": "attribute_admission",
+      "source_weight": 0.95,
+      "function": {
+        "name": "f_plithogenic_admission",
+        "input_symbols": ["Attr", "Val", "Dom", "provenance", "claim_scope"],
+        "output_symbols": ["Contr", "C_phi", "Adm"],
+        "operation": "numeric_dissimilarity_to_phi_weighted_admission",
+        "rule_map": ["contradiction_numeric", "admission_threshold", "claim_boundary"]
+      },
+      "maps_to": ["plithogenic_gate", "tile_admission"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S02",
+      "title": "Plithogenic Graphs",
+      "url": "https://fs.unm.edu/PlithogenicGraphs.pdf",
+      "lane": "graph",
+      "trust_tier": "primary",
+      "source_role": "row_matrix_edge",
+      "source_weight": 0.9,
+      "function": {
+        "name": "f_row_matrix_edge",
+        "input_symbols": ["row_u", "row_v"],
+        "output_symbols": ["edge_multiplicity", "edge_label", "edge_weight"],
+        "operation": "shared_row_components_to_edge_signature",
+        "rule_map": ["row_matrix_vertex", "row_matrix_edge", "weighted_graph"]
+      },
+      "maps_to": ["source_graph", "adjacency"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S03",
+      "title": "Plithogenic n-Super Hypergraph",
+      "url": "https://www.americaspg.com/journal/21/article/476",
+      "lane": "hypergraph",
+      "trust_tier": "secondary",
+      "source_role": "connector_hyperedge",
+      "source_weight": 0.8,
+      "function": {
+        "name": "f_connector",
+        "input_symbols": ["tile_ids", "source_function_ids", "admissibility_scores"],
+        "output_symbols": ["connector_id", "dominant_role", "connector_weight"],
+        "operation": "multi_tile_relation_to_connector_node",
+        "rule_map": ["hyperedge_connector", "dominant_role", "enveloping_vertex"]
+      },
+      "maps_to": ["source_graph", "orb_envelope"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S04",
+      "title": "Symbolic Plithogenic Algebraic Structures",
+      "url": "https://fs.unm.edu/NSS/SymbolicPlithogenicAlgebraic39.pdf",
+      "lane": "plithogenic_algebra",
+      "trust_tier": "primary",
+      "source_role": "prevalence_resolution",
+      "source_weight": 0.88,
+      "function": {
+        "name": "f_prevalence_resolve",
+        "input_symbols": ["candidate_a", "candidate_b", "prevalence_order"],
+        "output_symbols": ["selected_candidate", "resolution_reason"],
+        "operation": "prevalence_order_resolves_conflicting_source_functions",
+        "rule_map": ["prevalence_order", "absorbance_law", "dependency_status"]
+      },
+      "maps_to": ["source_function_composition", "tile_admission"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S05",
+      "title": "Single-Valued Plithogenic Graph",
+      "url": "https://www.americaspg.com/journal/21/article/785",
+      "lane": "plithogenic_graph",
+      "trust_tier": "secondary",
+      "source_role": "inf_sup_gate",
+      "source_weight": 0.8,
+      "function": {
+        "name": "f_inf_sup_gate",
+        "input_symbols": ["attribute_values"],
+        "output_symbols": ["lower_bound", "upper_bound", "admission_score"],
+        "operation": "interval_width_to_admission_confidence",
+        "rule_map": ["infimum", "supremum", "contradiction_interval"]
+      },
+      "maps_to": ["plithogenic_gate", "friction"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S06",
+      "title": "Entanglement In Graph States",
+      "url": "https://arxiv.org/abs/quant-ph/0602096",
+      "lane": "quantum_graph",
+      "trust_tier": "primary",
+      "source_role": "graph_state_carrier",
+      "source_weight": 0.76,
+      "function": {
+        "name": "f_graph_state_carrier",
+        "input_symbols": ["graph_nodes", "graph_edges"],
+        "output_symbols": ["carrier_size", "locality_class", "state_weight"],
+        "operation": "graph_topology_to_state_carrier_metadata",
+        "rule_map": ["graph_state_topology", "locality_signature", "bounded_metadata_only"]
+      },
+      "maps_to": ["source_graph", "claim_boundary"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S07",
+      "title": "Quantum Walks On Graphs",
+      "url": "https://arxiv.org/abs/quant-ph/0012090",
+      "lane": "quantum_graph",
+      "trust_tier": "primary",
+      "source_role": "walk_dispersion",
+      "source_weight": 0.74,
+      "function": {
+        "name": "f_walk_dispersion",
+        "input_symbols": ["adjacency", "phi_basis"],
+        "output_symbols": ["dispersion", "confinement", "transition_phase"],
+        "operation": "adjacency_to_dispersion_diagnostics",
+        "rule_map": ["unitary_walk", "dispersion_metric", "no_stationary_convergence_claim"]
+      },
+      "maps_to": ["lattice_diagnostics", "claim_boundary"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S08",
+      "title": "Quantum Multigraph And Multihypergraph States",
+      "url": "https://arxiv.org/abs/2312.14399",
+      "lane": "quantum_hypergraph",
+      "trust_tier": "primary",
+      "source_role": "multihyperedge_operation",
+      "source_weight": 0.74,
+      "function": {
+        "name": "f_multihyperedge_operation",
+        "input_symbols": ["edge_or_hyperedge", "dimension_d"],
+        "output_symbols": ["operation_signature", "dimension_condition"],
+        "operation": "edge_and_hyperedge_operations_to_connector_metadata",
+        "rule_map": ["prime_dimension_rule", "composite_dimension_subset", "bounded_hyperedge_metadata"]
+      },
+      "maps_to": ["source_graph", "orb_envelope"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S09",
+      "title": "Fusion-Based Graph State Optimization",
+      "url": "https://quantum-journal.org/papers/q-2023-12-20-1212/",
+      "lane": "quantum_graph",
+      "trust_tier": "primary",
+      "source_role": "fusion_order",
+      "source_weight": 0.72,
+      "function": {
+        "name": "f_fusion_order",
+        "input_symbols": ["target_graph"],
+        "output_symbols": ["simplified_graph", "fusion_network", "resource_overhead"],
+        "operation": "target_graph_to_deterministic_build_order",
+        "rule_map": ["graph_simplification", "fusion_network", "resource_overhead"]
+      },
+      "maps_to": ["lattice_build_order", "source_graph"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    },
+    {
+      "source_id": "S10",
+      "title": "Quantum Quasicrystal Patterns",
+      "url": "https://arxiv.org/abs/2110.12299",
+      "lane": "quasicrystal",
+      "trust_tier": "primary",
+      "source_role": "cut_project_accept",
+      "source_weight": 0.86,
+      "function": {
+        "name": "f_cut_project_accept",
+        "input_symbols": ["candidate_5d", "phi_basis", "acceptance_window", "seed_shift"],
+        "output_symbols": ["projected_2d", "internal_projection", "accept"],
+        "operation": "bounded_5d_candidate_to_2d_quasicrystal_acceptance",
+        "rule_map": ["phi_basis_projection", "acceptance_window", "candidate_cap"]
+      },
+      "maps_to": ["cut_project_engine", "penrose_lattice"],
+      "raw_body_stored": false,
+      "ui_visibility": "metadata_only"
+    }
+  ]
+}

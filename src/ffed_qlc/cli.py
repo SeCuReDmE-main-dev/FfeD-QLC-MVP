@@ -12,8 +12,16 @@ from .audit_orb import build_privacy_safe_audit_orb
 from .bc_perimeter import BcctlProvider
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS
 from .ecn_handoff import build_ecn_handoff_packet
+from .fractal_measurement import measure_tile_fractal_path
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
+from .orb_envelope import build_orb_envelope, export_redacted_orb_json, export_vad_reusable_template
+from .penrose_cut_project import CutProjectInput, cut_project_penrose_patch
+from .penrose_geometry import tile_metadata
+from .penrose_inflation import InflationInput, inflate_penrose_patch
+from .plithogenic_gate import classify_plithogenic_tile
+from .source_functions import build_source_function_graph, compile_source_function_profiles
 from .structural_transform import inspect_container, pack_bytes, unpack_bytes, verify_container
+from .tile_admission import build_tile_admission_ledger, compute_t_df_f, export_tile_admission_profile
 from .workflow import build_qlc_protection_workflow
 from .workflow_inspector import inspect_qlc_workflow_bundle
 
@@ -23,6 +31,31 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("map", help="Print the default Docker/CPAI study-case map")
+
+    source_functions = sub.add_parser("source-functions", help="Print source-function profiles as provenance graph")
+    source_functions.add_argument("--include-urls", action="store_true")
+    source_functions.add_argument("--output")
+
+    build_lattice = sub.add_parser("build-lattice", help="Build a Penrose lattice patch")
+    build_lattice.add_argument("--engine", choices=["inflation", "cut_project"], default="inflation")
+    build_lattice.add_argument("--target-tile-count", type=int, default=8)
+    build_lattice.add_argument("--depth", type=int, default=3)
+    build_lattice.add_argument("--seed", default="cli")
+    build_lattice.add_argument("--output")
+
+    admit_tiles = sub.add_parser("admit-tiles", help="Build and admit Penrose tiles through T,dF,F")
+    admit_tiles.add_argument("--engine", choices=["inflation", "cut_project"], default="inflation")
+    admit_tiles.add_argument("--target-tile-count", type=int, default=8)
+    admit_tiles.add_argument("--depth", type=int, default=3)
+    admit_tiles.add_argument("--seed", default="cli")
+    admit_tiles.add_argument("--output")
+
+    build_orb = sub.add_parser("build-orb", help="Build a redacted orb from admitted lattice tiles")
+    build_orb.add_argument("--engine", choices=["inflation", "cut_project"], default="inflation")
+    build_orb.add_argument("--target-tile-count", type=int, default=8)
+    build_orb.add_argument("--depth", type=int, default=3)
+    build_orb.add_argument("--seed", default="cli")
+    build_orb.add_argument("--output")
 
     gate = sub.add_parser("gate", help="Evaluate one evidence item")
     gate.add_argument("--source-id", required=True)
@@ -150,6 +183,41 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "map":
         print(json.dumps([block.__dict__ for block in DEFAULT_STUDYCASE_BLOCKS], indent=2))
+        return 0
+
+    if args.command == "source-functions":
+        profiles = compile_source_function_profiles()
+        payload = build_source_function_graph(profiles, include_urls=args.include_urls)
+        _emit_json(payload, args.output)
+        return 0
+
+    if args.command == "build-lattice":
+        patch = _build_cli_patch(args.engine, args.target_tile_count, args.depth, args.seed)
+        payload = {
+            "schema": "ffed.qlc.cli.build_lattice.v1",
+            "patch_metadata": dict(patch.metadata),
+            "tiles": [tile_metadata(tile) for tile in patch.tiles],
+        }
+        _emit_json(payload, args.output)
+        return 0
+
+    if args.command == "admit-tiles":
+        patch = _build_cli_patch(args.engine, args.target_tile_count, args.depth, args.seed)
+        _classifications, _measurements, admissions = _classify_measure_admit_patch(patch)
+        payload = {
+            "schema": "ffed.qlc.cli.admit_tiles.v1",
+            "patch_fingerprint": patch.metadata["patch_fingerprint"],
+            "admissions": [export_tile_admission_profile(profile) for profile in admissions],
+            "ledger": build_tile_admission_ledger(admissions),
+        }
+        _emit_json(payload, args.output)
+        return 0
+
+    if args.command == "build-orb":
+        patch = _build_cli_patch(args.engine, args.target_tile_count, args.depth, args.seed)
+        classifications, measurements, admissions = _classify_measure_admit_patch(patch)
+        envelope = build_orb_envelope(patch, admissions, classifications, measurements)
+        _emit_json(export_redacted_orb_json(envelope), args.output)
         return 0
 
     if args.command == "gate":
@@ -324,6 +392,38 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     return 2
+
+
+def _build_cli_patch(engine: str, target_tile_count: int, depth: int, seed: str):
+    if engine == "cut_project":
+        return cut_project_penrose_patch(
+            CutProjectInput(target_tile_count=target_tile_count, seed=seed)
+        ).patch
+    return inflate_penrose_patch(
+        InflationInput(depth=depth, target_tile_count=target_tile_count, seed=seed)
+    ).patch
+
+
+def _classify_measure_admit_patch(patch):
+    classifications = [classify_plithogenic_tile(tile) for tile in patch.tiles]
+    measurements = [
+        measure_tile_fractal_path(tile, patch, carrier_type="fractal_boundary")
+        for tile in patch.tiles
+    ]
+    admissions = [
+        compute_t_df_f(tile, classification, measurement)
+        for tile, classification, measurement in zip(patch.tiles, classifications, measurements)
+    ]
+    return classifications, measurements, admissions
+
+
+def _emit_json(payload: dict[str, Any], output_path: str | None) -> None:
+    output = json.dumps(payload, indent=2, sort_keys=True)
+    if output_path:
+        Path(output_path).write_text(output, encoding="utf-8")
+        print(output_path)
+    else:
+        print(output)
 
 
 def _resolve_passphrase(env_name: str | None) -> str:

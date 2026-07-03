@@ -26,6 +26,21 @@
     "webauth_source": "FNP-QNN-MVP/fnpqnn_gateway_MVP",
     "future_token_governor_bridge": "FNP-QNN-MVP/fnpqnn_gateway_MVP/fnpqnn_gateway_mvp/token_governor.py"
   },
+  "provider_mapping": {
+    "OpenAI": "Codex",
+    "ChatGPT": "Codex",
+    "Google": "Antigravity",
+    "Gemini": "Antigravity"
+  },
+  "math_contract": {
+    "hierarchy": "I -> I_system^S -> D_f -> dF -> i_fractal",
+    "penrose_lattice": "thin/thick rhombi only after geometry validation",
+    "source_graph": "secondary provenance graph",
+    "cpai": "metadata-only; no copied CodeProject AI server"
+  },
+  "unsupported_routes": {
+    "ollama_school_route": "rejected_for_official_school_route"
+  },
   "mcp": {
     "status": "planned",
     "live_servers_connected": []

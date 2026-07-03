@@ -55,5 +55,19 @@
       "dF",
       "i_fractal"
     ]
+  },
+  "provider_mapping": {
+    "Google": "Antigravity",
+    "Gemini": "Antigravity"
+  },
+  "math_contract": {
+    "preserve_penrose_contract": true,
+    "preserve_hierarchy": "I -> I_system^S -> D_f -> dF -> i_fractal",
+    "source_urls_are_function_provenance": true,
+    "cpai_yolo_boundary": "metadata-only; no long training without explicit UI confirmation",
+    "raw_tif_export_allowed": false
+  },
+  "unsupported_routes": {
+    "ollama_school_route": "rejected_for_official_education_handoff"
   }
 }

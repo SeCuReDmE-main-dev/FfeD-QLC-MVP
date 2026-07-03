@@ -359,6 +359,80 @@ def test_cli_bouncy_castle_status_sign_and_verify_use_provider(tmp_path, monkeyp
     assert provider.verify_calls[0]["signature_digest"] == SIGNATURE_DIGEST
 
 
+def test_cli_source_functions_build_lattice_admit_tiles_and_build_orb(tmp_path, monkeypatch) -> None:
+    sources = tmp_path / "sources.json"
+    lattice = tmp_path / "lattice.json"
+    admissions = tmp_path / "admissions.json"
+    orb = tmp_path / "orb.json"
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        ["ffed-qlc", "source-functions", "--output", str(sources)],
+    )
+    assert main() == 0
+    source_payload = json.loads(sources.read_text(encoding="utf-8"))
+    assert source_payload["graph_role"] == "secondary_provenance_not_lattice_engine"
+    assert "https://" not in json.dumps(source_payload)
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "build-lattice",
+            "--target-tile-count",
+            "5",
+            "--depth",
+            "3",
+            "--output",
+            str(lattice),
+        ],
+    )
+    assert main() == 0
+    lattice_payload = json.loads(lattice.read_text(encoding="utf-8"))
+    assert lattice_payload["schema"] == "ffed.qlc.cli.build_lattice.v1"
+    assert lattice_payload["patch_metadata"]["tile_count"] == 5
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "admit-tiles",
+            "--target-tile-count",
+            "5",
+            "--depth",
+            "3",
+            "--output",
+            str(admissions),
+        ],
+    )
+    assert main() == 0
+    admission_payload = json.loads(admissions.read_text(encoding="utf-8"))
+    assert admission_payload["schema"] == "ffed.qlc.cli.admit_tiles.v1"
+    assert admission_payload["ledger"]["raw_tif_exported"] is False
+
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "ffed-qlc",
+            "build-orb",
+            "--target-tile-count",
+            "5",
+            "--depth",
+            "3",
+            "--output",
+            str(orb),
+        ],
+    )
+    assert main() == 0
+    orb_payload = json.loads(orb.read_text(encoding="utf-8"))
+    assert orb_payload["schema"] == "ffed.qlc.orb_envelope.v1"
+    assert orb_payload["raw_media_embedded"] is False
+
+
 def test_cli_protect_workflow_can_add_bouncy_castle_perimeter_receipt(tmp_path, monkeypatch) -> None:
     class FakeProvider:
         def sign_digest(self, *, key_id: str, context_digest: str, artifact_digest: str) -> dict[str, object]:

@@ -25,3 +25,6 @@ Use this skill for the `.antigravity` VS Code extension-like adapter in `FfeD-QL
 - WebAuth template: `.antigravity/webauth-template.json`.
 - MCP route: planned only; this scaffold connects no live MCP server.
 - Do not rewrite the official school mechanism from this app adapter.
+- Preserve the QLC Penrose contract: source URLs are function provenance, Source Graph is secondary, and lattice tiles must be validated thin/thick rhombi.
+- Keep CPAI/YOLO metadata-only; do not copy CodeProject AI Server and do not start training without explicit UI confirmation.
+- Reject Ollama as an official school route for this adapter.
