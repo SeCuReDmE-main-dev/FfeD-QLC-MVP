@@ -9,6 +9,9 @@ __pycache__/
 .mypy_cache/
 .venv/
 venv/
+node_modules/
+tsconfig.tsbuildinfo
+.codex-run/
 
 dist/
 build/
