@@ -198,6 +198,20 @@ select:focus-visible {
   max-width: 190px;
 }
 
+.algoquest-status {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  max-width: 280px;
+  padding: 7px 10px;
+  border: 1px solid #cfd9d4;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #41504c;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
 .action-button:disabled,
 .icon-button:disabled {
   opacity: 0.52;

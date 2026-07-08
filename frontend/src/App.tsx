@@ -18,6 +18,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { emitAlgoQuestLearningEvent } from "./algoQuestQbitAdapter";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
@@ -128,6 +129,7 @@ export function App() {
   const [template, setTemplate] = useState<Record<string, unknown> | null>(null);
   const [cpai, setCpai] = useState<Record<string, CpaiStatus>>({});
   const [selectedTileId, setSelectedTileId] = useState<string | null>(null);
+  const [algoQuestStatus, setAlgoQuestStatus] = useState("AlgoQuest event pending");
 
   const request = useMemo(
     () => ({
@@ -277,6 +279,15 @@ export function App() {
     );
   }
 
+  function sendPatchToAlgoQuest() {
+    if (!lattice) {
+      return;
+    }
+    const fingerprint = lattice.patch_metadata.patch_fingerprint.slice(0, 16);
+    const event = emitAlgoQuestLearningEvent(`ffed-qlc:lattice:${fingerprint}`, 93);
+    setAlgoQuestStatus(`AlgoQuest event ready: ${event.artifact_ref}`);
+  }
+
   return (
     <div className="app-shell">
       <aside className="sidebar" aria-label="Source function profiles">
@@ -368,6 +379,13 @@ export function App() {
             disabled={!validation}
           />
           <ActionButton icon={Download} label="Export Template" loading={loading === "template"} onClick={exportTemplate} />
+          <ActionButton
+            icon={GraduationCap}
+            label="Send Patch to AlgoQuest"
+            onClick={sendPatchToAlgoQuest}
+            disabled={!lattice}
+          />
+          <span className="algoquest-status" role="status">{algoQuestStatus}</span>
         </section>
 
         {error ? <div className="error-banner">{error}</div> : null}

@@ -4,6 +4,7 @@ import { join } from "node:path";
 const root = process.cwd();
 const app = readFileSync(join(root, "frontend", "src", "App.tsx"), "utf8");
 const css = readFileSync(join(root, "frontend", "src", "styles.css"), "utf8");
+const adapter = readFileSync(join(root, "frontend", "src", "algoQuestQbitAdapter.ts"), "utf8");
 const dist = join(root, "dist");
 
 const requiredLabels = [
@@ -18,6 +19,7 @@ const requiredLabels = [
   "Filter accepted",
   "Save layout",
   "Download graph snapshot",
+  "Send Patch to AlgoQuest",
 ];
 
 const failures = [];
@@ -31,6 +33,14 @@ for (const label of requiredLabels) {
 }
 for (const expected of [".lattice-svg", "@media (max-width: 980px)", "@media (max-width: 620px)", "overflow-wrap"]) {
   if (!css.includes(expected)) failures.push(`missing responsive/style guard: ${expected}`);
+}
+for (const expected of [
+  "securedme.education.algoquest.outbox.v1",
+  "securedme.education.student-learning-event.v1",
+  "raw_secret_stored: false",
+  "ffed-qlc",
+]) {
+  if (!adapter.includes(expected)) failures.push(`missing AlgoQuest adapter guard: ${expected}`);
 }
 
 if (failures.length) {
