@@ -40,7 +40,7 @@ def test_adapter_maps_route_providers_and_reject_unsupported_school_route() -> N
     antigravity = _read_json(".antigravity/securedme-adapter-map.json")
 
     for payload in (codex, antigravity):
-        assert payload["schema"] == "securedme.education.adapter-map.v1"
+        assert payload["schema"] == "securedme.education.adapter-map.v2"
         assert payload["provider_mapping"]["OpenAI"] == "Codex"
         assert payload["provider_mapping"]["ChatGPT"] == "Codex"
         assert payload["provider_mapping"]["Google"] == "Antigravity"
