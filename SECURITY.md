@@ -1,73 +1,36 @@
 # Security Policy
 
-## SecuredMe Education Governance Alignment
+## Supported Versions
 
-- Current phase: pre-alpha / in development.
-- Repository license: Secured Educational Cybersecurity License 2.0 (SECL-2.0), local metadata reference LicenseRef-SECL-2.0.
-- Official AI-assisted classroom routes: Codex/OpenAI and Antigravity/Gemini only.
-- Do not add Ollama Cloud, uncensored local AI, raw-token student flows, or unknown agent providers as official school routes.
-- Cybersecurity, fraud-awareness, protection, or abuse-prevention behavior must stay defensive and supervised.
-- Preserve human-review boundaries; do not claim production, clinical, regulatory, enforcement, safety-critical, or autonomous authority readiness.
-- Private modified copies, broken forks, and unreviewed rewrites are not a maintainer support obligation.
+FfeD-QLC-MVP is pre-alpha. There are no production-supported versions yet. Security fixes target the current main branch unless a maintainer explicitly publishes another supported line.
 
+## Scope
 
-## Public MVP Boundary
+Security-sensitive areas include bounded admissibility checks, sandbox plans, image/document evidence, and gateway mesh proof payloads. Reports should focus on real behavior in this repository or on its documented gateway boundary.
 
-This repository is public. Do not commit:
+## Responsible Disclosure
 
-- real `.env` files;
-- private API keys;
-- Datadog API keys;
-- E2B API keys;
-- private research notebooks;
-- sensitive datasets;
-- credentials, tokens, cookies, or session material.
+Report security issues privately to the maintainer before public disclosure. If GitHub Security Advisories are enabled, use that channel first. If not, use a private maintainer channel and include enough detail to reproduce without exposing secrets or personal data.
 
-## Secret Handling Model
+Useful report content:
 
-The MVP protects secrets by workflow separation:
+- affected file, route, module, command, or workflow;
+- reproduction steps;
+- expected and observed behavior;
+- impact and affected users;
+- whether credentials, personal information, student data, private evidence, or operational details were exposed;
+- proposed fix, if known.
 
-- public examples contain variable names, not values;
-- Docker labels and Datadog tags must not contain secrets;
-- sandbox runs should receive only the exact variables required;
-- logs should contain success/failure state, not raw secret material;
-- `.env` files are ignored by git.
+## Secret Boundary
 
-## Image And Screenshot Redaction
+Never commit or disclose API keys, OAuth tokens, cookies, browser sessions, .env values, passwords, cPanel details, payment credentials, private corpora, raw student records, production logs, or unpublished research material.
 
-Images can contain secrets even when the filename looks harmless. Before images are committed, sent to a sandbox, or referenced in public documentation:
+The shared SecuredMe gateway may route configured audit, observability, and assistant handoff metadata. This repository must not expose gateway secrets, provider tokens, or private operator state in README files, tests, logs, exceptions, screenshots, or issue reports.
 
-- run object detection for sensitive regions such as screens, documents, QR codes, dashboards, and terminals;
-- run OCR and secret-pattern scanning on visible text;
-- use solid redaction for real keys and credentials;
-- emit only fingerprints, counts, and decision IDs to observability tools;
-- do not send unredacted screenshots to Datadog logs.
+## AI And Human Review Boundary
 
-See `docs/yolo-secret-redaction.md`.
+Official school AI routes are Codex/OpenAI and Antigravity/Gemini only. Model output must remain advisory and reviewable. Do not convert this tool into autonomous authority, enforcement, diagnosis, grading, legal decision-making, or unsupervised production safety infrastructure.
 
-## Optional Bouncy Castle Perimeter
+## Public Issues
 
-The optional `bcctl` integration uses Bouncy Castle through an external local
-tool to sign public metadata digests. It is a perimeter integrity receipt for
-workflow bundles, not a replacement for the QLC structural transform,
-ChaCha20-Poly1305, scrypt key derivation, or future production threat modeling.
-
-The provider boundary is strict:
-
-- pass only key IDs, context digests, artifact/message digests, and signature
-  digests;
-- never pass raw files, plaintext, passphrases, API keys, `.env` values, private
-  corpus text, screenshots, or raw simulator payloads;
-- keep provider failures sanitized and do not echo local filesystem paths in
-  public status output;
-- leave normal QLC commands functional when `bcctl` is not configured.
-
-See `docs/bouncy-castle-perimeter.md`.
-
-## Reporting
-
-If you find a secret exposure or unsafe public artifact, open a private disclosure path with the repository owner instead of posting the secret in a public issue.
-
-## Current Limit
-
-This MVP is not a production cryptographic system and is not yet a certified secret-management platform. Treat it as a public scaffold for building and testing the boundary layer.
+Do not open public issues containing exploit payloads, live credentials, personal data, private student information, customer records, camera/audio samples, payment secrets, or enough operational detail to compromise a deployment.

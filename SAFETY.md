@@ -1,21 +1,27 @@
 # Safety Policy For FfeD-QLC-MVP
 
-SEL/SECL-covered projects are built for education and supervised review.
+## Intended Use
 
-Do not use SEL/SECL-covered material for:
+FfeD-QLC-MVP is a SecuredMe Education pre-alpha tool for supervised education, research, simulation, classroom training, or public-interest review. It is not production authority software.
 
-- attack, intrusion, or unauthorized access;
-- theft, fraud, impersonation, or deception;
-- bypassing security, privacy, or school controls;
-- malware, credential theft, evasion, or exploit automation;
-- unsafe surveillance or biometric identification;
-- autonomous accusations, enforcement, discipline, diagnosis, or safety decisions;
-- publication of private data, private email, credentials, or unpublished source bodies;
-- illegal or harmful activity.
+## Gateway And Provider Boundary
 
-Cybersecurity and algorithm-building tools must be framed as training tools for
-students, teachers, and supervised young adults. They must not be converted into
-attack tooling or automation for abuse.
+The tool may be gateway-compatible when the shared SecuredMe gateway is configured. Gateway support does not mean this repository stores provider tokens, cPanel credentials, Datadog keys, E2B credentials, payment secrets, or raw .env values.
 
-When a workflow is ambiguous, route it to human review and keep the output
-non-authoritative.
+Official classroom AI routes are Codex/OpenAI and Antigravity/Gemini only. Unsupported provider routes must stay outside official school behavior.
+
+## Human Review
+
+Outputs, scores, traces, detections, plans, classifications, and recommendations are review artifacts. A qualified human reviewer remains responsible for interpretation, context, consent, privacy, and action.
+
+## Prohibited Uses
+
+Do not use this project for theft, fraud, bypass, impersonation, unsafe surveillance, credential harvesting, malware, harassment, autonomous enforcement, clinical diagnosis, legal compliance decisions, emergency response, or unsupervised production control.
+
+## Data Handling
+
+Use synthetic, public, consented, or properly authorized data only. Do not publish private student data, credentials, private correspondence, biometric identifiers, raw secrets, production logs, or private research artifacts.
+
+## Maintainer Support Boundary
+
+Private modified copies, unsafe forks, unsupported provider integrations, and rewrites that bypass these boundaries are not part of the maintained SecuredMe Education release.

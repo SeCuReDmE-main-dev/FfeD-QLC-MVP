@@ -1,16 +1,14 @@
 FfeD-QLC-MVP Notice
 
-Primary author and maintainer:
+Copyright (c) Jean-Sebastien Beaulieu and SecuredMe contributors.
 
-Jean-Sebastien Beaulieu
-ORCID: https://orcid.org/0009-0007-2904-0443
-SecuredMe
+This repository is part of the SecuredMe Education suite. It remains an independent Git repository with its own source history, license file, validation surface, and public issue trail.
 
-This repository is part of the SecuredMe Education suite and is licensed under
-the Secured Educational Cybersecurity License 2.0 (SECL-2.0). The local metadata reference is
-LicenseRef-SECL-2.0.
+License: Secured Educational Cybersecurity License 2.0 (SECL-2.0)
+Local metadata reference: LicenseRef-SECL-2.0
+Operational branch: main
+Homepage: https://ffed-qlc.securedme.ca
 
-The selected license is a custom SecuredMe license. It is not currently an
-OSI-approved license and is not currently listed in the SPDX License List. Use
-LicenseRef-SECL-2.0 only as a local metadata reference when the full license text is
-included in this repository.
+The shared SecuredMe gateway may provide configured routing, audit, observability, or assistant-handoff support for the suite. This repository does not publish, store, or require gateway secrets in public documentation.
+
+Third-party names, providers, libraries, marks, and services remain the property of their respective owners. Their mention does not imply endorsement unless explicitly stated in an approved public agreement.

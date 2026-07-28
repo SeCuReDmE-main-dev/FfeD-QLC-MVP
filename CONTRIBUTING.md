@@ -1,18 +1,43 @@
 # Contributing
 
-## SecuredMe Education Governance Alignment
+## SecuredMe Education Governance
 
-- Current phase: pre-alpha / in development.
-- Repository license: Secured Educational Cybersecurity License 2.0 (SECL-2.0), local metadata reference LicenseRef-SECL-2.0.
-- Official AI-assisted classroom routes: Codex/OpenAI and Antigravity/Gemini only.
-- Do not add Ollama Cloud, uncensored local AI, raw-token student flows, or unknown agent providers as official school routes.
-- Cybersecurity, fraud-awareness, protection, or abuse-prevention behavior must stay defensive and supervised.
-- Preserve human-review boundaries; do not claim production, clinical, regulatory, enforcement, safety-critical, or autonomous authority readiness.
-- Private modified copies, broken forks, and unreviewed rewrites are not a maintainer support obligation.
+This repository is part of the SecuredMe Education suite and is currently pre-alpha. Contribution intake is intentionally conservative until the alpha classroom stability gate is reached.
 
+- Tool: FfeD-QLC-MVP
+- License: Secured Educational Cybersecurity License 2.0 (SECL-2.0)
+- Local metadata reference: LicenseRef-SECL-2.0
+- Operational branch: main
+- Official classroom AI routes: Codex/OpenAI and Antigravity/Gemini only
+- Gateway stance: gateway-compatible when the shared SecuredMe gateway lane is configured; this repository must not store gateway secrets
 
-Official support is PR-based. Changes must preserve `SCHOOL_TOOL_GOVERNANCE.md`.
+## What Helps
 
-Accepted contributions are small, test-backed, and education-safe. Provider changes must keep Codex/OpenAI and Antigravity/Gemini as the only official school routes.
+Useful public issues include reproducible bugs, documentation gaps, test failures, accessibility problems, unclear student/teacher flows, and evidence-bound safety wording improvements.
 
-Do not add Ollama Cloud, uncensored local AI, unknown agent routes, or attack/bypass workflows as official behavior.
+Future code contributions should be small, test-backed, and scoped to this tool. They must preserve the suite hierarchy, the local secret boundary, human review, and the documented gateway contract.
+
+## What Is Not Accepted
+
+Do not submit or request:
+
+- API keys, tokens, cookies, .env values, private cPanel details, private student data, or private correspondence;
+- raw-token student flows or browser-session export;
+- Ollama Cloud, uncensored local AI, unknown model providers, or unsupported agent routes as official school behavior;
+- autonomous enforcement, clinical, regulatory, safety-critical, or production-readiness claims;
+- offensive, abusive, fraud, bypass, credential theft, surveillance-abuse, or criminal automation workflows;
+- broad rewrites that make the maintained classroom version harder to audit.
+
+## Validation
+
+Before maintainer-owned changes are pushed, run the narrow validation for this tool when available:
+
+`powershell
+python -m pytest
+`
+
+If the validation surface is not available on the machine, document the blocker in the issue or commit notes without inventing a passing result.
+
+## Security Reports
+
+Security issues must follow SECURITY.md. Do not publish exploit details, credentials, personal data, private files, or operational infrastructure details in a public issue.
