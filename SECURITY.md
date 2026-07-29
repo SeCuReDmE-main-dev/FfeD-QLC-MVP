@@ -25,6 +25,8 @@ Useful report content:
 
 Never commit or disclose API keys, OAuth tokens, cookies, browser sessions, .env values, passwords, cPanel details, payment credentials, private corpora, raw student records, production logs, or unpublished research material.
 
+Do not commit Datadog API keys, OpenAI keys, GitHub tokens, cPanel credentials, PayPal credentials, or any other operational secret. This MVP is not a production cryptographic system.
+
 The shared SecuredMe gateway may route configured audit, observability, and assistant handoff metadata. This repository must not expose gateway secrets, provider tokens, or private operator state in README files, tests, logs, exceptions, screenshots, or issue reports.
 
 ## AI And Human Review Boundary
