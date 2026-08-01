@@ -1,0 +1,40 @@
+schema: securedme.tool-doc.v2
+slug: ffed-qlc
+title: FfeD-QLC
+version: 0.1.0
+status: public-preview
+license: LicenseRef-SECL-2.0
+summary: A bounded admissibility workbench for structured quantum and logical-computation
+  experiments.
+identity:
+  logo: assets/Logo Final.png
+  family: FfeD-QLC
+runtime:
+  type: browser-app
+  availability: verified
+  public_url: https://ffed-qlc.securedme.ca
+source:
+  repository: https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP
+  issues: https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/issues
+documentation:
+  public_root: docs/public
+  source_language: en
+  languages:
+  - en
+  - fr
+  - es
+commands:
+  install:
+  - python -m venv .venv
+  - .venv\Scripts\python -m pip install -e .[dev]
+  - npm install
+  start:
+  - npm run dev
+  - .venv\Scripts\ffed-qlc --help
+  test:
+  - .venv\Scripts\python -m pytest
+  - npm run build
+boundaries:
+  authority: Candidate admission is a software decision trace, not proof of a physical
+    or quantum claim.
+  human_review_required: true
