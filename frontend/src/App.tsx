@@ -103,6 +103,102 @@ type CpaiStatus = {
   training_started?: boolean;
 };
 
+type UtilityTheme = "night" | "day";
+type UtilityLanguage = "en" | "fr" | "es";
+type UtilityAccess = "base" | "autism-calm" | "adhd-sprint" | "deep-work";
+
+const LANGUAGE_ORDER: UtilityLanguage[] = ["en", "fr", "es"];
+const LANGUAGE_LABELS: Record<UtilityLanguage, string> = {
+  en: "Language: EN",
+  fr: "Langue : FR",
+  es: "Idioma: ES",
+};
+
+const ACCESS_ORDER: UtilityAccess[] = ["base", "autism-calm", "adhd-sprint", "deep-work"];
+const ACCESS_LABELS: Record<UtilityAccess, string> = {
+  base: "Access: Base",
+  "autism-calm": "Access: Autism Calm",
+  "adhd-sprint": "Access: ADHD Sprint",
+  "deep-work": "Access: Deep Work",
+};
+
+function UtilityDock() {
+  const [language, setLanguage] = useState<UtilityLanguage>(() => {
+    const saved = localStorage.getItem("securedme.ffedqlc.language") as UtilityLanguage | null;
+    return saved && LANGUAGE_ORDER.includes(saved) ? saved : "en";
+  });
+  const [theme, setTheme] = useState<UtilityTheme>(() =>
+    localStorage.getItem("securedme.ffedqlc.theme") === "night" ? "night" : "day",
+  );
+  const [access, setAccess] = useState<UtilityAccess>(() => {
+    const saved = localStorage.getItem("securedme.ffedqlc.access") as UtilityAccess | null;
+    return saved && ACCESS_ORDER.includes(saved) ? saved : "base";
+  });
+
+  useEffect(() => {
+    localStorage.setItem("securedme.ffedqlc.language", language);
+    document.documentElement.lang = language;
+    document.documentElement.dataset.lang = language;
+  }, [language]);
+
+  useEffect(() => {
+    localStorage.setItem("securedme.ffedqlc.theme", theme);
+    document.documentElement.dataset.theme = theme;
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem("securedme.ffedqlc.access", access);
+    document.documentElement.dataset.accessProfile = access;
+  }, [access]);
+
+  const nextLanguage = () => {
+    const currentIndex = LANGUAGE_ORDER.indexOf(language);
+    setLanguage(LANGUAGE_ORDER[(currentIndex + 1) % LANGUAGE_ORDER.length]);
+  };
+
+  const nextAccess = () => {
+    const currentIndex = ACCESS_ORDER.indexOf(access);
+    setAccess(ACCESS_ORDER[(currentIndex + 1) % ACCESS_ORDER.length]);
+  };
+
+  return (
+    <aside className="utility-dock" aria-label="SecuredMe display and accessibility preferences">
+      <button
+        type="button"
+        onClick={nextLanguage}
+        className="utility-dock-button"
+        aria-label={`Language preference: ${language.toUpperCase()}. Activate for next language.`}
+      >
+        {LANGUAGE_LABELS[language]}
+      </button>
+      <button
+        type="button"
+        onClick={() => setTheme((current) => (current === "night" ? "day" : "night"))}
+        className="utility-dock-button"
+        aria-label={`Theme: ${theme}. Activate to switch theme.`}
+      >
+        Theme: {theme === "night" ? "Night" : "Day"}
+      </button>
+      <button
+        type="button"
+        onClick={nextAccess}
+        className="utility-dock-button"
+        aria-label={`Accessibility profile: ${ACCESS_LABELS[access]}. Activate for next profile.`}
+      >
+        {ACCESS_LABELS[access]}
+      </button>
+      <a
+        href="https://securedme.ca/pay/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="utility-dock-button utility-dock-support"
+      >
+        Support SecuredMe
+      </a>
+    </aside>
+  );
+}
+
 const tabs: Array<{ key: TabKey; label: string; icon: typeof Box }> = [
   { key: "lattice", label: "Lattice", icon: Box },
   { key: "gate", label: "Plithogenic Gate", icon: ShieldCheck },
@@ -310,6 +406,34 @@ export function App() {
             </button>
           ))}
         </div>
+
+        <div className="stitch-sidebar-card">
+          <div className="stitch-card-header">
+            <div>
+              <span className={`stitch-live-dot${lattice || validation ? "" : " is-idle"}`}></span>
+              <span>LATTICE TELEMETRY</span>
+            </div>
+            <span>{lattice || validation ? "LIVE" : "IDLE"}</span>
+          </div>
+          <div className="stitch-metrics-compact">
+            <div className="stitch-metric-item">
+              <span>Tiles</span>
+              <strong>{lattice?.patch_metadata.tile_count ?? 0}</strong>
+            </div>
+            <div className="stitch-metric-item">
+              <span>Accepted</span>
+              <strong>{validation?.ledger.accepted_count ?? 0}</strong>
+            </div>
+            <div className="stitch-metric-item">
+              <span>Engine</span>
+              <strong>{engine}</strong>
+            </div>
+            <div className="stitch-metric-item">
+              <span>Status</span>
+              <strong>{validation ? "VALIDATED" : lattice ? "BUILT" : "IDLE"}</strong>
+            </div>
+          </div>
+        </div>
       </aside>
 
       <main className="workspace">
@@ -435,6 +559,7 @@ export function App() {
           </div>
         </section>
       </main>
+      <UtilityDock />
     </div>
   );
 }

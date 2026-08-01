@@ -405,3 +405,202 @@ pre {
     flex: 1 1 150px;
   }
 }
+
+/* Stitch Design System & Utility Dock */
+.utility-dock {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  max-width: calc(100vw - 32px);
+}
+
+.utility-dock-button {
+  border: 1px solid rgba(255, 183, 3, 0.7);
+  background: rgba(5, 8, 22, 0.92);
+  color: #ffffff;
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+.utility-dock-button:hover {
+  border-color: #00f0ff;
+}
+
+.utility-dock-support {
+  border: 1px solid #00f0ff;
+  background: linear-gradient(135deg, #0284c7, #7c3aed);
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stitch-sidebar-card {
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  background: rgba(5, 15, 30, 0.85);
+  color: #f0f6fc;
+}
+
+.stitch-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 240, 255, 0.15);
+  padding-bottom: 6px;
+}
+
+.stitch-live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+  margin-right: 6px;
+}
+
+.stitch-live-dot.is-idle {
+  background: #8b949e;
+  box-shadow: none;
+}
+
+.stitch-metrics-compact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  font-size: 11px;
+}
+
+.stitch-metric-item {
+  background: rgba(15, 25, 45, 0.7);
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.stitch-metric-item span {
+  display: block;
+  color: #8b949e;
+  font-size: 9px;
+  text-transform: uppercase;
+}
+
+.stitch-metric-item strong {
+  color: #00f0ff;
+  font-family: monospace;
+}
+
+:root[data-theme="night"] {
+  color-scheme: dark;
+  background: #050816;
+  color: #f0f6fc;
+}
+
+:root[data-theme="night"] body,
+:root[data-theme="night"] .app-shell,
+:root[data-theme="night"] .workspace {
+  background: #050816;
+  color: #f0f6fc;
+}
+
+:root[data-theme="night"] .sidebar,
+:root[data-theme="night"] .topbar,
+:root[data-theme="night"] .control-band,
+:root[data-theme="night"] .canvas-panel,
+:root[data-theme="night"] .inspector,
+:root[data-theme="night"] .ledger {
+  background: #0b1220;
+  color: #f0f6fc;
+  border-color: #26364a;
+}
+
+:root[data-theme="night"] .source-pill,
+:root[data-theme="night"] .tab,
+:root[data-theme="night"] .action-button,
+:root[data-theme="night"] .icon-button,
+:root[data-theme="night"] .ledger-row,
+:root[data-theme="night"] input,
+:root[data-theme="night"] select {
+  background: #111c2f;
+  color: #f0f6fc;
+  border-color: #3b4c63;
+}
+
+:root[data-theme="night"] .muted,
+:root[data-theme="night"] .brand-block p,
+:root[data-theme="night"] .ledger-row span,
+:root[data-theme="night"] .ledger-row small {
+  color: #a9b7c9;
+}
+
+:root[data-access-profile="autism-calm"] * {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+  transition-duration: 0.01ms !important;
+}
+
+:root[data-access-profile="autism-calm"] .stitch-live-dot,
+:root[data-access-profile="autism-calm"] .utility-dock-button {
+  box-shadow: none;
+}
+
+:root[data-access-profile="adhd-sprint"] button:focus-visible,
+:root[data-access-profile="adhd-sprint"] a:focus-visible,
+:root[data-access-profile="adhd-sprint"] input:focus-visible,
+:root[data-access-profile="adhd-sprint"] select:focus-visible {
+  outline: 4px solid #ffb703;
+  outline-offset: 3px;
+}
+
+:root[data-access-profile="adhd-sprint"] .action-button,
+:root[data-access-profile="adhd-sprint"] .utility-dock-button {
+  min-height: 44px;
+}
+
+:root[data-access-profile="deep-work"] .stitch-sidebar-card,
+:root[data-access-profile="deep-work"] .status-strip {
+  opacity: 0.72;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .utility-dock {
+    position: static;
+    align-items: stretch;
+    margin: 12px;
+    max-width: none;
+  }
+
+  .utility-dock-button {
+    justify-content: center;
+  }
+}
