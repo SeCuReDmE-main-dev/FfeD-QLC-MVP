@@ -17,6 +17,7 @@ def test_cpai_status_dry_run_and_unavailable_probe_are_metadata_only() -> None:
     dry_run = probe_cpai_status()
     unavailable = probe_cpai_status("http://127.0.0.1:9", dry_run=False, timeout_seconds=0.01)
 
+    assert DEFAULT_CPAI_URL == "http://127.0.0.1:32171"
     assert dry_run["cpai_url"] == DEFAULT_CPAI_URL
     assert dry_run["dry_run"] is True
     assert dry_run["raw_payload_embedded"] is False

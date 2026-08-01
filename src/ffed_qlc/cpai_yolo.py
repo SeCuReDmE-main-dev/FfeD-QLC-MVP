@@ -12,7 +12,7 @@ from .mesh_proof import build_celebrum_roi_map
 from .particle_pressure import semantic_pressure_from_yolo_rois
 
 
-DEFAULT_CPAI_URL = "http://localhost:32168"
+DEFAULT_CPAI_URL = "http://127.0.0.1:32171"
 TRAINING_MODULE = "TrainingObjectDetectionYOLOv5"
 DETECTION_ROUTE = "/v1/vision/detection"
 CUSTOM_MODEL_LIST_ROUTE = "/v1/vision/custom/list"
@@ -92,11 +92,24 @@ def probe_yolo_detection_routes(
 ) -> dict[str, Any]:
     """Return metadata for YOLO detection and custom model routes."""
 
+    available = False
+    error_type: str | None = None
+    if not dry_run:
+        try:
+            request = Request(cpai_url.rstrip("/") + CUSTOM_MODEL_LIST_ROUTE, data=b"", method="POST")
+            with urlopen(request, timeout=2.0) as response:  # nosec - repository-local CPAI node
+                payload = json.loads(response.read(1024 * 1024).decode("utf-8"))
+                available = bool(payload.get("success")) if isinstance(payload, dict) else False
+        except (URLError, TimeoutError, OSError, ValueError, json.JSONDecodeError) as exc:
+            error_type = type(exc).__name__
     return {
         "schema": "ffed.qlc.cpai_yolo_probe.v1",
         "cpai_url": cpai_url,
         "routes": [DETECTION_ROUTE, CUSTOM_MODEL_LIST_ROUTE],
         "dry_run": dry_run,
+        "transport_checked": not dry_run,
+        "available": available,
+        "error_type": error_type,
         "raw_image_embedded": False,
         "server_copied": False,
     }

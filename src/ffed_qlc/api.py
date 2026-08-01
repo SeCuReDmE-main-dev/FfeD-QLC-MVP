@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 from .fractal_measurement import measure_tile_fractal_path
 from .cpai_yolo import (
+    DEFAULT_CPAI_URL,
     probe_cpai_status,
     probe_yolo_detection_routes,
     probe_yolo_training_module,
@@ -144,15 +145,15 @@ def create_app() -> FastAPI:
         return export_vad_reusable_template()
 
     @app.get("/api/cpai/status")
-    def cpai_status(cpai_url: str = "http://localhost:32168") -> dict[str, Any]:
-        return probe_cpai_status(cpai_url, dry_run=True)
+    def cpai_status(cpai_url: str = DEFAULT_CPAI_URL) -> dict[str, Any]:
+        return probe_cpai_status(cpai_url, dry_run=False, timeout_seconds=2.0)
 
     @app.get("/api/cpai/yolo/probe")
-    def yolo_probe(cpai_url: str = "http://localhost:32168") -> dict[str, Any]:
-        return probe_yolo_detection_routes(cpai_url, dry_run=True)
+    def yolo_probe(cpai_url: str = DEFAULT_CPAI_URL) -> dict[str, Any]:
+        return probe_yolo_detection_routes(cpai_url, dry_run=False)
 
     @app.get("/api/cpai/yolo/training/probe")
-    def training_probe(cpai_url: str = "http://localhost:32168") -> dict[str, Any]:
+    def training_probe(cpai_url: str = DEFAULT_CPAI_URL) -> dict[str, Any]:
         return probe_yolo_training_module(cpai_url, dry_run=True)
 
     @app.post("/api/cpai/yolo/training/plan")

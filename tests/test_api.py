@@ -46,7 +46,7 @@ def test_api_lattice_classify_validate_orb_and_template() -> None:
     assert template.json()["raw_payload_allowed"] is False
 
 
-def test_api_cpai_yolo_and_training_are_dry_run_metadata() -> None:
+def test_api_cpai_yolo_transport_and_training_plan_are_bounded() -> None:
     client = TestClient(create_app())
 
     status = client.get("/api/cpai/status")
@@ -57,7 +57,8 @@ def test_api_cpai_yolo_and_training_are_dry_run_metadata() -> None:
         json={"model_name": "m", "dataset_name": "d", "epochs": 3},
     )
 
-    assert status.json()["dry_run"] is True
+    assert status.json()["dry_run"] is False
+    assert yolo.json()["transport_checked"] is True
     assert yolo.json()["raw_image_embedded"] is False
     assert training_probe.json()["training_started"] is False
     assert training_plan.json()["module"] == "TrainingObjectDetectionYOLOv5"
