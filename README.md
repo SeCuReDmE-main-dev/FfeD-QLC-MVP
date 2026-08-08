@@ -7,7 +7,7 @@
 
 [Embedded CodeProject.AI node operations](infra/codeproject-ai/README.md)
 
-[![SecuredMe Education Suite public calendar](https://img.shields.io/badge/SecuredMe%20Education%20Suite-public%20calendar%20%7C%20pre--alpha%20through%20Aug%208%202026-5484ED?style=for-the-badge&logo=googlecalendar&logoColor=white)](https://calendrier.securedme.ca)
+[![SecuredMe Education Suite public calendar](https://img.shields.io/badge/SecuredMe%20Education%20Suite-public%20calendar%20%7C%20pre--alpha%20%7C%20active%20public%20development-5484ED?style=for-the-badge&logo=googlecalendar&logoColor=white)](https://calendrier.securedme.ca)
 
 **Attribution:** Jean-Sebastien Beaulieu · [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443) · [SecuredMe](https://securedme.ca) · [FfeD-QLC](https://ffed-qlc.securedme.ca)
 
@@ -40,7 +40,7 @@ This repository is a small SecuredMe school tool. Official classroom use must no
 
 The reason for excluding generic local AI routes from official school mode is student and teacher safety: education accounts, provider-side account controls, browser login, and governed AI refusal behavior are safer than unguided local model endpoints for classroom cybersecurity and algorithm-building tools.
 
-> **Development status.** This school tool is currently tagged **pre-alpha / in development**. Public issues remain open for intake, but no response or delivery date is promised. Pull requests are paused during the active code-finishing week.
+> **Development status.** This school tool is currently **pre-alpha — active public development**. Public issues remain open for intake, but no response or delivery date is promised. Pull requests are paused during active development.
 
 ![FfeD-QLC Logo](./assets/Logo%20draft%20version/logo%20centre%201.png)
 
