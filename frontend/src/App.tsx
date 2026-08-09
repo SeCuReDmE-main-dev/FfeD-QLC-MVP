@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { emitAlgoQuestLearningEvent } from "./algoQuestQbitAdapter";
+import { AlphaConsole } from "./alpha/AlphaConsole";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000";
 
@@ -209,7 +210,7 @@ const tabs: Array<{ key: TabKey; label: string; icon: typeof Box }> = [
   { key: "template", label: "Template", icon: Database },
 ];
 
-export function App() {
+function PenroseWorkbench() {
   const [activeTab, setActiveTab] = useState<TabKey>("lattice");
   const [engine, setEngine] = useState<"inflation" | "cut_project">("inflation");
   const [targetTileCount, setTargetTileCount] = useState(21);
@@ -562,6 +563,10 @@ export function App() {
       <UtilityDock />
     </div>
   );
+}
+
+export function App() {
+  return <AlphaConsole orbStudio={<PenroseWorkbench />} />;
 }
 
 function ActionButton({
