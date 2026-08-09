@@ -1,0 +1,204 @@
+{
+  "securedme.education.session-role.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "securedme.education.session-role.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "session_id",
+      "fingerprint_ref",
+      "role",
+      "surface",
+      "consent_scope",
+      "allowed_tools",
+      "expires_at"
+    ],
+    "properties": {
+      "schema": {
+        "const": "securedme.education.session-role.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.fixture.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.fixture.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "fixture_id",
+      "title",
+      "kind",
+      "sha256",
+      "difficulty",
+      "provenance"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.fixture.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.geometry_trace.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.geometry_trace.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "trace_id",
+      "algorithm",
+      "steps",
+      "collisions",
+      "cycles",
+      "sha256"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.geometry_trace.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.orb_public.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.orb_public.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "orb_id",
+      "project_id",
+      "geometry_profile",
+      "evidence_refs",
+      "claim_boundary"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.orb_public.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.orb_project.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.orb_project.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "project_id",
+      "session_id",
+      "title",
+      "level",
+      "status",
+      "created_at"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.orb_project.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.mission_run.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.mission_run.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "run_id",
+      "project_id",
+      "lab_id",
+      "state",
+      "attempt_count",
+      "created_at"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.mission_run.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.vigil_report.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.vigil_report.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "report_id",
+      "run_id",
+      "observation",
+      "mechanism",
+      "attack",
+      "evidence",
+      "limitation",
+      "decision",
+      "safe_next_action",
+      "provider_route"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.vigil_report.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.professor_decision.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.professor_decision.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "decision_id",
+      "report_id",
+      "teacher_session_id",
+      "decision",
+      "created_at"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.professor_decision.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.learning_evidence.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.learning_evidence.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "evidence_id",
+      "project_id",
+      "artifact_sha256",
+      "claim",
+      "limitation"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.learning_evidence.v1"
+      }
+    },
+    "additionalProperties": true
+  },
+  "ffed.qlc.portfolio_case_study.v1": {
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "ffed.qlc.portfolio_case_study.v1",
+    "type": "object",
+    "required": [
+      "schema",
+      "case_study_id",
+      "project_id",
+      "title",
+      "evidence_refs",
+      "decisions",
+      "sha256"
+    ],
+    "properties": {
+      "schema": {
+        "const": "ffed.qlc.portfolio_case_study.v1"
+      }
+    },
+    "additionalProperties": true
+  }
+}

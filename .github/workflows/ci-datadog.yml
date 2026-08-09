@@ -43,6 +43,27 @@ jobs:
       - name: Run public unit tests with package dependencies
         run: python -m pytest
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci
+
+      - name: Build and test frontend
+        run: |
+          npm run test:unit
+          npm run build
+          npm run smoke:frontend
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run desktop and mobile browser tests
+        run: npm run test:e2e
+
       - name: Validate public-safe boundary
         run: |
           python - <<'PY'

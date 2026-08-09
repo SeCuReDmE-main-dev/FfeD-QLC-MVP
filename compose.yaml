@@ -4,8 +4,19 @@ services:
   ffed-qlc:
     build:
       context: .
+      additional_contexts:
+        gateway: ../fnpqnn_gateway_MVP
     image: ffed-qlc-mvp:local
-    command: ["map"]
+    ports:
+      - "8000:8000"
+    volumes:
+      - ffed-qlc-data:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health/ready', timeout=3)"]
+      interval: 10s
+      timeout: 4s
+      retries: 5
+      start_period: 10s
     labels:
       studycase.block.id: "public-ffed-qlc-mvp"
       studycase.block.title: "Public FfeD QLC MVP"
@@ -18,3 +29,6 @@ services:
       DD_SERVICE: "${DD_SERVICE:-ffed-qlc-mvp}"
       DD_ENV: "${DD_ENV:-local-studycase}"
       DD_VERSION: "${DD_VERSION:-0.1.0}"
+
+volumes:
+  ffed-qlc-data:

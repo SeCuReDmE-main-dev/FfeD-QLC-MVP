@@ -46,6 +46,23 @@ The reason for excluding generic local AI routes from official school mode is st
 
 # FfeD-QLC MVP
 
+## Functional Alpha Workflow
+
+The current alpha implements a supervised Education workflow:
+
+`Gateway -> diagnostic -> orb project -> nine laboratories -> mission evidence -> Vigil report -> professor decision -> portfolio`
+
+Run the complete local surface with the shared suite runtime:
+
+```powershell
+& 'Z:\SecuredMe Education suite\.venv\Scripts\python.exe' -m pip install -e '.[alpha]'
+npm ci
+npm run build
+ffed-qlc serve
+```
+
+The Gateway repository is mandatory and is located through `FFED_QLC_GATEWAY_ROOT`. See [the alpha architecture](docs/public/alpha-architecture.md) and [Gateway troubleshooting](docs/public/gateway-troubleshooting.md). Only synthetic fixtures are accepted; this remains supervised educational research rather than a production cryptographic claim.
+
 FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility layer, Docker/CodeProject.AI study-case mapping, and observable sandbox execution.
 
 > **Official school governance.** This repo is an educational research scaffold, not a finished cryptographic standard, attack tool, or safety guarantee. The maintained classroom route supports Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md).

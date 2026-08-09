@@ -61,6 +61,17 @@ plugins:
 - search
 nav:
 - Home: index.md
+- Alpha:
+  - Architecture: public/alpha-architecture.md
+  - Student path: public/student-path.md
+  - Professor path: public/professor-path.md
+  - Gateway troubleshooting: public/gateway-troubleshooting.md
+  - Claim boundaries: public/claim-boundaries.md
+  - Validation record: public/alpha-validation.md
+- Existing public reference:
+  - Quickstart: public/quickstart.md
+  - Interfaces: public/interfaces.md
+  - Operations: public/operations.md
 - Accessibility:
   - Edge User Console: accessibility/edge-user-console.md
   - Neurodivergent Comfort: accessibility/neurodivergent-comfort.md

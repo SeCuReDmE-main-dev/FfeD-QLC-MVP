@@ -12,6 +12,9 @@ venv/
 node_modules/
 tsconfig.tsbuildinfo
 .codex-run/
+.local-data/
+playwright-report/
+test-results/
 
 dist/
 build/
