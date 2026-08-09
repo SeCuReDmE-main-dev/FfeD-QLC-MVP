@@ -16,6 +16,9 @@ from .key_schedule import derive_chunk_key_schedule
 
 MAGIC = b"FQLC1\n"
 HEADER_LENGTH_BYTES = 4
+MAX_HEADER_BYTES = 65_536
+MAX_PLAINTEXT_BYTES = 1_048_576
+AEAD_TAG_BYTES = 16
 GOLDEN_64 = 0x9E3779B97F4A7C15
 GOLDEN_64_ALT = 0xD1B54A32D192ED03
 MASK_64 = (1 << 64) - 1
@@ -51,6 +54,8 @@ def pack_bytes(
 
     if not passphrase:
         raise ValueError("passphrase must not be empty")
+    if len(plaintext) > MAX_PLAINTEXT_BYTES:
+        raise ValueError("plaintext exceeds the FQLC1 alpha fixture budget")
 
     active_config = config or QLCTransformConfig()
     salt = os.urandom(16)
@@ -102,8 +107,8 @@ def unpack_bytes(
         kdf_r=int(header["kdf_r"]),
         kdf_p=int(header["kdf_p"]),
     )
-    salt = base64.b64decode(header["salt"])
-    nonce = base64.b64decode(header["nonce"])
+    salt = _decode_b64_field(header["salt"], "salt", 16)
+    nonce = _decode_b64_field(header["nonce"], "nonce", 12)
     key = _derive_key(passphrase, salt, config)
     aad = _container_aad(header_bytes, associated_data)
 
@@ -276,6 +281,8 @@ def _split_container(container: bytes) -> tuple[dict[str, object], bytes, bytes]
     if len(container) < offset + HEADER_LENGTH_BYTES:
         raise QLCTransformError("truncated QLC container header")
     header_length = int.from_bytes(container[offset : offset + HEADER_LENGTH_BYTES], "big")
+    if header_length <= 0 or header_length > MAX_HEADER_BYTES:
+        raise QLCTransformError("invalid QLC container header length")
     header_start = offset + HEADER_LENGTH_BYTES
     header_end = header_start + header_length
     if len(container) < header_end:
@@ -289,7 +296,10 @@ def _split_container(container: bytes) -> tuple[dict[str, object], bytes, bytes]
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise QLCTransformError("invalid QLC container header JSON") from exc
     _validate_header(header)
-    return header, header_bytes, container[header_end:]
+    ciphertext = container[header_end:]
+    if len(ciphertext) < AEAD_TAG_BYTES or len(ciphertext) > MAX_PLAINTEXT_BYTES + AEAD_TAG_BYTES:
+        raise QLCTransformError("invalid QLC container body length")
+    return header, header_bytes, ciphertext
 
 
 def _validate_header(header: dict[str, object]) -> None:
@@ -314,6 +324,15 @@ def _validate_header(header: dict[str, object]) -> None:
         raise QLCTransformError("unsupported QLC transform")
     if header.get("cipher") != "ChaCha20-Poly1305" or header.get("kdf") != "scrypt":
         raise QLCTransformError("unsupported QLC cryptographic profile")
+    integer_fields = ("version", "kdf_n", "kdf_r", "kdf_p", "plaintext_length")
+    if any(isinstance(header.get(field), bool) or not isinstance(header.get(field), int) for field in integer_fields):
+        raise QLCTransformError("invalid QLC numeric header field")
+    if (header["kdf_n"], header["kdf_r"], header["kdf_p"]) != (2**14, 8, 1):
+        raise QLCTransformError("unsupported QLC scrypt profile")
+    if not 0 <= int(header["plaintext_length"]) <= MAX_PLAINTEXT_BYTES:
+        raise QLCTransformError("invalid QLC plaintext length")
+    _decode_b64_field(header["salt"], "salt", 16)
+    _decode_b64_field(header["nonce"], "nonce", 12)
 
 
 def _container_aad(header_bytes: bytes, associated_data: bytes) -> bytes:
@@ -322,3 +341,15 @@ def _container_aad(header_bytes: bytes, associated_data: bytes) -> bytes:
 
 def _b64(value: bytes) -> str:
     return base64.b64encode(value).decode("ascii")
+
+
+def _decode_b64_field(value: object, field: str, expected_length: int) -> bytes:
+    if not isinstance(value, str) or len(value) > 128:
+        raise QLCTransformError(f"invalid QLC {field}")
+    try:
+        decoded = base64.b64decode(value, validate=True)
+    except (ValueError, base64.binascii.Error) as exc:
+        raise QLCTransformError(f"invalid QLC {field}") from exc
+    if len(decoded) != expected_length:
+        raise QLCTransformError(f"invalid QLC {field} length")
+    return decoded

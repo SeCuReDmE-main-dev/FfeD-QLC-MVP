@@ -3,7 +3,7 @@ import hashlib
 import pytest
 
 from ffed_qlc import QLCTransformError, inspect_container, pack_bytes, quasicrystal_coordinates, unpack_bytes, verify_container
-from ffed_qlc.structural_transform import HEADER_LENGTH_BYTES, MAGIC
+from ffed_qlc.structural_transform import HEADER_LENGTH_BYTES, MAGIC, MAX_HEADER_BYTES, MAX_PLAINTEXT_BYTES
 
 
 def test_pack_unpack_round_trip() -> None:
@@ -75,3 +75,28 @@ def test_quasicrystal_coordinates_are_deterministic() -> None:
 
     assert first == second
     assert sorted(source_index for _, source_index, _ in first) == list(range(16))
+
+
+def test_fqlc1_rejects_unbounded_header_and_plaintext() -> None:
+    header_length = (MAX_HEADER_BYTES + 1).to_bytes(HEADER_LENGTH_BYTES, "big")
+    with pytest.raises(QLCTransformError, match="header length"):
+        inspect_container(MAGIC + header_length)
+
+    with pytest.raises(ValueError, match="fixture budget"):
+        pack_bytes(b"x" * (MAX_PLAINTEXT_BYTES + 1), "passphrase")
+
+
+def test_fqlc1_rejects_hostile_kdf_profile_before_derivation() -> None:
+    container = pack_bytes(b"safe", "passphrase")
+    offset = len(MAGIC)
+    header_length = int.from_bytes(container[offset : offset + HEADER_LENGTH_BYTES], "big")
+    start = offset + HEADER_LENGTH_BYTES
+    import json
+
+    header = json.loads(container[start : start + header_length])
+    header["kdf_n"] = 2**30
+    encoded = json.dumps(header, sort_keys=True, separators=(",", ":")).encode()
+    hostile = MAGIC + len(encoded).to_bytes(HEADER_LENGTH_BYTES, "big") + encoded + container[start + header_length :]
+
+    with pytest.raises(QLCTransformError, match="scrypt profile"):
+        inspect_container(hostile)

@@ -24,6 +24,7 @@ from .structural_transform import inspect_container, pack_bytes, unpack_bytes, v
 from .tile_admission import build_tile_admission_ledger, compute_t_df_f, export_tile_admission_profile
 from .workflow import build_qlc_protection_workflow
 from .workflow_inspector import inspect_qlc_workflow_bundle
+from .contracts import contract_schemas
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -31,6 +32,13 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("map", help="Print the default Docker/CPAI study-case map")
+
+    serve = sub.add_parser("serve", help="Serve the alpha API and compiled frontend")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8000)
+
+    export_contracts = sub.add_parser("export-contracts", help="Export the alpha JSON Schemas")
+    export_contracts.add_argument("--output", required=True)
 
     source_functions = sub.add_parser("source-functions", help="Print source-function profiles as provenance graph")
     source_functions.add_argument("--include-urls", action="store_true")
@@ -183,6 +191,18 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "map":
         print(json.dumps([block.__dict__ for block in DEFAULT_STUDYCASE_BLOCKS], indent=2))
+        return 0
+
+    if args.command == "serve":
+        try:
+            import uvicorn
+        except ImportError as exc:
+            raise SystemExit("Install ffed-qlc-mvp[api] to use serve") from exc
+        uvicorn.run("ffed_qlc.api:app", host=args.host, port=args.port)
+        return 0
+
+    if args.command == "export-contracts":
+        Path(args.output).write_text(json.dumps(contract_schemas(), indent=2), encoding="utf-8")
         return 0
 
     if args.command == "source-functions":
