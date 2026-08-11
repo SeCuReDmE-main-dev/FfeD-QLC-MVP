@@ -1,6 +1,6 @@
 <!-- SECUREDME-ZENODO:START -->
 <p align="center">
-  <a href="https://zenodo.org/badge/latestdoi/1275980928"><img alt="DOI" src="https://zenodo.org/badge/1275980928.svg" /></a>
+  <a href="https://doi.org/10.5281/zenodo.21893179"><img alt="Zenodo DOI: 10.5281/zenodo.21893179" src="https://img.shields.io/badge/Zenodo%20DOI-10.5281%2Fzenodo.21893179-1682D4?style=for-the-badge" /></a>
 </p>
 <!-- SECUREDME-ZENODO:END -->
 
