@@ -29,4 +29,3 @@ The hierarchy remains `I -> I_system^S -> D_f -> dF -> i_fractal` throughout mea
 | Professor surface | Review, revise, accept, suspend, reject | Final pedagogical decision |
 
 New alpha resources live under `/api/v1`. Historical workbench routes under `/api` remain available during pre-alpha. `/api/v1/health/live` reports process health; `/api/v1/health/ready` additionally requires the Gateway.
-

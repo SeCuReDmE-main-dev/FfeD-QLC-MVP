@@ -15,4 +15,3 @@ Students enter through a Gateway-issued pseudonymous role. Prior suite metrics a
 9. Assemble a capstone orb and portfolio evidence bundle.
 
 Every run records the action, fixture, proof, limitation and Tenebris budgets. A successful action produces evidence, not a grade. Vigil organizes the evidence; a professor retains the final decision.
-

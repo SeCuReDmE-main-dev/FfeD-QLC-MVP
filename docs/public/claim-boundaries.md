@@ -14,4 +14,3 @@
 - A visual pattern supplies entropy.
 - Vigil autonomously grades, certifies, publishes or analyzes real secrets.
 - A successful fixture exercise proves protection of a production system.
-
