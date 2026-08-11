@@ -1,8 +1,9 @@
 # Interfaces
 
-- **Vite research workbench:** use only through the documented repository route.
+- **Vite student/professor workbench:** preserves separate learning and review authority.
 - **ffed-qlc command line:** use only through the documented repository route.
-- **Optional FastAPI adapter:** use only through the documented repository route.
+- **FastAPI `/api/v1`:** requires the reviewed Gateway contract for real alpha sessions; liveness remains distinct from readiness.
+- **Vigil report:** schema-validates evidence and limitations but never assigns a final grade or security certification.
 
 ## Interface contract
 
