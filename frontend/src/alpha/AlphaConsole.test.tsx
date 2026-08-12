@@ -22,7 +22,9 @@ describe("Vigil alpha console", () => {
       const url = String(input);
       const body = url.includes("laboratories")
         ? { laboratories: labs }
-        : { status: "ready", gateway: { transport: "test" }, storage: "sqlite" };
+        : url.includes("capabilities")
+          ? { phase: "pre-alpha", development: "active-public-development", public_stateful_enabled: true, identity_adapter_ready: true, fqlc2_demo_enabled: true, native_handoff_runtime_ready: false }
+          : { status: "ready", gateway: { transport: "test" }, storage: "sqlite" };
       return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
     }));
 
@@ -34,4 +36,3 @@ describe("Vigil alpha console", () => {
     expect(screen.getByRole("button", { name: /Ouvrir la session supervisee/ })).toBeEnabled();
   });
 });
-

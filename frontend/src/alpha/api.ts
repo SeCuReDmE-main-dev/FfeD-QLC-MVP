@@ -1,4 +1,4 @@
-import type { Laboratory, MissionRun, Project, Provider, Role, Session, VigilReport } from "./types";
+import type { Capabilities, Laboratory, MissionRun, Project, Provider, Role, Session, VigilReport } from "./types";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -17,6 +17,10 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
 
 export async function checkReadiness() {
   return api<{ status: string; gateway: { transport: string }; storage: string }>("/api/v1/health/ready");
+}
+
+export async function loadCapabilities() {
+  return api<Capabilities>("/api/v1/capabilities");
 }
 
 export async function bootstrapSession(role: Role, provider: Provider, fingerprint: string) {
@@ -51,10 +55,10 @@ export async function executeMission(runId: string, action: string) {
   );
 }
 
-export async function createVigilReport(runId: string, provider: Provider) {
+export async function createVigilReport(runId: string) {
   return api<VigilReport>(`/api/v1/missions/${runId}/vigil`, {
     method: "POST",
-    body: JSON.stringify({ provider_route: provider }),
+    body: JSON.stringify({}),
   });
 }
 

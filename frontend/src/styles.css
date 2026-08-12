@@ -912,6 +912,7 @@ pre {
 .decision-row button:first-child { border-color: #65d69e; }
 .decision-row button:last-child { border-color: #ff8f7a; }
 .alpha-error { margin: 12px 24px 0; border: 1px solid #ff8f7a; background: #321a20; color: #ffd7cf; padding: 10px 12px; }
+.alpha-boundary-note { margin: 10px 0 0; border-left: 3px solid #61d9ff; padding: 8px 10px; color: #c9eff8; background: rgba(24, 86, 104, 0.22); }
 .embedded-orb .app-shell { min-height: calc(100vh - 130px); }
 .embedded-orb .utility-dock { bottom: 12px; }
 

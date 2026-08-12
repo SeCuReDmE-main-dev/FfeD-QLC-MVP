@@ -20,6 +20,7 @@ def build_apollonian_trace(depth: int = 3, root: Iterable[int] = DEFAULT_ROOT) -
         raise ValueError("root must be a Descartes curvature quadruple")
     queue = deque([(root_tuple, 0)])
     seen = {root_tuple}
+    canonical_seen = {tuple(sorted(root_tuple))}
     steps: list[dict[str, Any]] = []
     collisions = 0
     cycles = 0
@@ -31,7 +32,7 @@ def build_apollonian_trace(depth: int = 3, root: Iterable[int] = DEFAULT_ROOT) -
             reflected = _reflect(current, generator)
             canonical = tuple(sorted(reflected))
             repeated = reflected in seen
-            equivalent = canonical in {tuple(sorted(item)) for item in seen}
+            equivalent = canonical in canonical_seen
             collisions += int(equivalent and not repeated)
             cycles += int(repeated)
             steps.append({
@@ -46,6 +47,7 @@ def build_apollonian_trace(depth: int = 3, root: Iterable[int] = DEFAULT_ROOT) -
             })
             if not repeated:
                 seen.add(reflected)
+                canonical_seen.add(canonical)
                 queue.append((reflected, current_depth + 1))
     body = {
         "schema": "ffed.qlc.geometry_trace.v1",
@@ -72,4 +74,3 @@ def _reflect(values: tuple[int, int, int, int], index: int) -> tuple[int, int, i
 
 def _is_descartes(values: tuple[int, int, int, int]) -> bool:
     return 2 * sum(value * value for value in values) == sum(values) ** 2
-

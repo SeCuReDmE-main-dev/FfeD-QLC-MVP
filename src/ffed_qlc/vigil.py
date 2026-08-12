@@ -23,9 +23,7 @@ WAKEUP_KIT = {
 }
 
 
-def build_vigil_report(run: Mapping[str, Any], evidence: Mapping[str, Any], provider: str = "deterministic") -> dict[str, Any]:
-    if provider not in (*PROVIDERS, "deterministic"):
-        raise ValueError("unsupported Vigil provider")
+def build_vigil_report(run: Mapping[str, Any], evidence: Mapping[str, Any]) -> dict[str, Any]:
     report = {
         "schema": "ffed.qlc.vigil_report.v1",
         "report_id": f"report-{uuid.uuid4().hex[:16]}",
@@ -37,7 +35,8 @@ def build_vigil_report(run: Mapping[str, Any], evidence: Mapping[str, Any], prov
         "limitation": evidence["limitation"],
         "decision": "suspend" if run["state"] != "evidence_ready" else "accept",
         "safe_next_action": "professor_review" if run["lab_id"] in {"lab-06", "lab-07", "lab-08", "lab-09"} else "continue_curriculum",
-        "provider_route": provider,
+        "provider_route": "ffed-deterministic-engine",
+        "native_model_called": False,
         "human_review_required": True,
         "created_at": utc_now(),
         "raw_secret_stored": False,
@@ -82,4 +81,3 @@ def build_professor_decision(report_id: str, teacher_session_id: str, decision: 
     }
     validate_contract(payload)
     return payload
-

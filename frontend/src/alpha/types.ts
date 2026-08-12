@@ -3,6 +3,15 @@ export type Surface = "prerequisites" | "orb" | "mission" | "defense" | "evidenc
 export type Role = "student_minor" | "student_adult" | "teacher";
 export type Provider = "codex" | "gemini";
 
+export type Capabilities = {
+  phase: "pre-alpha";
+  development: "active-public-development";
+  public_stateful_enabled: boolean;
+  identity_adapter_ready: boolean;
+  fqlc2_demo_enabled: boolean;
+  native_handoff_runtime_ready: boolean;
+};
+
 export type Session = {
   session_id: string;
   fingerprint_ref: string;
@@ -56,4 +65,3 @@ export type VigilReport = {
   provider_route: string;
   human_review_required: boolean;
 };
-

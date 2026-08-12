@@ -34,7 +34,7 @@ class GatewayClient:
         return {
             "ready": callable(getattr(module, "validate_session_role", None)),
             "transport": "credential_blind_python_contract",
-            "gateway_root": str(self.gateway_root.resolve()),
+            "gateway_configured": True,
             "secret_values_exposed": False,
         }
 

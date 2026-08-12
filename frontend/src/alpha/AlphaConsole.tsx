@@ -5,10 +5,10 @@ import {
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 import {
   bootstrapSession, checkReadiness, createProject, createVigilReport, executeMission,
-  loadLaboratories, loadPortfolio, saveTenebrisBudgets, startMission, submitDecision,
+  loadCapabilities, loadLaboratories, loadPortfolio, saveTenebrisBudgets, startMission, submitDecision,
 } from "./api";
 import { labTitle, t } from "./i18n";
-import type { Laboratory, Language, MissionRun, Project, Provider, Role, Session, Surface, VigilReport } from "./types";
+import type { Capabilities, Laboratory, Language, MissionRun, Project, Provider, Role, Session, Surface, VigilReport } from "./types";
 
 const surfaces: Array<{ key: Surface; icon: typeof Radar; label: keyof ReturnType<typeof t> }> = [
   { key: "prerequisites", icon: BookOpenCheck, label: "prerequisites" },
@@ -23,6 +23,7 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
   const [language, setLanguage] = useState<Language>("fr");
   const [surface, setSurface] = useState<Surface>("prerequisites");
   const [ready, setReady] = useState(false);
+  const [capabilities, setCapabilities] = useState<Capabilities | null>(null);
   const [role, setRole] = useState<Role>("student_adult");
   const [provider, setProvider] = useState<Provider>("codex");
   const [fingerprint, setFingerprint] = useState("learner-local-demo");
@@ -38,6 +39,7 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
   const [retryBudget, setRetryBudget] = useState(3);
   const [traceBudget, setTraceBudget] = useState(4096);
   const [budgetSaved, setBudgetSaved] = useState(false);
+  const [decisionNote, setDecisionNote] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState("");
   const text = t(language);
@@ -45,6 +47,7 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
 
   useEffect(() => {
     void checkReadiness().then(() => setReady(true)).catch(() => setReady(false));
+    void loadCapabilities().then(setCapabilities).catch((caught: Error) => setError(caught.message));
     void loadLaboratories().then((value) => setLabs(value.laboratories)).catch((caught: Error) => setError(caught.message));
   }, []);
 
@@ -86,7 +89,7 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
   async function makeReport() {
     if (!run) return;
     await task("report", async () => {
-      setReport(await createVigilReport(run.run_id, provider));
+      setReport(await createVigilReport(run.run_id));
       setSurface("defense");
     });
   }
@@ -144,7 +147,8 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
             <label>{text.fingerprint}<input value={fingerprint} onChange={(event) => setFingerprint(event.target.value)} /></label>
             <label>{text.role}<select value={role} onChange={(event) => setRole(event.target.value as Role)}><option value="student_adult">{text.adult}</option><option value="student_minor">{text.minor}</option></select></label>
             <label>{text.provider}<select value={provider} onChange={(event) => setProvider(event.target.value as Provider)}><option value="codex">Codex / OpenAI</option><option value="gemini">Antigravity / Gemini</option></select></label>
-            <button className="primary-command" type="button" disabled={!ready || busy === "session"} onClick={openSession}><UserRoundCheck size={17} />{busy === "session" ? "..." : text.start}</button>
+            <button className="primary-command" type="button" disabled={!ready || !capabilities?.public_stateful_enabled || busy === "session"} onClick={openSession}><UserRoundCheck size={17} />{busy === "session" ? "..." : text.start}</button>
+            {capabilities && !capabilities.public_stateful_enabled ? <p className="alpha-boundary-note" role="status">Pre-alpha — active public development. Stateful classroom workflows await the verified identity adapter.</p> : null}
           </div>
           <div className="alpha-panel boundary-panel"><h2>{text.boundary}</h2><ul><li>{text.synthetic}</li><li>{text.noShell}</li><li>{text.teacherOwns}</li><li>{text.geometryClaim}</li></ul></div>
         </div>
@@ -162,7 +166,7 @@ export function AlphaConsole({ orbStudio }: { orbStudio: ReactNode }) {
 
       {surface === "evidence" ? <section className="alpha-page"><div className="page-heading"><span>05 / PORTFOLIO</span><h1>{text.proof}</h1><p>{text.portfolioSummary}</p></div><button className="primary-command" type="button" disabled={!project} onClick={() => project && task("portfolio", async () => setPortfolio(await loadPortfolio(project.project_id)))}><Database size={17} />{text.download}</button>{portfolio ? <pre className="portfolio-json">{JSON.stringify(portfolio, null, 2)}</pre> : null}</section> : null}
 
-      {surface === "professor" ? <section className="alpha-page"><div className="page-heading"><span>06 / HUMAN REVIEW</span><h1>{text.professor}</h1><p>{text.vigilDecides}</p></div><div className="alpha-grid two"><div className="alpha-panel"><button type="button" onClick={openTeacherSession} disabled={busy === "teacher"}>{text.openTeacher}</button>{teacherSession ? <div className="session-strip"><CheckCircle2 size={18} />{teacherSession.session_id}</div> : null}<textarea aria-label={text.note} placeholder={text.note} /><div className="decision-row">{["accept", "suspend", "revise", "reject"].map((decision) => <button key={decision} type="button" disabled={!teacherSession || !report} onClick={() => teacherSession && report && task("decision", async () => { await submitDecision(report.report_id, teacherSession.session_id, decision, text.note); })}>{decision}</button>)}</div></div><div className="alpha-panel"><h2>{text.limits}</h2><p>{text.limitsHelp}</p><label>{text.retries}<input type="number" min="1" max="3" value={retryBudget} onChange={(event) => { setRetryBudget(Number(event.target.value)); setBudgetSaved(false); }} /></label><label>{text.trace}<input type="number" min="1" max="4096" value={traceBudget} onChange={(event) => { setTraceBudget(Number(event.target.value)); setBudgetSaved(false); }} /></label><button type="button" disabled={!teacherSession || !project || busy === "budgets"} onClick={applyBudgets}>{text.apply}</button>{budgetSaved ? <div className="session-strip"><CheckCircle2 size={18} />{text.enforced}</div> : null}</div></div></section> : null}
+      {surface === "professor" ? <section className="alpha-page"><div className="page-heading"><span>06 / HUMAN REVIEW</span><h1>{text.professor}</h1><p>{text.vigilDecides}</p></div><div className="alpha-grid two"><div className="alpha-panel"><button type="button" onClick={openTeacherSession} disabled={!capabilities?.public_stateful_enabled || busy === "teacher"}>{text.openTeacher}</button>{teacherSession ? <div className="session-strip"><CheckCircle2 size={18} />{teacherSession.session_id}</div> : null}<textarea aria-label={text.note} placeholder={text.note} value={decisionNote} onChange={(event) => setDecisionNote(event.target.value)} /><div className="decision-row">{["accept", "suspend", "revise", "reject"].map((decision) => <button key={decision} type="button" disabled={!teacherSession || !report} onClick={() => teacherSession && report && task("decision", async () => { await submitDecision(report.report_id, teacherSession.session_id, decision, decisionNote); })}>{decision}</button>)}</div></div><div className="alpha-panel"><h2>{text.limits}</h2><p>{text.limitsHelp}</p><label>{text.retries}<input type="number" min="1" max="3" value={retryBudget} onChange={(event) => { setRetryBudget(Number(event.target.value)); setBudgetSaved(false); }} /></label><label>{text.trace}<input type="number" min="1" max="4096" value={traceBudget} onChange={(event) => { setTraceBudget(Number(event.target.value)); setBudgetSaved(false); }} /></label><button type="button" disabled={!teacherSession || !project || busy === "budgets"} onClick={applyBudgets}>{text.apply}</button>{budgetSaved ? <div className="session-strip"><CheckCircle2 size={18} />{text.enforced}</div> : null}</div></div></section> : null}
     </div>
   );
 }

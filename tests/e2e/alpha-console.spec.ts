@@ -15,7 +15,9 @@ test.beforeEach(async ({ page }) => {
     const url = route.request().url();
     const body = url.includes("laboratories")
       ? { laboratories }
-      : { status: "ready", gateway: { transport: "test" }, storage: "sqlite" };
+      : url.includes("capabilities")
+        ? { phase: "pre-alpha", development: "active-public-development", public_stateful_enabled: false, identity_adapter_ready: false, fqlc2_demo_enabled: true, native_handoff_runtime_ready: false }
+        : { status: "ready", gateway: { transport: "test" }, storage: "sqlite" };
     await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
   });
 });
@@ -24,7 +26,7 @@ test("renders a stable accessible entry surface", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByText("Laboratoire d'orbe Vigil")).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Vigil workflow" })).toBeVisible();
-  await expect(page.getByRole("button", { name: /Ouvrir la session supervisee/ })).toBeEnabled();
+  await expect(page.getByRole("button", { name: /Ouvrir la session supervisee/ })).toBeDisabled();
+  await expect(page.getByRole("status")).toContainText("verified identity adapter");
   await expect(page.locator("body")).not.toHaveCSS("overflow-x", "scroll");
 });
-

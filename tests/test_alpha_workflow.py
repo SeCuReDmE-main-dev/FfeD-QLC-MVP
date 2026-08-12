@@ -34,7 +34,7 @@ def test_project_mission_vigil_professor_and_portfolio_flow(tmp_path) -> None:
 
     run = engine.start(project["project_id"], "lab-05")
     result = engine.execute(run["run_id"], "trace_apollonian", "neural-graph-small")
-    report = build_vigil_report(result["run"], result["evidence"], "codex")
+    report = build_vigil_report(result["run"], result["evidence"])
     store.save_report(report)
     decision = build_professor_decision(report["report_id"], teacher["session_id"], "accept", "Evidence is bounded.")
     store.save_decision(decision)
@@ -112,16 +112,18 @@ def test_all_nine_laboratories_execute_distinct_bounded_actions(tmp_path) -> Non
     assert len(mechanisms) == 9
 
 
-def test_codex_and_gemini_vigil_vectors_have_contract_parity(tmp_path) -> None:
+def test_vigil_report_is_deterministic_and_never_claims_a_model_call(tmp_path) -> None:
     store = AlphaStore(tmp_path)
     student = store.save_session(session("student_adult", "provider-parity"))
     project = store.create_project(student["session_id"], "Provider parity", "college")
     engine = MissionEngine(store)
     result = engine.execute(engine.start(project["project_id"], "lab-01")["run_id"], "inspect_primitives")
 
-    codex = build_vigil_report(result["run"], result["evidence"], "codex")
-    gemini = build_vigil_report(result["run"], result["evidence"], "gemini")
-    ignored = {"report_id", "provider_route", "created_at"}
-    assert {key: value for key, value in codex.items() if key not in ignored} == {
-        key: value for key, value in gemini.items() if key not in ignored
+    first = build_vigil_report(result["run"], result["evidence"])
+    second = build_vigil_report(result["run"], result["evidence"])
+    ignored = {"report_id", "created_at"}
+    assert {key: value for key, value in first.items() if key not in ignored} == {
+        key: value for key, value in second.items() if key not in ignored
     }
+    assert first["provider_route"] == "ffed-deterministic-engine"
+    assert first["native_model_called"] is False

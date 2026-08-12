@@ -5,6 +5,8 @@ from datetime import datetime, timedelta, timezone
 from fastapi.testclient import TestClient
 
 from ffed_qlc.api import create_app
+from ffed_qlc.identity import SyntheticTestIdentityVerifier
+from ffed_qlc.runtime_config import RuntimeConfig
 from ffed_qlc.storage import AlphaStore
 
 
@@ -33,7 +35,12 @@ class FakeGateway:
 
 
 def test_v1_api_executes_the_student_flow(tmp_path) -> None:
-    client = TestClient(create_app(store=AlphaStore(tmp_path), gateway=FakeGateway()))
+    client = TestClient(create_app(
+        store=AlphaStore(tmp_path),
+        gateway=FakeGateway(),
+        identity=SyntheticTestIdentityVerifier(),
+        config=RuntimeConfig(public_stateful_enabled=True),
+    ))
     assert client.get("/api/v1/health/ready").status_code == 200
     assert len(client.get("/api/v1/laboratories").json()["laboratories"]) == 9
 
@@ -53,21 +60,33 @@ def test_v1_api_executes_the_student_flow(tmp_path) -> None:
         f"/api/v1/missions/{run['run_id']}/actions",
         json={"action": "inspect_primitives", "fixture_id": "synthetic-env-basic"},
     )
-    report = client.post(f"/api/v1/missions/{run['run_id']}/vigil", json={"provider_route": "gemini"})
+    report = client.post(f"/api/v1/missions/{run['run_id']}/vigil", json={})
 
     assert execution.status_code == 200
     assert report.status_code == 200
-    assert report.json()["provider_route"] == "gemini"
+    assert report.json()["provider_route"] == "ffed-deterministic-engine"
+    assert report.json()["native_model_called"] is False
 
 
-def test_unknown_handoff_is_explicitly_not_available(tmp_path) -> None:
+def test_legacy_planned_handoff_is_explicitly_retired(tmp_path) -> None:
     client = TestClient(create_app(store=AlphaStore(tmp_path), gateway=FakeGateway()))
     response = client.post(
         "/api/v1/handoffs",
         json={"project_id": "project-x", "target_slug": "missing", "mascot": "Unknown", "metric_names": ["mastery"]},
     )
 
-    assert response.status_code == 200
-    assert response.json()["status"] == "not_available"
-    assert response.json()["full_history_requested"] is False
+    assert response.status_code == 410
+    assert response.json()["detail"]["code"] == "NATIVE_HANDOFF_CONTRACT_REQUIRED"
 
+
+def test_public_stateful_routes_remain_closed_without_identity_adapter(tmp_path) -> None:
+    client = TestClient(create_app(store=AlphaStore(tmp_path), gateway=FakeGateway()))
+
+    capabilities = client.get("/api/v1/capabilities").json()
+    assert capabilities["public_stateful_enabled"] is False
+    response = client.post(
+        "/api/v1/session/bootstrap",
+        json={"role": "student_adult", "fingerprint_ref": "fingerprint-redacted"},
+    )
+    assert response.status_code == 503
+    assert response.json()["detail"]["code"] == "IDENTITY_INTEGRATION_PENDING"

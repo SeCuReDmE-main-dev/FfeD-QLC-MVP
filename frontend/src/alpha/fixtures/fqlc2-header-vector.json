@@ -1,0 +1,11 @@
+{
+  "schema": "ffed.qlc.fqlc2.header-vector.v1",
+  "header_base64": "p2VzdWl0ZXg2REhLRU1fWDI1NTE5X0hLREZfU0hBMjU2L0hLREZfU0hBMjU2L0NIQUNIQTIwX1BPTFkxMzA1ZnNpZ25lZPRnY29udGV4dKZkcm9vdIQgAgIDZWRlcHRoAmlhbGdvcml0aG14JGludGVncmFsX2Rlc2NhcnRlc19yZWZsZWN0aW9uX2Jmc192MWloaWVyYXJjaHl4KUkgLT4gSV9zeXN0ZW1eUyAtPiBEX2YgLT4gZEYgLT4gaV9mcmFjdGFsbGtleV9tYXRlcmlhbPRsdHJhY2Vfc2hhMjU2WCBqULrkvDes75/wGGf6NJpaBTDD+3BEBVjpwZnV4ooJJmdzdGFuemFzgaNjZW5jWCC+hHgs0Wfv5/3r6j9VV8/i459VIvow5w3aL1nQjBH8AGNyZWZQlALY8jei8GDj5E8vpXRWHWt3cmFwcGVkX2Nla1gwUDzXPXgZiLiUxKUdXPFGQHOu59rrUDRtkXUmrarZ1mNKQqT6It9b0tRTkEENrlZtZ3ZlcnNpb24Ca2NodW5rX2J5dGVzGgAQAABsbm9uY2VfcHJlZml4SPA4M4vNF1nm",
+  "expected": {
+    "version": 2,
+    "suite": "DHKEM_X25519_HKDF_SHA256/HKDF_SHA256/CHACHA20_POLY1305",
+    "recipient_count": 1,
+    "hierarchy": "I -> I_system^S -> D_f -> dF -> i_fractal",
+    "key_material": false
+  }
+}

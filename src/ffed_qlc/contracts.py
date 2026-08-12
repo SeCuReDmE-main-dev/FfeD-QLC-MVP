@@ -93,7 +93,7 @@ def validate_contract(payload: Mapping[str, Any], expected_schema: str | None = 
         if payload.get("surface") != expected_surface:
             raise ContractError("role and surface do not match")
     if schema == "ffed.qlc.vigil_report.v1":
-        if payload.get("provider_route") not in (*PROVIDERS, "deterministic"):
+        if payload.get("provider_route") != "ffed-deterministic-engine":
             raise ContractError("unsupported Vigil provider route")
         if payload.get("decision") not in DECISIONS:
             raise ContractError("unsupported Vigil recommendation")

@@ -14,7 +14,7 @@ from typing import Any, Mapping
 from .contracts import canonical_json, reject_secret_material, utc_now, validate_contract
 
 
-SCHEMA_VERSION = 2
+SCHEMA_VERSION = 3
 MAX_ARTIFACT_BYTES = 1_048_576
 
 
@@ -29,9 +29,11 @@ class AlphaStore:
         self._migrate()
 
     def connection(self) -> sqlite3.Connection:
-        connection = sqlite3.connect(self.db_path)
+        connection = sqlite3.connect(self.db_path, timeout=5.0)
         connection.row_factory = sqlite3.Row
         connection.execute("PRAGMA foreign_keys = ON")
+        connection.execute("PRAGMA journal_mode = WAL")
+        connection.execute("PRAGMA busy_timeout = 5000")
         return connection
 
     def save_session(self, payload: Mapping[str, Any]) -> dict[str, Any]:
@@ -91,6 +93,24 @@ class AlphaStore:
                 ),
             )
         return dict(payload)
+
+    def claim_idempotency_key(self, key: str, operation: str, payload_sha256: str) -> bool:
+        if not 16 <= len(key) <= 120:
+            raise ValueError("idempotency key must contain 16 to 120 characters")
+        with self.connection() as db:
+            inserted = db.execute(
+                "INSERT INTO idempotency_keys VALUES (?, ?, ?, ?) ON CONFLICT(idempotency_key) DO NOTHING",
+                (key, operation, payload_sha256, utc_now()),
+            ).rowcount
+            existing = db.execute(
+                "SELECT operation, payload_sha256 FROM idempotency_keys WHERE idempotency_key=?",
+                (key,),
+            ).fetchone()
+            if existing is None:  # pragma: no cover - SQLite guarantees the row after INSERT/CONFLICT
+                raise RuntimeError("idempotency key persistence failed")
+            if existing["operation"] != operation or existing["payload_sha256"] != payload_sha256:
+                raise ValueError("idempotency key was already used for a different operation")
+        return bool(inserted)
 
     def get_run(self, run_id: str) -> dict[str, Any]:
         with self.connection() as db:
@@ -201,10 +221,6 @@ class AlphaStore:
         return payload
 
     def _migrate(self) -> None:
-        if self.db_path.exists():
-            backup = self.db_path.with_suffix(".sqlite3.bak")
-            if not backup.exists():
-                shutil.copy2(self.db_path, backup)
         with self.connection() as db:
             db.executescript(
                 """
@@ -245,9 +261,34 @@ class AlphaStore:
                 """
             )
             if db.execute("SELECT COUNT(*) FROM schema_meta").fetchone()[0] == 0:
-                db.execute("INSERT INTO schema_meta VALUES (?)", (SCHEMA_VERSION,))
-            else:
-                db.execute("UPDATE schema_meta SET version=?", (SCHEMA_VERSION,))
+                db.execute("INSERT INTO schema_meta VALUES (?)", (2,))
+            current = int(db.execute("SELECT version FROM schema_meta").fetchone()[0])
+        if current > SCHEMA_VERSION:
+            raise RuntimeError("database schema is newer than this runtime")
+        while current < SCHEMA_VERSION:
+            next_version = current + 1
+            backup = self.db_path.with_name(f"alpha.sqlite3.v{current}-to-v{next_version}.bak")
+            if self.db_path.exists() and not backup.exists():
+                shutil.copy2(self.db_path, backup)
+            with self.connection() as db:
+                db.execute("BEGIN IMMEDIATE")
+                if next_version == 3:
+                    db.execute(
+                        """CREATE TABLE IF NOT EXISTS idempotency_keys (
+                            idempotency_key TEXT PRIMARY KEY,
+                            operation TEXT NOT NULL,
+                            payload_sha256 TEXT NOT NULL,
+                            created_at TEXT NOT NULL
+                        )"""
+                    )
+                    db.execute("CREATE INDEX IF NOT EXISTS idx_projects_session_created ON projects(session_id, created_at DESC)")
+                    db.execute("CREATE INDEX IF NOT EXISTS idx_runs_project_created ON mission_runs(project_id, created_at)")
+                    db.execute("CREATE INDEX IF NOT EXISTS idx_reports_run ON reports(run_id)")
+                else:
+                    raise RuntimeError(f"missing database migration for version {next_version}")
+                db.execute("UPDATE schema_meta SET version=?", (next_version,))
+                db.commit()
+            current = next_version
 
     @staticmethod
     def _require_session(db: sqlite3.Connection, session_id: str) -> None:

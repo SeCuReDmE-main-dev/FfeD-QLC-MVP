@@ -4,6 +4,7 @@ import argparse
 import getpass
 import json
 import os
+import tempfile
 from pathlib import Path
 from typing import Any
 
@@ -13,6 +14,20 @@ from .bc_perimeter import BcctlProvider
 from .docker_map import DEFAULT_STUDYCASE_BLOCKS
 from .ecn_handoff import build_ecn_handoff_packet
 from .fractal_measurement import measure_tile_fractal_path
+from .fqlc2 import (
+    FQLC2Error,
+    atomic_pack_file,
+    atomic_unpack_file,
+    generate_recipient_key_pair,
+    generate_signing_key_pair,
+    inspect_stream,
+    load_recipient_private_key,
+    load_recipient_public_key,
+    load_signing_private_key,
+    pack_stream,
+    rotate_stream,
+    unpack_stream,
+)
 from .mesh_proof import build_fnpqnn_runtime_payload, build_gateway_command_plan
 from .orb_envelope import build_orb_envelope, export_redacted_orb_json, export_vad_reusable_template
 from .penrose_cut_project import CutProjectInput, cut_project_penrose_patch
@@ -87,6 +102,45 @@ def main(argv: list[str] | None = None) -> int:
     verify.add_argument("--passphrase-env", default="FFED_QLC_PASSPHRASE")
     verify.add_argument("--output")
     verify.add_argument("--no-decrypt", action="store_true", help="Inspect manifest without authenticating plaintext")
+
+    fqlc2_keygen = sub.add_parser("fqlc2-keygen", help="Generate an encrypted X25519 or Ed25519 key pair")
+    fqlc2_keygen.add_argument("--private-output", required=True)
+    fqlc2_keygen.add_argument("--public-output", required=True)
+    fqlc2_keygen.add_argument("--passphrase-env", default="FFED_QLC_KEY_PASSPHRASE")
+    fqlc2_keygen.add_argument("--signing", action="store_true", help="Generate Ed25519 signing keys instead of X25519 recipient keys")
+
+    fqlc2_pack = sub.add_parser("fqlc2-pack", help="Pack a file for bounded X25519 recipients")
+    fqlc2_pack.add_argument("--input", required=True)
+    fqlc2_pack.add_argument("--output", required=True)
+    fqlc2_pack.add_argument("--recipient-public-key", action="append", required=True)
+    fqlc2_pack.add_argument("--signing-private-key")
+    fqlc2_pack.add_argument("--signing-passphrase-env", default="FFED_QLC_SIGNING_PASSPHRASE")
+    fqlc2_pack.add_argument("--geometry-depth", type=int, default=2)
+
+    fqlc2_unpack = sub.add_parser("fqlc2-unpack", help="Authenticate and unpack an FQLC2 file")
+    fqlc2_unpack.add_argument("--input", required=True)
+    fqlc2_unpack.add_argument("--output", required=True)
+    fqlc2_unpack.add_argument("--recipient-private-key", required=True)
+    fqlc2_unpack.add_argument("--passphrase-env", default="FFED_QLC_KEY_PASSPHRASE")
+    fqlc2_unpack.add_argument("--require-signature", action="store_true")
+
+    fqlc2_inspect = sub.add_parser("fqlc2-inspect", help="Inspect public FQLC2 metadata without a private key")
+    fqlc2_inspect.add_argument("--input", required=True)
+    fqlc2_inspect.add_argument("--output")
+
+    fqlc2_verify = sub.add_parser("fqlc2-verify", help="Authenticate FQLC2 without writing plaintext")
+    fqlc2_verify.add_argument("--input", required=True)
+    fqlc2_verify.add_argument("--recipient-private-key", required=True)
+    fqlc2_verify.add_argument("--passphrase-env", default="FFED_QLC_KEY_PASSPHRASE")
+    fqlc2_verify.add_argument("--require-signature", action="store_true")
+    fqlc2_verify.add_argument("--output")
+
+    fqlc2_rotate = sub.add_parser("fqlc2-rotate", help="Repack FQLC2 with a fresh CEK and recipient set")
+    fqlc2_rotate.add_argument("--input", required=True)
+    fqlc2_rotate.add_argument("--output", required=True)
+    fqlc2_rotate.add_argument("--current-private-key", required=True)
+    fqlc2_rotate.add_argument("--current-passphrase-env", default="FFED_QLC_KEY_PASSPHRASE")
+    fqlc2_rotate.add_argument("--recipient-public-key", action="append", required=True)
 
     bc_status = sub.add_parser("bc-status", help="Inspect the optional Bouncy Castle perimeter provider")
     bc_status.add_argument("--output")
@@ -280,6 +334,89 @@ def main(argv: list[str] | None = None) -> int:
             print(output)
         return 0
 
+    if args.command == "fqlc2-keygen":
+        _require_new_output(args.private_output)
+        _require_new_output(args.public_output)
+        passphrase = _resolve_secret_bytes(args.passphrase_env, "FQLC2 private-key passphrase: ")
+        private_pem, public_pem = (
+            generate_signing_key_pair(passphrase) if args.signing else generate_recipient_key_pair(passphrase)
+        )
+        Path(args.private_output).write_bytes(private_pem)
+        Path(args.public_output).write_bytes(public_pem)
+        _emit_json({
+            "schema": "ffed.qlc.fqlc2.keygen-receipt.v1",
+            "key_type": "Ed25519" if args.signing else "X25519",
+            "private_key_encrypted": True,
+            "private_output": str(Path(args.private_output)),
+            "public_output": str(Path(args.public_output)),
+            "secret_values_exposed": False,
+        }, None)
+        return 0
+
+    if args.command == "fqlc2-pack":
+        _require_new_output(args.output)
+        recipients = [load_recipient_public_key(Path(path).read_bytes()) for path in args.recipient_public_key]
+        signing_key = None
+        if args.signing_private_key:
+            signing_key = load_signing_private_key(
+                Path(args.signing_private_key).read_bytes(),
+                _resolve_secret_bytes(args.signing_passphrase_env, "FQLC2 signing-key passphrase: "),
+            )
+        receipt = atomic_pack_file(
+            Path(args.input), Path(args.output), recipients,
+            geometry_depth=args.geometry_depth, signing_key=signing_key,
+        )
+        _emit_json(receipt | {"output": str(Path(args.output))}, None)
+        return 0
+
+    if args.command == "fqlc2-unpack":
+        _require_new_output(args.output)
+        private_key = load_recipient_private_key(
+            Path(args.recipient_private_key).read_bytes(),
+            _resolve_secret_bytes(args.passphrase_env, "FQLC2 private-key passphrase: "),
+        )
+        receipt = atomic_unpack_file(
+            Path(args.input), Path(args.output), private_key,
+            require_signature=args.require_signature,
+        )
+        _emit_json(receipt | {"output": str(Path(args.output))}, None)
+        return 0
+
+    if args.command == "fqlc2-inspect":
+        with Path(args.input).open("rb") as source:
+            receipt = inspect_stream(source)
+        _emit_json(receipt, args.output)
+        return 0
+
+    if args.command == "fqlc2-verify":
+        private_key = load_recipient_private_key(
+            Path(args.recipient_private_key).read_bytes(),
+            _resolve_secret_bytes(args.passphrase_env, "FQLC2 private-key passphrase: "),
+        )
+        with Path(args.input).open("rb") as source, tempfile.SpooledTemporaryFile(max_size=16 * 1024 * 1024) as sink:
+            receipt = unpack_stream(source, sink, private_key, require_signature=args.require_signature)
+        _emit_json(receipt, args.output)
+        return 0
+
+    if args.command == "fqlc2-rotate":
+        _require_new_output(args.output)
+        current_key = load_recipient_private_key(
+            Path(args.current_private_key).read_bytes(),
+            _resolve_secret_bytes(args.current_passphrase_env, "Current FQLC2 private-key passphrase: "),
+        )
+        recipients = [load_recipient_public_key(Path(path).read_bytes()) for path in args.recipient_public_key]
+        temporary = Path(args.output).with_name(f".{Path(args.output).name}.{os.getpid()}.tmp")
+        try:
+            with Path(args.input).open("rb") as source, temporary.open("xb") as destination:
+                receipt = rotate_stream(source, destination, current_key, recipients)
+                destination.flush()
+                os.fsync(destination.fileno())
+            os.replace(temporary, args.output)
+        finally:
+            temporary.unlink(missing_ok=True)
+        _emit_json(receipt | {"output": str(Path(args.output))}, None)
+        return 0
+
     if args.command == "bc-status":
         payload = BcctlProvider.from_environment().status()
         output = json.dumps(payload, indent=2, sort_keys=True)
@@ -452,6 +589,18 @@ def _resolve_passphrase(env_name: str | None) -> str:
         if env_value:
             return env_value
     return getpass.getpass("QLC passphrase: ")
+
+
+def _resolve_secret_bytes(env_name: str | None, prompt: str) -> bytes:
+    value = os.environ.get(env_name) if env_name else None
+    if not value:
+        value = getpass.getpass(prompt)
+    return value.encode("utf-8")
+
+
+def _require_new_output(path: str) -> None:
+    if Path(path).exists():
+        raise FQLC2Error(f"refusing to overwrite existing output: {path}")
 
 
 def _load_detections(path: str | None) -> list[dict[str, Any]]:
