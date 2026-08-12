@@ -54,22 +54,31 @@ The reason for excluding generic local AI routes from official school mode is st
 
 # FfeD-QLC MVP
 
-## Functional Alpha Workflow
+## Pre-alpha Workflow
 
-The current alpha implements a supervised Education workflow:
+The current pre-alpha implements a supervised Education workflow:
 
 `Gateway -> diagnostic -> orb project -> nine laboratories -> mission evidence -> Vigil report -> professor decision -> portfolio`
 
 Run the complete local surface with the shared suite runtime:
 
 ```powershell
-& 'Z:\SecuredMe Education suite\.venv\Scripts\python.exe' -m pip install -e '.[alpha]'
 npm ci
 npm run build
 ffed-qlc serve
 ```
 
-The Gateway repository is mandatory and is located through `FFED_QLC_GATEWAY_ROOT`. See [the alpha architecture](docs/public/alpha-architecture.md) and [Gateway troubleshooting](docs/public/gateway-troubleshooting.md). Only synthetic fixtures are accepted; this remains supervised educational research rather than a production cryptographic claim.
+Inside the SecuredMe Education workspace, Python dependencies are installed through the Settings Operator into the central Python 3.10.11 environment; the application does not read the workspace `.env`. The Gateway is required only for verified, persistent classroom operations and is located through `FFED_QLC_GATEWAY_ROOT`. Public health, contracts, synthetic fixtures and the FQLC2 demonstration remain available while persistent operations fail closed with `IDENTITY_INTEGRATION_PENDING`.
+
+### FQLC1 and experimental FQLC2
+
+- FQLC1 remains the compatible passphrase-based container; no FQLC1 file is rewritten automatically.
+- FQLC2 has a distinct magic/version and uses RFC 9180 Base-mode HPKE (X25519, HKDF-SHA256, ChaCha20-Poly1305) to wrap one random CEK per container.
+- Its deterministic RFC 8949 CBOR header, 1 MiB authenticated frames, recipient bounds and optional Ed25519 signature are tested across Python and TypeScript.
+- The Web surface is limited to bounded synthetic roundtrips and metadata inspection. Real keys and user documents stay in the local CLI.
+- FQLC2 is an unaudited pre-alpha prototype, not a cryptographic certification or a post-quantum claim. PyHPKE itself does not claim a formal security audit.
+
+Native Vigil handoffs use an explicit consent/evidence envelope and succeed only when the existing private Pivot runtime returns a real receipt. Hosted Passenger runtimes return `NATIVE_RUNTIME_UNAVAILABLE` instead of simulating Codex or Gemini. See [the architecture](docs/public/alpha-architecture.md), [Passenger deployment](docs/public/passenger-deployment.md), and [Gateway troubleshooting](docs/public/gateway-troubleshooting.md).
 
 FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility layer, Docker/CodeProject.AI study-case mapping, and observable sandbox execution.
 
