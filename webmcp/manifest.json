@@ -1,0 +1,655 @@
+{
+  "schema": "securedme.webmcp.v1",
+  "manifestVersion": "1.0.0",
+  "product": {
+    "slug": "ffed-qlc",
+    "name": "FfeD-QLC MVP",
+    "status": "public-pre-alpha",
+    "canonicalStateOwner": "algoquest",
+    "applicationStateOwner": "ffed-qlc",
+    "pagePatterns": [
+      "https://ffed-qlc.securedme.ca/",
+      "http://localhost:5173/"
+    ],
+    "theme": {
+      "slug": "ffed-qlc",
+      "source": "securedme-site/assets/landing/secureme.ca-product/education/FfeD-QLC-MVP/desing/stitch_ffed_qlc_design_system_landing_page/stitch_ffed_qlc_design_system_landing_page/desing.md",
+      "sourceStatus": "verified-product-stitch",
+      "assets": {
+        "dark": "landing dark.png",
+        "light": "landing light.png"
+      },
+      "tokens": {
+        "background": "#070b1b",
+        "surface": "#101936",
+        "primary": "#3976ff",
+        "secondary": "#7b52ff",
+        "accent": "#d8a548",
+        "text": "#f7fbff",
+        "muted": "#9aa8c7",
+        "focus": "#36d7ff"
+      },
+      "typography": {
+        "display": "system-ui, sans-serif",
+        "body": "system-ui, sans-serif",
+        "code": "monospace"
+      },
+      "fallback": "High-contrast system fonts, visible focus, and textual gate labels."
+    }
+  },
+  "boundaries": {
+    "authority": "Supervised metadata-only education and research scaffold; no security certification.",
+    "secrets": "Plaintext, private keys, raw T/I/F, raw media and credentials are forbidden.",
+    "externalWrites": "No WebMCP tool starts training, provisions infrastructure, opens a browser or executes a shell.",
+    "heroProgression": "AlgoQuest alone owns Hero Book progression and evidence admission."
+  },
+  "tools": [
+    {
+      "name": "ffed_list_source_functions",
+      "title": "Ffed List Source Functions",
+      "description": "List compiled source-function profiles and their redacted graph.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_list_source_functions"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "GET",
+        "path": "/api/source-functions"
+      }
+    },
+    {
+      "name": "ffed_build_lattice",
+      "title": "Ffed Build Lattice",
+      "description": "Build a bounded Penrose lattice review candidate.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": [
+              "inflation",
+              "cut_project"
+            ]
+          },
+          "target_tile_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "engine",
+          "target_tile_count"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_build_lattice"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/lattice/build"
+      }
+    },
+    {
+      "name": "ffed_classify_lattice",
+      "title": "Ffed Classify Lattice",
+      "description": "Classify tiles with the existing plithogenic classifier.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": [
+              "inflation",
+              "cut_project"
+            ]
+          },
+          "target_tile_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "engine",
+          "target_tile_count"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_classify_lattice"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/lattice/classify"
+      }
+    },
+    {
+      "name": "ffed_validate_lattice",
+      "title": "Ffed Validate Lattice",
+      "description": "Validate tile admissions as accept, suspend, or reject.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": [
+              "inflation",
+              "cut_project"
+            ]
+          },
+          "target_tile_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "engine",
+          "target_tile_count"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_validate_lattice"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/lattice/validate"
+      }
+    },
+    {
+      "name": "ffed_build_audit_orb",
+      "title": "Ffed Build Audit Orb",
+      "description": "Build a metadata-only redacted audit orb.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "engine": {
+            "type": "string",
+            "enum": [
+              "inflation",
+              "cut_project"
+            ]
+          },
+          "target_tile_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 200
+          }
+        },
+        "required": [
+          "engine",
+          "target_tile_count"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_build_audit_orb"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/orbs/build"
+      }
+    },
+    {
+      "name": "ffed_export_lattice_template",
+      "title": "Ffed Export Lattice Template",
+      "description": "Prepare the VAD reusable lattice template.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_export_lattice_template"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/export/lattice-template"
+      }
+    },
+    {
+      "name": "ffed_inspect_fqlc2_container",
+      "title": "Ffed Inspect Fqlc2 Container",
+      "description": "Inspect a bounded FQLC2 container without exposing plaintext or key material.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "container_base64": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 4000000
+          }
+        },
+        "required": [
+          "container_base64"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_inspect_fqlc2_container"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/v1/fqlc2/inspect"
+      }
+    },
+    {
+      "name": "ffed_preview_synthetic_roundtrip",
+      "title": "Ffed Preview Synthetic Roundtrip",
+      "description": "Preview a synthetic fixture roundtrip; no private key is returned.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "fixture_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "recipient_count": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8
+          },
+          "signed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "fixture_id"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_preview_synthetic_roundtrip"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/v1/fqlc2/synthetic-roundtrip"
+      }
+    },
+    {
+      "name": "ffed_inspect_cpai_status",
+      "title": "Ffed Inspect Cpai Status",
+      "description": "Inspect the allowlisted local CodeProject.AI node with sanitized output.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_inspect_cpai_status"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "GET",
+        "path": "/api/cpai/status"
+      }
+    },
+    {
+      "name": "ffed_plan_yolo_training",
+      "title": "Ffed Plan Yolo Training",
+      "description": "Prepare a metadata-only YOLO training plan; training is never started.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "cpai_url": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 200
+          },
+          "model_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "dataset_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "epochs": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 100
+          }
+        },
+        "required": [
+          "cpai_url",
+          "model_name",
+          "dataset_name"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "ffed_plan_yolo_training"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "http",
+        "method": "POST",
+        "path": "/api/cpai/yolo/training/plan"
+      }
+    },
+    {
+      "name": "securedme_companion_context",
+      "title": "Securedme Companion Context",
+      "description": "Read a sanitized Hero Book projection without transferring progression authority.",
+      "mode": "READ",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {},
+        "required": [],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "securedme_companion_context"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "local",
+        "operation": "Gateway_session_projection"
+      }
+    },
+    {
+      "name": "securedme_qbit_plan_handoff",
+      "title": "Securedme Qbit Plan Handoff",
+      "description": "Prepare a Qbit return proposal; AlgoQuest alone may admit it.",
+      "mode": "STAGE",
+      "availability": "available",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mission_ref": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "artifact_refs": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "maxLength": 160
+            }
+          }
+        },
+        "required": [
+          "mission_ref"
+        ],
+        "additionalProperties": false
+      },
+      "outputSchema": {
+        "type": "object",
+        "required": [
+          "status",
+          "tool",
+          "data",
+          "secret_values_exposed"
+        ],
+        "properties": {
+          "status": {
+            "const": "success"
+          },
+          "tool": {
+            "const": "securedme_qbit_plan_handoff"
+          },
+          "data": {},
+          "secret_values_exposed": {
+            "const": false
+          }
+        },
+        "additionalProperties": false
+      },
+      "handler": {
+        "kind": "local",
+        "operation": "local_proposal_only"
+      }
+    }
+  ]
+}

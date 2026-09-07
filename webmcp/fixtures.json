@@ -1,0 +1,136 @@
+{
+  "tools": {
+    "ffed_list_source_functions": {
+      "validInput": {},
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "ffed_build_lattice": {
+      "validInput": {
+        "engine": "inflation",
+        "target_tile_count": 1
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    },
+    "ffed_classify_lattice": {
+      "validInput": {
+        "engine": "inflation",
+        "target_tile_count": 1
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "ffed_validate_lattice": {
+      "validInput": {
+        "engine": "inflation",
+        "target_tile_count": 1
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "ffed_build_audit_orb": {
+      "validInput": {
+        "engine": "inflation",
+        "target_tile_count": 1
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    },
+    "ffed_export_lattice_template": {
+      "validInput": {},
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    },
+    "ffed_inspect_fqlc2_container": {
+      "validInput": {
+        "container_base64": "xxxxxxxx"
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "ffed_preview_synthetic_roundtrip": {
+      "validInput": {
+        "fixture_id": "x"
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    },
+    "ffed_inspect_cpai_status": {
+      "validInput": {},
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "ffed_plan_yolo_training": {
+      "validInput": {
+        "cpai_url": "xxxxxxxx",
+        "model_name": "x",
+        "dataset_name": "x"
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    },
+    "securedme_companion_context": {
+      "validInput": {},
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "completed"
+    },
+    "securedme_qbit_plan_handoff": {
+      "validInput": {
+        "mission_ref": "x"
+      },
+      "invalidInput": {
+        "__invalid": true
+      },
+      "expectedStatus": "staged"
+    }
+  },
+  "journeys": [
+    [
+      "ffed_list_source_functions",
+      "ffed_build_lattice"
+    ],
+    [
+      "ffed_classify_lattice",
+      "ffed_validate_lattice"
+    ],
+    [
+      "ffed_build_audit_orb",
+      "ffed_export_lattice_template"
+    ],
+    [
+      "ffed_inspect_fqlc2_container",
+      "ffed_preview_synthetic_roundtrip"
+    ],
+    [
+      "ffed_inspect_cpai_status",
+      "ffed_plan_yolo_training"
+    ],
+    [
+      "securedme_companion_context",
+      "securedme_qbit_plan_handoff"
+    ]
+  ]
+}

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
+from typing import Any, Callable
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +34,7 @@ def create_app(
     identity: IdentityVerifier | None = None,
     handoff: NativeHandoffAdapter | None = None,
     config: RuntimeConfig | None = None,
+    webmcp_authorizer: Callable[[Any], dict[str, Any] | None] | None = None,
 ) -> FastAPI:
     runtime = config or RuntimeConfig.from_environment()
     alpha_store = store or AlphaStore()
@@ -50,6 +52,9 @@ def create_app(
         version="0.2.0-prealpha",
         description="Pre-alpha active public development API with bounded synthetic workflows.",
     )
+    # WebMCP discovery is public, but invocation is fail-closed unless the host
+    # installs a trusted Gateway session resolver.
+    app.state.securedme_webmcp_authorizer = webmcp_authorizer
     app.add_middleware(RequestSizeLimitMiddleware)
     app.add_middleware(
         CORSMiddleware,

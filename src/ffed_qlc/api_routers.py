@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import base64
 import binascii
+from datetime import datetime, timezone
 from typing import Any
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
 from cryptography.hazmat.primitives.asymmetric.x25519 import X25519PrivateKey
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 
 from .api_models import (
     FQLC2InspectRequest,
@@ -46,6 +47,8 @@ from .storage import AlphaStore
 from .tile_admission import build_tile_admission_ledger, compute_t_df_f, export_tile_admission_profile
 from .vigil import WAKEUP_KIT, build_professor_decision, build_vigil_report
 from .geometry_trace import build_apollonian_trace
+from .webmcp import PRODUCT_SLUG as WEBMCP_PRODUCT_SLUG
+from .webmcp import manifest as webmcp_manifest, tool as webmcp_tool
 
 
 def public_router(
@@ -90,6 +93,10 @@ def public_router(
     def contracts() -> dict[str, Any]:
         return {"schemas": contract_schemas(), "wakeup_kit": WAKEUP_KIT}
 
+    @router.get("/api/v1/webmcp/manifest")
+    def webmcp_discovery() -> dict[str, Any]:
+        return webmcp_manifest()
+
     @router.get("/api/v1/fixtures")
     def fixtures() -> dict[str, Any]:
         return {"fixtures": fixture_catalog(), "raw_fixture_content_exposed": False}
@@ -115,6 +122,39 @@ def alpha_router(
     def require_stateful(action: str) -> None:
         if not config.public_stateful_enabled or not identity.ready:
             raise _http_error(503, "IDENTITY_INTEGRATION_PENDING", f"{action} requires the verified identity adapter")
+
+    @router.post("/webmcp/invoke")
+    def webmcp_invoke(request: Request, payload: dict[str, Any]) -> dict[str, Any]:
+        authorizer = getattr(request.app.state, "securedme_webmcp_authorizer", None)
+        if not callable(authorizer):
+            raise _http_error(503, "GATEWAY_SESSION_REQUIRED", "trusted Gateway session integration is unavailable")
+        try:
+            session = authorizer(request)
+        except Exception as exc:
+            raise _http_error(401, "UNAUTHORIZED", "Gateway session was rejected") from exc
+        if not isinstance(session, dict) or session.get("schema") != "securedme.education.session.v2":
+            raise _http_error(401, "UNAUTHORIZED", "Gateway session was rejected")
+        if WEBMCP_PRODUCT_SLUG not in session.get("allowed_tools", []) or session.get("consent_scope") not in {"tool", "suite"}:
+            raise _http_error(403, "FORBIDDEN", "session does not authorize FfeD-QLC")
+        try:
+            expires = datetime.fromisoformat(str(session["expires_at"]).replace("Z", "+00:00"))
+            if expires <= datetime.now(timezone.utc):
+                raise ValueError("expired")
+        except Exception as exc:
+            raise _http_error(401, "SESSION_EXPIRED", "Gateway session is expired or invalid") from exc
+        name = str(payload.get("name") or "")
+        descriptor = webmcp_tool(name)
+        if descriptor is None:
+            raise _http_error(404, "TOOL_UNAVAILABLE", "requested capability is not registered")
+        arguments = payload.get("arguments") or {}
+        try:
+            _validate_webmcp_arguments(descriptor, arguments)
+            result = _dispatch_webmcp(name, arguments, session, config)
+        except ValueError as exc:
+            raise _http_error(400, "INVALID_ARGUMENTS", str(exc)) from exc
+        except (FQLC2Error, GatewayUnavailable) as exc:
+            raise _http_error(503, "TOOL_UNAVAILABLE", str(exc)) from exc
+        return {"status": "success", "tool": name, "data": _sanitize_webmcp(result), "secret_values_exposed": False}
 
     @router.post("/session/bootstrap")
     def session_bootstrap(request: SessionBootstrapRequest) -> dict[str, Any]:
@@ -253,6 +293,79 @@ def alpha_router(
             raise _http_error(404, "PROJECT_NOT_FOUND", str(exc)) from exc
 
     return router
+
+
+def _validate_webmcp_arguments(descriptor: dict[str, Any], arguments: Any) -> None:
+    if not isinstance(arguments, dict):
+        raise ValueError("arguments must be an object")
+    schema = descriptor["inputSchema"]
+    properties = schema.get("properties", {})
+    unknown = set(arguments) - set(properties)
+    if unknown:
+        raise ValueError("unknown arguments: " + ", ".join(sorted(unknown)))
+    missing = [name for name in schema.get("required", []) if name not in arguments]
+    if missing:
+        raise ValueError("missing arguments: " + ", ".join(missing))
+    for name, value in arguments.items():
+        rule = properties[name]
+        if rule.get("type") == "string" and (not isinstance(value, str) or len(value) < rule.get("minLength", 0) or len(value) > rule.get("maxLength", 10**9)):
+            raise ValueError(f"invalid string argument: {name}")
+        if rule.get("type") == "integer" and (not isinstance(value, int) or value < rule.get("minimum", value) or value > rule.get("maximum", value)):
+            raise ValueError(f"invalid integer argument: {name}")
+        if rule.get("type") == "boolean" and not isinstance(value, bool):
+            raise ValueError(f"invalid boolean argument: {name}")
+
+
+def _sanitize_webmcp(value: Any, depth: int = 0) -> Any:
+    if depth > 8:
+        return "<depth-limited>"
+    if isinstance(value, dict):
+        blocked = ("secret", "password", "private_key", "env", "raw_media", "plaintext")
+        return {str(key): _sanitize_webmcp(item, depth + 1) for key, item in value.items() if not any(marker in str(key).lower() for marker in blocked)}
+    if isinstance(value, list):
+        return [_sanitize_webmcp(item, depth + 1) for item in value[:500]]
+    if isinstance(value, str):
+        return value[:20000]
+    return value
+
+
+def _dispatch_webmcp(name: str, arguments: dict[str, Any], session: dict[str, Any], config: RuntimeConfig) -> Any:
+    if name == "ffed_list_source_functions":
+        profiles = compile_source_function_profiles()
+        return {"source_count": len(profiles), "source_ids": [item.source_id for item in profiles], "graph": build_source_function_graph(profiles)}
+    if name in {"ffed_build_lattice", "ffed_classify_lattice", "ffed_validate_lattice", "ffed_build_audit_orb"}:
+        patch = _build_patch(LatticeRequest(**arguments))
+        if name == "ffed_build_lattice":
+            return {"schema": "ffed.qlc.api.lattice_build.v1", "patch_metadata": dict(patch.metadata), "tiles": [tile_metadata(tile) for tile in patch.tiles]}
+        classifications, measurements, admissions = _classify_measure_admit(patch)
+        if name == "ffed_classify_lattice":
+            return {"patch_fingerprint": patch.metadata["patch_fingerprint"], "classifications": [export_plithogenic_tile_classification(item) for item in classifications]}
+        if name == "ffed_validate_lattice":
+            return {"patch_fingerprint": patch.metadata["patch_fingerprint"], "admissions": [export_tile_admission_profile(item) for item in admissions], "ledger": build_tile_admission_ledger(admissions)}
+        return export_redacted_orb_json(build_orb_envelope(patch, admissions, classifications, measurements))
+    if name == "ffed_export_lattice_template":
+        return export_vad_reusable_template()
+    if name == "ffed_inspect_fqlc2_container":
+        container = base64.b64decode(arguments["container_base64"], validate=True)
+        return inspect_bytes_v2(container, limits=FQLC2Limits(chunk_bytes=config.fqlc2_chunk_bytes, max_recipients=config.fqlc2_max_recipients))
+    if name == "ffed_preview_synthetic_roundtrip":
+        fixture = synthetic_fixture_bytes(arguments["fixture_id"])
+        count = arguments.get("recipient_count", 1)
+        recipients = [X25519PrivateKey.generate() for _ in range(count)]
+        signing_key = Ed25519PrivateKey.generate() if arguments.get("signed", False) else None
+        limits = FQLC2Limits(chunk_bytes=config.fqlc2_chunk_bytes, max_recipients=config.fqlc2_max_recipients)
+        container = pack_bytes_v2(fixture, [key.public_key() for key in recipients], signing_key=signing_key, limits=limits)
+        return {"manifest": inspect_bytes_v2(container, limits=limits), "roundtrip_verified": unpack_bytes_v2(container, recipients[0], require_signature=bool(signing_key), limits=limits) == fixture, "synthetic_fixture": True, "private_key_exposed": False, "container_exposed": False}
+    if name == "ffed_inspect_cpai_status":
+        return probe_cpai_status(config.require_cpai_url(config.cpai_allowed_base_urls[0]), dry_run=False, timeout_seconds=2.0)
+    if name == "ffed_plan_yolo_training":
+        url = config.require_cpai_url(arguments["cpai_url"])
+        return plan_yolo_training(cpai_url=url, model_name=arguments["model_name"], dataset_name=arguments["dataset_name"], epochs=arguments["epochs"], requires_ui_confirmation=True)
+    if name == "securedme_companion_context":
+        return {"schema": "HeroBookPanelState.projection.v1", "canonical_state_owner": "algoquest", "hero_context": session.get("hero_context", {}), "revision": session.get("hero_revision"), "specialist": "ffed-qlc", "raw_learner_record_exposed": False}
+    if name == "securedme_qbit_plan_handoff":
+        return {"schema": "securedme.qbit.handoff-plan.v1", "status": "staged", "mission_ref": arguments["mission_ref"], "artifact_refs": arguments.get("artifact_refs", []), "target": "algoquest", "progression_modified": False}
+    raise ValueError("registered tool has no real handler")
 
 
 def fqlc2_router(config: RuntimeConfig) -> APIRouter:
