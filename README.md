@@ -55,6 +55,8 @@ During an individual course, learners choose suite tools to practice. The eight-
 
 ## Boundaries and privacy
 
+Public contributions must contain no real `.env` files and no API keys. Classroom exercises provide no medical/clinical guidance. This pre-alpha cryptographic workbench requires synthetic inputs and human review; tests do not establish production cryptographic security.
+
 Public boundaries: no real `.env` files, no API keys, no medical/clinical guidance.
 
 Cloud E2B runs are optional and require verified included quota before use. Technical OTLP counters are opt-in and loopback-only; payloads remain outside analytics.
