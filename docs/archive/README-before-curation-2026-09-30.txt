@@ -1,0 +1,438 @@
+# FfeD-QLC
+
+<!-- SECUREDME-REPOSITORY-IMAGE:START -->
+![FfeD-QLC — SecuredMe Education pre-alpha](docs/assets/repository/readme-banner-2026.png)
+
+[Repository social preview](docs/assets/repository/github-social-preview-2026.jpg) · [Presentation history](docs/repository-presentation-history-2026-09-30.md)
+<!-- SECUREDME-REPOSITORY-IMAGE:END -->
+
+<!-- SECUREDME-ZENODO:START -->
+<p align="center">
+  <a href="https://doi.org/10.5281/zenodo.21893179"><img alt="Zenodo DOI: 10.5281/zenodo.21893179" src="https://img.shields.io/badge/Zenodo%20DOI-10.5281%2Fzenodo.21893179-1682D4?style=for-the-badge" /></a>
+</p>
+<!-- SECUREDME-ZENODO:END -->
+
+<!-- SECUREDME-CPAI-MESH:START -->
+[![CodeProject.AI local connector](https://img.shields.io/badge/CodeProject.AI-local%20connector-1F6FEB)](infra/codeproject-ai/README.md)
+
+Local runtime availability must be checked; historical inference reports do not establish current readiness.
+<!-- SECUREDME-CPAI-MESH:END -->
+
+[Embedded CodeProject.AI node operations](infra/codeproject-ai/README.md)
+
+[![SecuredMe Education Suite public calendar](https://img.shields.io/badge/SecuredMe%20Education%20Suite-public%20calendar%20%7C%20pre--alpha%20%7C%20active%20public%20development-5484ED?style=for-the-badge&logo=googlecalendar&logoColor=white)](https://calendrier.securedme.ca)
+
+**Attribution:** Jean-Sebastien Beaulieu · [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443) · [SecuredMe](https://securedme.ca) · [FfeD-QLC](https://ffed-qlc.securedme.ca)
+
+<!-- SECUREDME-SUITE-BADGES:START -->
+[![License SECL-2.0](https://img.shields.io/badge/license-SECL--2.0-6F42FF)](LICENSE)
+[![Pre-alpha](https://img.shields.io/badge/status-pre--alpha-0E7490)](AGENTS.md)
+[![Issues](https://img.shields.io/github/issues/SeCuReDmE-main-dev/FfeD-QLC-MVP)](https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/issues)
+[![Main history](https://img.shields.io/github/last-commit/SeCuReDmE-main-dev/FfeD-QLC-MVP/main)](https://github.com/SeCuReDmE-main-dev/FfeD-QLC-MVP/commits/main/)
+<!-- SECUREDME-SUITE-BADGES:END -->
+
+<!-- SECUREDME-STARTUP-SUPPORT:START -->
+[![SPONSORED BY E2B FOR STARTUPS](https://img.shields.io/badge/SPONSORED%20BY-E2B%20FOR%20STARTUPS-ff3001?style=for-the-badge&labelColor=black)](https://e2b.dev/startups)
+
+E2B supports SecuredMe through E2B for Startups. Sponsorship recognition is separate from runtime availability and included quotas.
+<!-- SECUREDME-STARTUP-SUPPORT:END -->
+
+> **Maintainer review.** This pre-alpha repository accepts reproducible issues and reviewed maintenance changes. Protected-branch reviews and human authorization remain required; an issue does not promise a response or delivery date.
+
+
+
+## School Authentication And Secret Boundary
+This repository is a small SecuredMe school tool. Official classroom use must not require `.env` files, API keys, raw tokens, or local model secrets. Student and teacher workflows must use Codex/OpenAI or Antigravity/Gemini through browser WebAuth, fingerprinted session approval, and encrypted local session records when authentication is needed.
+
+Both host adapters implement the shared `securedme.education.webauth-template.v1` policy and are auditable through the Gateway. The current alpha also exercises a credential-blind Gateway session contract. Neither fact alone proves a deployed public login: provider callback, account binding, expiry, logout, recovery, and accessible browser acceptance remain required.
+
+The reason for excluding generic local AI routes from official school mode is student and teacher safety: education accounts, provider-side account controls, browser login, and governed AI refusal behavior are safer than unguided local model endpoints for classroom cybersecurity and algorithm-building tools.
+
+> **Development status.** This school tool is currently **pre-alpha — active public development**. Public issues remain open for intake, but no response or delivery date is promised. Pull requests are paused during active development.
+
+![FfeD-QLC Logo](./assets/Logo%20draft%20version/logo%20centre%201.png)
+
+# FfeD-QLC MVP
+
+## Pre-alpha Workflow
+
+The current pre-alpha implements a supervised Education workflow:
+
+`Gateway -> diagnostic -> orb project -> nine laboratories -> mission evidence -> Vigil report -> professor decision -> portfolio`
+
+Run the complete local surface with the shared suite runtime:
+
+```powershell
+npm ci
+npm run build
+ffed-qlc serve
+```
+
+Inside the SecuredMe Education workspace, Python dependencies are installed through the Settings Operator into the central Python 3.10.11 environment; the application does not read the workspace `.env`. The Gateway is required only for verified, persistent classroom operations and is located through `FFED_QLC_GATEWAY_ROOT`. Public health, contracts, synthetic fixtures and the FQLC2 demonstration remain available while persistent operations fail closed with `IDENTITY_INTEGRATION_PENDING`.
+
+### FQLC1 and experimental FQLC2
+
+- FQLC1 remains the compatible passphrase-based container; no FQLC1 file is rewritten automatically.
+- FQLC2 has a distinct magic/version and uses RFC 9180 Base-mode HPKE (X25519, HKDF-SHA256, ChaCha20-Poly1305) to wrap one random CEK per container.
+- Its deterministic RFC 8949 CBOR header, 1 MiB authenticated frames, recipient bounds and optional Ed25519 signature are tested across Python and TypeScript.
+- The Web surface is limited to bounded synthetic roundtrips and metadata inspection. Real keys and user documents stay in the local CLI.
+- FQLC2 is an unaudited pre-alpha prototype, not a cryptographic certification or a post-quantum claim. PyHPKE itself does not claim a formal security audit.
+
+Native Vigil handoffs use an explicit consent/evidence envelope and succeed only when the existing private Pivot runtime returns a real receipt. Hosted Passenger runtimes return `NATIVE_RUNTIME_UNAVAILABLE` instead of simulating Codex or Gemini. See [the architecture](docs/public/alpha-architecture.md), [Passenger deployment](docs/public/passenger-deployment.md), and [Gateway troubleshooting](docs/public/gateway-troubleshooting.md).
+
+FfeD-QLC MVP is a public software scaffold for a bounded QLC-style admissibility layer, Docker/CodeProject.AI study-case mapping, and observable sandbox execution.
+
+> **Official school governance.** This repo is an educational research scaffold, not a finished cryptographic standard, attack tool, or safety guarantee. The maintained classroom route supports Codex/OpenAI or Antigravity/Gemini only. See [SCHOOL_TOOL_GOVERNANCE.md](SCHOOL_TOOL_GOVERNANCE.md) and [AGENTS.md](AGENTS.md).
+
+> **License.** This project uses the Secured Educational Cybersecurity License 2.0 (SECL-2.0). It is provided for defensive education, fraud-awareness, simulation, and supervised cyber training. Offensive workflows, unsafe surveillance, credential theft, fraud, bypass, and criminal automation are not maintained or endorsed by the official school version. See [LICENSE](LICENSE), [NOTICE](NOTICE), [DISCLAIMER](DISCLAIMER), and [SAFETY.md](SAFETY.md).
+
+In this public repo, QLC means **Quasicrystal Lattice Cryptography**: a research protocol for long-term data protection based on structural transformation rather than only conventional encryption. The public MVP does not claim a finished cryptographic standard. It exposes the useful first layer: classify, contain, observe, and decide before sensitive material enters a workflow.
+
+Primary research attribution identifier: [ORCID 0009-0007-2904-0443](https://orcid.org/0009-0007-2904-0443).
+
+Accepted into the **E2B for Startups** program. The program approval email confirms E2B credits and Pro Tier access for sandbox-based AI-agent development. Datadog for Startups onboarding evidence is also present, and the Datadog APM console is active for the project environment.
+
+The product direction is simple: protect complex AI/research workspaces from accidental data mixing, secret leakage, and untraceable evidence reuse while still letting independent project blocks connect like Lego pieces.
+
+It is intentionally bounded: it does not publish private research logic, secrets, biological claims, clinical claims, or security-certification claims. It gives a clean public base that can be discussed, tested, and extended without mixing study-case data.
+
+## Investor Summary
+
+Modern AI development teams connect repositories, Docker services, API keys, data folders, sandbox tools, and observability stacks very quickly. The risk is that sensitive material crosses boundaries before anyone knows what happened.
+
+FfeD-QLC MVP proposes a lightweight control layer:
+
+```text
+incoming evidence or execution request
+  -> provenance check
+  -> secret-boundary check
+  -> admissibility decision
+  -> sandboxed execution
+  -> observable runtime event
+```
+
+The first commercial shape is a developer/research operations tool that sits between local project blocks, sandbox execution, and observability. It does not replace Docker, Datadog, E2B, or GitHub. It coordinates them with a strict gate so each project can remain isolated while still being measurable.
+
+## What It Does
+
+- Defines a minimal evidence gate: `accept`, `suspend`, `reject`.
+- Maps three local study-case blocks to CodeProject.AI endpoints.
+- Keeps the public model tied to provenance, trust score, and bounded claim scope.
+- Provides a Docker image and Compose entrypoint.
+- Provides tests for the MVP behavior.
+- Documents the E2B + Datadog sponsor demo path.
+- Documents the official-badge evidence policy before using sponsor language.
+- Defines a defensive image-redaction path using YOLO-style object detection plus text/secret scanning.
+- Provides a concrete reversible QLC-style structural transform using a phi/cut-and-project byte ordering plus authenticated encryption.
+- Builds an FNP-QNN runtime proof payload so QLC events can pass through `fnpqnn_gateway_MVP`, CodeProject.AI/YOLO mesh metadata, CeLeBrUm orchestration, LVFM, and the simulator's Hydra-EM-GPCN lane.
+- Adds a Semantic Complexity Map and Privacy-Safe Audit Orb as second-pass concept extractions from the foundation documents.
+- Adds an optional Bouncy Castle perimeter signature layer through a local `bcctl` provider. It signs metadata digests only and does not replace the QLC transform or authenticated encryption.
+
+## What The Algorithm Protects
+
+The MVP is designed around the practical problem of public and private key handling in already-existing workspaces.
+
+It protects by policy and workflow:
+
+- real `.env` files are excluded from git;
+- secret values are never required in public examples;
+- sandbox execution receives only the minimum variables it needs;
+- Datadog receives runtime metadata, service tags, and counters, not raw keys;
+- evidence without provenance is suspended instead of trusted;
+- unbounded claims are rejected instead of promoted;
+- each Docker study-case block has its own network and persistent volume.
+
+The intended production version would add secret-pattern scanning, redaction, fingerprint-only audit records, per-repo policy files, and signed decision logs. This public MVP is the first small, testable piece of that larger system.
+
+## What Is Public And What Stays Private
+
+Public in this repository:
+
+- the admissibility gate pattern;
+- the Docker/CPAI map;
+- E2B sandbox smoke logic;
+- Datadog labels and non-secret telemetry pattern;
+- investor-readable problem framing.
+
+Not public in this repository:
+
+- private keys or `.env` values;
+- internal research notebooks;
+- full QLC transformation logic;
+- unpublished protocol details;
+- production cryptographic claims.
+
+This split is intentional: the repository gives investors and sponsors enough to understand the product surface while preserving the deeper research and security logic.
+
+## What QLC Means Here
+
+Quasicrystal Lattice Cryptography is based on the idea that protected data can be transformed through structured, non-periodic lattice rules inspired by quasicrystal geometry. Instead of treating security only as a key-wrapping problem, QLC treats the data, its provenance, its execution context, and its admissibility state as part of the protection surface.
+
+Publicly, the MVP focuses on the operational layer around that protocol:
+
+- each project block keeps its own boundary;
+- evidence and execution requests are classified before use;
+- public and private keys are never exposed in examples or telemetry;
+- sandbox runs receive only the minimum environment needed;
+- runtime events are observable without leaking secret values;
+- every item receives an explicit `accept`, `suspend`, or `reject` decision.
+
+In practical software terms, this MVP is the first public control surface for a future QLC protocol. It is not yet a cryptographic proof or production security certification.
+
+## Docker/CPAI Base Map
+
+| Study case | CPAI URL | Network identifier | Persistent volume |
+|---|---|---|---|
+| Quasicrystal | `http://localhost:33168` | `block-quasicrystal` | `studycase-cpai-quasicrystal-data` |
+| Neutrosophique | `http://localhost:33268` | `block-neutrosophique` | `studycase-cpai-neutrosophique-data` |
+| FNP-QNN | `http://localhost:33368` | `block-fnp-qnn` | `studycase-cpai-fnp-qnn-data` |
+
+The mapped CPAI servers can be managed through Portainer CE when the private local infrastructure is running. This repo only documents the public map and does not require Portainer to run the MVP.
+
+## Install
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+```
+
+On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -e ".[dev]"
+```
+
+## Use The CLI
+
+Print the default study-case map:
+
+```bash
+ffed-qlc map
+```
+
+Evaluate one evidence item:
+
+```bash
+ffed-qlc gate --source-id paper-001 --source-type whitepaper --trust-score 0.9 --has-provenance
+```
+
+Expected output:
+
+```text
+accept
+```
+
+An unbounded claim is rejected:
+
+```bash
+ffed-qlc gate --source-id claim-001 --trust-score 1.0 --has-provenance --claim-scope biological_proof
+```
+
+Expected output:
+
+```text
+reject
+```
+
+Pack and unpack a local file with the QLC structural transform:
+
+```powershell
+$env:FFED_QLC_PASSPHRASE = "replace-with-a-real-local-secret"
+ffed-qlc pack --input .\plain.bin --output .\plain.fqlc
+ffed-qlc verify --input .\plain.fqlc --output .\plain.manifest.json
+ffed-qlc unpack --input .\plain.fqlc --output .\plain.roundtrip.bin
+```
+
+The current transform is documented in `docs/qlc-structural-transform.md`. The quasicrystal layer is a deterministic structural permutation; confidentiality and integrity come from standard ChaCha20-Poly1305 with a scrypt-derived key.
+
+Optionally attach a Bouncy Castle perimeter signature to workflow metadata:
+
+```powershell
+$env:FFED_BCCTL_PATH = "path-to-local-bcctl-executable"
+ffed-qlc bc-status
+ffed-qlc protect-workflow `
+  --input .\plain.fqlc `
+  --source-id asset-001 `
+  --output .\qlc-workflow.json `
+  --bcctl-sign `
+  --bcctl-key-id perimeter-key
+```
+
+The Bouncy Castle perimeter signs public digests only: workflow context digest,
+container artifact digest, key ID, and signature metadata. It never receives
+raw files, plaintext, passphrases, `.env` values, or private research text.
+Details: `docs/bouncy-castle-perimeter.md`.
+
+Build the simulator proof payload for the gateway mesh:
+
+```powershell
+ffed-qlc mesh-proof --input .\plain.fqlc --source-id asset-001 --output .\qlc-runtime.json --plan-output .\qlc-gateway-plan.json
+```
+
+This produces a JSON body shaped for FNP-QNN `POST /cerebrum/runtime/run`.
+Details: `docs/fnpqnn-gateway-mesh-proof.md`.
+
+Pack a YOLO-analyzed image/file and produce the CeLeBrUm/FNP-QNN proof in one step:
+
+```powershell
+ffed-qlc yolo-pack `
+  --input .\image.png `
+  --output .\image.fqlc `
+  --source-id image-001 `
+  --proof-output .\image-runtime.json `
+  --detections-json .\yolo-detections.json `
+  --proof-mode qlc_protects_simulator_mvp `
+  --plan-output .\image-gateway-plan.json
+```
+
+`yolo-detections.json` contains metadata only. QLC does not embed raw image bytes
+in the simulator payload.
+
+Build a privacy-safe ProGuarD audit orb:
+
+```powershell
+ffed-qlc audit-orb `
+  --orb-id worker-orb-001 `
+  --events-json .\events.json `
+  --output .\audit-orb.json
+```
+
+The Audit Orb rejects raw password/secret fields and keeps only fingerprints,
+secret-manager references, and bounded aggregate metadata.
+
+This is a reciprocal MVP proof loop:
+
+- `--proof-mode simulator_supports_qlc_complexity` proves the FNP-QNN MVP can
+  support, measure, and route a complex protocol like QLC.
+- `--proof-mode qlc_protects_simulator_mvp` demonstrates the QLC MVP by
+  protecting simulator inputs, outputs, runtime snapshots, YOLO-derived events,
+  and mesh handoffs with authenticated manifests and metadata-only audit records.
+
+Naming boundary: `CeLeBrUm` is the MVP orchestrator that routes YOLO-derived
+observations; `Cerebrum` is the FNP-QNN runtime/memory endpoint. They are not
+the same component.
+
+## Docker
+
+Build and run:
+
+```bash
+docker compose up --build
+```
+
+Or build directly:
+
+```bash
+docker build -t ffed-qlc-mvp:local .
+docker run --rm ffed-qlc-mvp:local map
+```
+
+## E2B + Datadog Sponsor Demo
+
+The sponsor-facing MVP is:
+
+```text
+evidence -> admissibility gate -> E2B sandbox run -> Docker/Datadog observability
+```
+
+E2B is the isolated execution lane. Datadog is the observability lane. The QLC gate is the control lane between them.
+
+Run an optional E2B sandbox smoke:
+
+```bash
+pip install -e ".[e2b]"
+python scripts/e2b_run_mvp.py
+```
+
+The E2B smoke emits a DogStatsD counter to a local Datadog Agent when reachable:
+
+```text
+ffed_qlc.e2b.mvp_run
+```
+
+Run Docker while the local Datadog Agent is active:
+
+```bash
+docker compose up --build
+```
+
+Details:
+
+```text
+docs/e2b-datadog-sponsor-demo.md
+```
+
+Investor-facing explanation:
+
+```text
+docs/investor-brief.md
+```
+
+Official badge evidence policy:
+
+```text
+docs/official-badges-and-evidence.md
+```
+
+MicroVM architecture:
+
+```text
+docs/e2b-microvm-qlc-architecture.md
+```
+
+YOLO-style image secret redaction:
+
+```text
+docs/yolo-secret-redaction.md
+```
+
+Safe public banner copy for the current repo:
+
+```text
+Accepted into E2B for Startups - sandbox smoke path in progress
+Datadog for Startups onboarding active - APM console active
+ORCID-attributed research prototype: 0009-0007-2904-0443
+```
+
+Do not use stronger Datadog language such as "sponsored by" or "official partner" unless an explicit written approval is present and recorded in the evidence file.
+
+## Test
+
+```bash
+pytest
+```
+
+## Public Safety Boundary
+
+This repository is public by design. Keep it public-safe:
+
+- no real `.env` files;
+- no API keys;
+- no private theory notebooks;
+- no claims of biological proof;
+- no medical/clinical guidance;
+- no production security claims without an explicit threat model and tests.
+
+This MVP improves secret hygiene and workflow separation, but it is not yet a complete security product. Production security would require a threat model, automated secret scanning, redaction tests, access-control design, and audit-log hardening.
+
+## Repository Layout
+
+```text
+src/ffed_qlc/
+  admissibility.py
+  docker_map.py
+  telemetry.py
+  cli.py
+tests/
+docs/
+scripts/
+Dockerfile
+compose.yaml
+```
+
+## License
+
+This project is licensed under the Secured Educational Cybersecurity License 2.0 (SECL-2.0). See `LICENSE`, `NOTICE`, `DISCLAIMER`, and `SAFETY.md`.

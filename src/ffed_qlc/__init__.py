@@ -185,7 +185,7 @@ from .structural_transform import (
     unpack_bytes,
     verify_container,
 )
-from .telemetry import emit_dogstatsd_counter, emit_qlc_workflow_counter
+from .telemetry import emit_local_counter, emit_qlc_workflow_counter
 from .tile_admission import (
     TDF_ADMISSION_SCHEMA,
     TileAdmissionProfile,
@@ -341,7 +341,7 @@ __all__ = [
     "export_vad_reusable_template",
     "evaluate_evidence",
     "expected_area_for_type",
-    "emit_dogstatsd_counter",
+    "emit_local_counter",
     "emit_qlc_workflow_counter",
     "inspect_container",
     "inspect_qlc_workflow_bundle",

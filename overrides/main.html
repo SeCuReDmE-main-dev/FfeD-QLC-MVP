@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block extrahead %}
+{{ super() }}
+<meta http-equiv="origin-trial" content="AhKHBzmwpJ3WptlEMhAfma67wcp5Hh7R1Vj2fkqL+1vTH9FWhNpq3Rnj3U9yWRx5ehCgZ09RQtXawsTq0EY9GgYAAABieyJvcmlnaW4iOiJodHRwczovL3NlY3VyZWRtZS1tYWluLWRldi5naXRodWIuaW86NDQzIiwiZmVhdHVyZSI6IkhUTUxJbkNhbnZhcyIsImV4cGlyeSI6MTc5MjQ1NDQwMH0=">
+<script defer src="{{ 'securedme-public/securedme-html-canvas.js' | url }}"></script>
+<script defer src="{{ 'securedme-public/securedme-public-analytics.js' | url }}"></script>
+{% endblock %}
+{% block footer %}
+{{ super() }}
+<div style="text-align:center;padding:1rem" data-no-translate><a href="https://e2b.dev/startups" rel="noopener noreferrer"><img src="{{ 'securedme-public/e2b-for-startups.svg' | url }}" width="300" height="28" alt="SPONSORED BY E2B FOR STARTUPS"></a></div>
+{% endblock %}

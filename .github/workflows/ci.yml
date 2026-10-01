@@ -1,4 +1,4 @@
-name: FFeD-QLC CI + Datadog telemetry
+name: FfeD-QLC validation
 
 on:
   pull_request:
@@ -14,24 +14,20 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DD_SERVICE: ffed-qlc-mvp
-  DD_ENV: alpha-local
-  DD_REPO_TAG: ffed-qlc-mvp
-  DD_TEAM: fnp-qnn
   PYTHONUNBUFFERED: "1"
 
 jobs:
   validate:
-    name: Tests, public boundary, Datadog marker
+    name: Tests and public boundary
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.11"
 
@@ -45,18 +41,16 @@ jobs:
         run: python -m pytest
 
       - name: Enforce critical closure coverage
-        env:
-          DD_TRACE_ENABLED: "false"
         run: |
           python -m coverage erase
-          python -m coverage run --branch --source=src/ffed_qlc -m pytest -p no:ddtrace tests/test_fqlc2.py tests/test_alpha_api.py tests/test_closure_controls.py
+          python -m coverage run --branch --source=src/ffed_qlc -m pytest tests/test_fqlc2.py tests/test_alpha_api.py tests/test_closure_controls.py
           python -m coverage report --include='*fqlc2.py,*api_security.py,*identity.py,*native_handoff.py' --fail-under=90
 
       - name: Audit Python dependencies
         run: python -m pip_audit --local --progress-spinner off
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: "22"
           cache: npm
@@ -88,7 +82,7 @@ jobs:
           root = Path.cwd()
           required = {
               "README.md": ["no real `.env` files", "no API keys", "no medical/clinical guidance"],
-              "SECURITY.md": ["Do not commit", "Datadog API keys", "This MVP is not a production cryptographic system"],
+              "SECURITY.md": ["Do not commit", "API keys", "This MVP is not a production cryptographic system"],
           }
           problems = []
           for path, snippets in required.items():
@@ -124,54 +118,27 @@ jobs:
           print("Public-boundary validation passed")
           PY
 
-      - name: Emit Datadog CI metric when configured
+      - name: Record CI result locally
         if: always()
         env:
-          DD_API_KEY: ${{ secrets.DD_API_KEY }}
-          DD_SITE: us3.datadoghq.com
           CI_JOB_STATUS: ${{ job.status }}
         run: |
           python - <<'PY'
           import json
           import os
-          import time
-          import urllib.error
-          import urllib.request
+          from pathlib import Path
 
-          def safe(value: str) -> str:
-              return (value or "unknown").strip().replace(" ", "_").replace("/", "_").lower() or "unknown"
-
-          status = os.environ.get("CI_JOB_STATUS", "unknown")
-          success = 1 if status == "success" else 0
-          tags = [
-              "team:fnp-qnn",
-              "service:ffed-qlc-mvp",
-              "repo:ffed-qlc-mvp",
-              "env:alpha-local",
-              "component:ci",
-              "managed_by:github-actions",
-              f"github_repository:{safe(os.environ.get('GITHUB_REPOSITORY', 'securedme-main-dev/FfeD-QLC-MVP'))}",
-              f"git_branch:{safe(os.environ.get('GITHUB_REF_NAME', 'unknown'))}",
-              f"git_commit_sha:{safe(os.environ.get('GITHUB_SHA', 'unknown'))}",
-              f"github_run_id:{safe(os.environ.get('GITHUB_RUN_ID', 'unknown'))}",
-          ]
-          payload = {
-              "series": [
-                  {"metric": "ffed_qlc.ci.validation", "points": [[int(time.time()), success]], "type": "gauge", "host": "github-actions", "tags": tags},
-                  {"metric": "ffed_qlc.ci.run", "points": [[int(time.time()), 1]], "type": "count", "host": "github-actions", "tags": tags + [f"ci_status:{safe(status)}"]},
-              ]
-          }
-          print(json.dumps({"metrics": [s["metric"] for s in payload["series"]], "tags": tags, "dd_api_key_present": bool(os.environ.get("DD_API_KEY"))}, sort_keys=True))
-          api_key = os.environ.get("DD_API_KEY")
-          if not api_key:
-              print("DD_API_KEY not configured; skipping Datadog submission.")
-              raise SystemExit(0)
-          site = os.environ.get("DD_SITE", "us3.datadoghq.com").removeprefix("https://").removeprefix("http://").rstrip("/")
-          url = f"https://api.{site}/api/v1/series" if not site.startswith("api.") else f"https://{site}/api/v1/series"
-          request = urllib.request.Request(url, data=json.dumps(payload).encode(), headers={"Content-Type": "application/json", "DD-API-KEY": api_key}, method="POST")
-          try:
-              with urllib.request.urlopen(request, timeout=10) as response:
-                  print(f"Datadog metric submission status: {response.status}")
-          except (urllib.error.HTTPError, OSError) as exc:
-              print(f"Datadog metric submission skipped/failed without failing CI: {exc}")
+          state = os.environ.get("CI_JOB_STATUS", "unknown")
+          record = {"schema": "securedme.ci.result.v1", "component": "ffed-qlc", "status": state}
+          Path("ci-result.json").write_text(json.dumps(record, sort_keys=True), encoding="utf-8")
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
+              summary.write(f"FfeD-QLC validation result: **{state}**.\n")
           PY
+
+      - name: Keep CI result artifact
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: ffed-qlc-ci-result
+          path: ci-result.json
+          retention-days: 7

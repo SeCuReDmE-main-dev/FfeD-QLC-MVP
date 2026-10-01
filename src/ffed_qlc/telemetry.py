@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-import os
 import re
-import socket
 from typing import Any, Mapping
 
 
@@ -23,16 +21,10 @@ def _sanitize(value: str, *, limit: int = 120) -> str:
     return (cleaned[:limit] or "unknown")
 
 
-def emit_dogstatsd_counter(name: str, value: int = 1, tags: tuple[str, ...] = ()) -> None:
-    host = os.environ.get("DD_DOGSTATSD_HOST", "127.0.0.1")
-    port = int(os.environ.get("DD_DOGSTATSD_PORT", "8125"))
-    safe_name = _sanitize(name, limit=200)
-    safe_tags = [_sanitize(t) for t in tags]
-    tag_suffix = f"|#{','.join(safe_tags)}" if safe_tags else ""
-    payload = f"{safe_name}:{value}|c{tag_suffix}".encode("utf-8")
-
-    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as sock:
-        sock.sendto(payload, (host, port))
+def emit_local_counter(name: str, value: int = 1, tags: tuple[str, ...] = ()) -> bool:
+    """Optional fixed-name local OTLP counter; failures never change decisions."""
+    from .local_otlp import emit_otel_counter
+    return emit_otel_counter(name, value, tags)
 
 
 def emit_qlc_workflow_counter(
@@ -44,11 +36,11 @@ def emit_qlc_workflow_counter(
     e2b_enabled: bool = False,
     extra_tags: tuple[str, ...] = (),
 ) -> None:
-    """Emit a typed QLC workflow DogStatsD counter with redacted tags only."""
+    """Emit an optional technical counter; private workflow attributes are filtered before export."""
 
     metric_name = QLC_WORKFLOW_METRICS.get(event, event)
     tags = _workflow_tags(workflow_bundle or {}, simulator_result or {}, gateway_mode, e2b_enabled)
-    emit_dogstatsd_counter(metric_name, tags=(*tags, *extra_tags))
+    emit_local_counter(metric_name, tags=(*tags, *extra_tags))
 
 
 def _workflow_tags(

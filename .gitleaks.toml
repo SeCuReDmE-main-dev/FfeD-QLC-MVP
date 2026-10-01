@@ -1,0 +1,16 @@
+# Public project tokens initialize the consent-gated browser SDK.
+# They cannot read private PostHog data. Personal phx_ tokens remain forbidden.
+# https://posthog.com/docs/privacy#is-it-ok-for-my-api-key-to-be-exposed-and-public
+title = "SecuredMe Education secret policy"
+minVersion = "v8.25.0"
+[extend]
+useDefault = true
+
+[[rules]]
+id = "generic-api-key"
+[[rules.allowlists]]
+description = "Exact public PostHog project token in enumerated browser adapters only"
+condition = "AND"
+regexTarget = "secret"
+regexes = ["^phc_kXRL4FyfQ4W3XqbuCGnYfxMRbPanSnSfnfWxuZqELeZR$"]
+paths = ["^(?:docs/securedme\\-public/securedme\\-public\\-analytics\\.js|public/securedme\\-public/securedme\\-public\\-analytics\\.js)$"]

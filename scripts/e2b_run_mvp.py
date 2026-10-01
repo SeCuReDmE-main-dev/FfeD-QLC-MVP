@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import textwrap
 
-from ffed_qlc import emit_dogstatsd_counter
+from ffed_qlc import emit_local_counter
 
 
 def main() -> int:
@@ -47,7 +47,7 @@ def main() -> int:
             if exit_code != 0:
                 break
 
-    emit_dogstatsd_counter(
+    emit_local_counter(
         "ffed_qlc.e2b.mvp_run",
         1,
         (
@@ -64,7 +64,7 @@ def main() -> int:
         textwrap.dedent(
             """
             E2B MVP run completed.
-            Datadog sponsor tag suggestion:
+            Local audit completed; aggregate telemetry is optional.
             service:ffed-qlc-mvp source:e2b result:success
             """
         ).strip()

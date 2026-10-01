@@ -165,7 +165,7 @@ def test_emit_qlc_workflow_counter_uses_typed_metric(monkeypatch) -> None:
     def fake_emit(name: str, value: int = 1, tags: tuple[str, ...] = ()) -> None:
         emitted.append((name, value, tags))
 
-    monkeypatch.setattr("ffed_qlc.telemetry.emit_dogstatsd_counter", fake_emit)
+    monkeypatch.setattr("ffed_qlc.telemetry.emit_local_counter", fake_emit)
     bundle = build_qlc_protection_workflow(
         source_id="asset-006",
         qlc_container=_container(),
@@ -180,7 +180,7 @@ def test_emit_qlc_workflow_counter_uses_typed_metric(monkeypatch) -> None:
     assert "simulator_status:ok" in emitted[0][2]
 
 
-def test_dogstatsd_sanitizer_rejects_injection_delimiters_and_bounds_length() -> None:
+def test_local_metric_sanitizer_rejects_injection_delimiters_and_bounds_length() -> None:
     unsafe = "metric|c\nsecond:tag,another" + ("x" * 200)
     safe = sanitize_metric_token(unsafe)
 
